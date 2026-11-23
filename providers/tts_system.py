@@ -218,6 +218,19 @@ def engine_name() -> str:
 class SystemTTS:
     def __init__(self, cfg: dict):
         self.voice = (cfg.get("voice") or "").strip()
+        if not self.voice and _SYS == "Windows":
+            # For DAZY Indian female companion, automatically pick female voice over male David
+            try:
+                available = list_voices()
+                for v in available:
+                    if any(f in v.lower() for f in ("zira", "heera", "kalpana", "female", "veena", "harita", "neerja", "swara")):
+                        self.voice = v
+                        break
+                if not self.voice and len(available) > 1:
+                    # 'Microsoft Zira Desktop' is usually the 2nd voice
+                    self.voice = available[1]
+            except Exception:
+                pass
         self.rate = int(cfg.get("rate") or 0)        # -10..10 on Windows
         self.caps = dict(DEFAULT_CAPS)
         self.caps["audio_out"] = True

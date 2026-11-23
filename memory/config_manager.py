@@ -144,8 +144,8 @@ def save_assistant_config(assistant_name: str, user_name: str) -> None:
 # ── Assistant voice ──────────────────────────────────────────────────────────
 # Gemini Live prebuilt voices. Names are proper nouns — identical in every
 # language, so this list is safe to show verbatim in any locale.
-AVAILABLE_VOICES = ["Charon", "Puck", "Kore", "Fenrir", "Aoede"]
-DEFAULT_VOICE    = "Charon"
+AVAILABLE_VOICES = ["Aoede", "Kore", "Charon", "Puck", "Fenrir"]
+DEFAULT_VOICE    = "Aoede"
 
 
 def get_voice() -> str:

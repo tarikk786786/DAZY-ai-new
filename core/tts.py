@@ -105,7 +105,7 @@ def _play_audio_bytes(audio_bytes: bytes) -> None:
 class EdgeTTSEngine:
     """Microsoft EdgeTTS – free, requires internet."""
 
-    def __init__(self, voice: str = "en-US-GuyNeural"):
+    def __init__(self, voice: str = "en-IN-NeerjaNeural"):
         self.voice = voice
 
     def speak(self, text: str) -> None:
