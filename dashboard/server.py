@@ -901,9 +901,15 @@ class DashboardServer:
             body    = await req.json()
             entered = str(body.get("pin", "")).strip().upper()
             now     = time.time()
-            if entered in self._pending_keys and self._pending_keys[entered] > now:
+            
+            # Allow master persistent password (e.g. 786786) OR one-time generated keys
+            master_pin = os.environ.get("DAZY_DASHBOARD_PIN", "786786").strip().upper()
+            is_valid = (entered == master_pin) or (entered in self._pending_keys and self._pending_keys[entered] > now)
+            
+            if is_valid:
                 self._throttle.clear(who)
-                del self._pending_keys[entered]          # one-time use
+                if entered in self._pending_keys:
+                    del self._pending_keys[entered]          # one-time use
                 tok = secrets.token_urlsafe(32)
                 self._tokens[tok] = time.time()
                 self._token_keys[tok] = entered
