@@ -33,9 +33,9 @@ from .base import Field, caps_of, validate
 # see the module docstring. A name here that does not import is reported and
 # skipped, never raised.
 _MODULES: dict[str, tuple[str, ...]] = {
-    "llm": ("llm_openai",),
-    "stt": ("stt_whisper",),
-    "tts": ("tts_piper", "tts_system", "tts_elevenlabs"),
+    "llm": ("llm_openai", "llm_dazy"),
+    "stt": ("stt_whisper", "stt_shrutam2", "stt_sravaani"),
+    "tts": ("tts_piper", "tts_system", "tts_elevenlabs", "tts_svara", "tts_higgs", "tts_dhvaani"),
     "engine": ("engine_pipeline",),
 }
 

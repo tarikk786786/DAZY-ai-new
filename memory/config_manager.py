@@ -122,8 +122,8 @@ def is_configured() -> bool:
 
 
 def get_assistant_name() -> str:
-    """Return the configured assistant name, or 'JARVIS' if not set."""
-    return load_api_keys().get("assistant_name", "JARVIS") or "JARVIS"
+    """Return the configured assistant name, or 'DAZY' if not set."""
+    return load_api_keys().get("assistant_name", "DAZY") or "DAZY"
 
 
 def get_user_name() -> str:
@@ -136,7 +136,7 @@ def save_assistant_config(assistant_name: str, user_name: str) -> None:
     """Persist assistant name and user name to config."""
     ensure_config_dir()
     data = _read_for_write()
-    data["assistant_name"] = assistant_name.strip() or "JARVIS"
+    data["assistant_name"] = assistant_name.strip() or "DAZY"
     data["user_name"] = user_name.strip()
     _write_config(data)
 

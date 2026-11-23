@@ -169,6 +169,12 @@ class PipelineEngine:
         self._vad_started = False
         # Per-turn stage timings, printed to the console when the turn ends.
         self._timing: dict = {}
+        # Emotion controller for DAZY & expressive voice synthesis
+        try:
+            from core.emotion_controller import EmotionController
+            self._emotion_controller = EmotionController()
+        except Exception:
+            self._emotion_controller = None
 
     # ── configuration ────────────────────────────────────────────────────────
     def _read_config(self, config) -> None:
@@ -608,6 +614,15 @@ class PipelineEngine:
         language = getattr(self._stt, "detected_language", "")
         if language and _accepts_language(self._tts):
             kwargs["language"] = language
+        if hasattr(self, "_emotion_controller") and self._emotion_controller and _accepts_emotion(self._tts):
+            try:
+                emo_state = self._emotion_controller.current_state
+                if emo_state:
+                    kwargs["emotion"] = emo_state.primary
+                    kwargs["intensity"] = emo_state.intensity
+                    kwargs["delivery"] = emo_state.delivery
+            except Exception:
+                pass
         try:
             async for pcm in self._tts.speak(text, **kwargs):
                 if pcm:
@@ -773,6 +788,11 @@ class PipelineEngine:
             return ""
         self._timing["stt"] = time.monotonic() - t0
         if text:
+            if hasattr(self, "_emotion_controller") and self._emotion_controller and _accepts_emotion(self._tts):
+                try:
+                    self._emotion_controller.step(text)
+                except Exception:
+                    pass
             # THIS is what the user said, and the only thing that should reach
             # the activity log as "You:". Emitted here rather than in
             # `send_client_content`, which is also how the app injects system
@@ -984,6 +1004,15 @@ def _accepts_language(tts) -> bool:
     import inspect
     try:
         return "language" in inspect.signature(tts.speak).parameters
+    except Exception:
+        return False
+
+
+def _accepts_emotion(tts) -> bool:
+    """Whether this voice accepts emotional modulation parameters."""
+    import inspect
+    try:
+        return "emotion" in inspect.signature(tts.speak).parameters
     except Exception:
         return False
 

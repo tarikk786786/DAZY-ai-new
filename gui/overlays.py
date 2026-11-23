@@ -76,7 +76,7 @@ class SetupOverlay(QWidget):
             return w
 
         layout.addWidget(_lbl("◈  INITIALISATION REQUIRED", 13, True))
-        layout.addWidget(_lbl("Configure J.A.R.V.I.S. before first boot.", 9, color=C.PRI_DIM))
+        layout.addWidget(_lbl("Configure DAZY — by Tarik before first boot.", 9, color=C.PRI_DIM))
         layout.addSpacing(6)
 
         sep = QFrame(); sep.setFrameShape(QFrame.Shape.HLine)
@@ -288,7 +288,7 @@ class CustomizeOverlay(QWidget):
     saved = pyqtSignal(str, str, str, str)   # assistant_name, user_name, ui_color, voice
     _OW, _OH = 400, 588
 
-    def __init__(self, assistant_name="JARVIS", user_name="",
+    def __init__(self, assistant_name="DAZY", user_name="Tarik",
                  ui_color=DEFAULT_UI_COLOR, voice="", parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
