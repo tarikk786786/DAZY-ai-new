@@ -1892,25 +1892,32 @@ class JarvisLive:
             try:
                 _mic_stream = _open_mic(_mic_dev)
             except Exception as _e:
-                # A device the picker listed but the driver will not open right
-                # now — exclusive mode, a webcam already in use, a virtual mic
-                # whose source went away. Chosen hardware failing must never
-                # mean the assistant cannot hear at all.
-                if _mic_dev is None:
-                    raise
-                print(f"[JARVIS] ⚠️  Mic '{_mic_name}' failed: {_e} — using default")
-                self.ui.write_log(
-                    f"SYS: Microphone '{_mic_name}' unavailable — using system default."
-                )
-                _mic_stream = _open_mic(None)
+                print(f"[JARVIS] ⚠️  Mic '{_mic_name}' failed: {_e} — trying system default")
+                try:
+                    _mic_stream = _open_mic(None)
+                except Exception as _e2:
+                    print(f"[JARVIS] ⚠️  Default mic failed: {_e2} — entering text-only mode")
+                    self.ui.write_log(
+                        f"SYS: Microphone unavailable ({_e2}) — text input mode active."
+                    )
+                    while True:
+                        await asyncio.sleep(4.0)
+                        try:
+                            _mic_stream = _open_mic(None)
+                            self.ui.write_log("SYS: Microphone restored.")
+                            break
+                        except Exception:
+                            continue
 
             with _mic_stream:
                 print("[JARVIS] 🎤 Mic stream open")
                 while True:
                     await asyncio.sleep(0.1)
         except Exception as e:
-            print(f"[JARVIS] ❌ Mic: {e}")
-            raise
+            print(f"[JARVIS] ❌ Mic loop warning: {e}")
+            self.ui.write_log(f"SYS: Mic stream suspended: {e}")
+            while True:
+                await asyncio.sleep(1.0)
 
     async def _flush_pending_vision(self) -> bool:
         """Send a captured frame immediately after its tool response.
@@ -3054,13 +3061,20 @@ def main():
     holder: dict = {}
 
     def runner():
-        ui.wait_for_api_key()
-        jarvis = JarvisLive(ui)
-        holder["jarvis"] = jarvis
         try:
+            ui.wait_for_api_key()
+            jarvis = JarvisLive(ui)
+            holder["jarvis"] = jarvis
             asyncio.run(jarvis.run())
         except KeyboardInterrupt:
             print("\n🔴 Shutting down...")
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            try:
+                ui.write_log(f"SYS: Voice engine error: {exc}")
+            except Exception:
+                pass
 
     threading.Thread(target=runner, daemon=True).start()
     ui.root.mainloop()
