@@ -85,6 +85,9 @@ from gui.overlays import (
 from gui.providers_panel import (
     ProvidersOverlay,
 )
+from gui.automation_panel import (
+    AutomationPanel,
+)
 
 from PyQt6.QtWidgets import QGridLayout
 
@@ -1656,6 +1659,7 @@ class MainWindow(QMainWindow):
         # "&&": a single & in a button label is Qt's shortcut marker, and it
         # was being drawn as an underscore — "ENGINE _PROVIDERS".
         _btn("🔌  ENGINE && PROVIDERS", self._open_providers)
+        _btn("⚡  AUTOMATION && ADVISOR", self._open_automation_panel)
 
         w.adjustSize()
         return w
@@ -2779,6 +2783,20 @@ class MainWindow(QMainWindow):
         ov = MemoryOverlay(parent=self.centralWidget())
         self._centre_overlay(ov)
         self._memory_overlay = ov
+
+    # ── Automation panel ─────────────────────────────────────────────────────
+
+    def _open_automation_panel(self):
+        try:
+            ov = getattr(self, "_automation_overlay", None)
+            if ov is None:
+                ov = AutomationPanel(parent=self.centralWidget())
+                self._automation_overlay = ov
+            self._centre_overlay(ov)
+            ov.show()
+            ov.raise_()
+        except Exception as e:
+            self._log.append_log(f"SYS: Automation panel unavailable: {e}")
 
     # ── Irreversible-action confirmation ─────────────────────────────────────
 
