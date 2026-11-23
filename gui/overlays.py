@@ -760,10 +760,15 @@ class AudioDeviceOverlay(_HudOverlay):
         lay.setContentsMargins(20, 16, 20, 16)
         lay.setSpacing(6)
 
-        hdr = QLabel("🎧  AUDIO DEVICES")
+        hdr = QLabel("🎧  DAZY VOICE INTELLIGENCE & AUDIO")
         hdr.setFont(hud_font(12, QFont.Weight.Bold))
         hdr.setStyleSheet(f"color: {C.PRI}; background: transparent;")
         lay.addWidget(hdr)
+
+        dsp_info = QLabel("⚡ WebRTC AEC · Silero VAD · sherpa-onnx KWS · Speaker ID Active")
+        dsp_info.setFont(hud_font(8))
+        dsp_info.setStyleSheet("color: #ec4899; background: transparent; margin-bottom: 2px;")
+        lay.addWidget(dsp_info)
 
         sep = QFrame(); sep.setFrameShape(QFrame.Shape.HLine)
         sep.setStyleSheet(f"color: {C.BORDER}; margin: 2px 0;")

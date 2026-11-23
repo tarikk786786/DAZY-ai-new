@@ -632,6 +632,21 @@ class JarvisLive:
         self._ptt                  = None    # core.hotkey.PushToTalk
         self._out_level            = 0.0     # level of the audio being played right now
         self._echo                 = EchoGuard()
+        try:
+            from core.audio_dsp import AudioPreprocessor
+            self._audio_dsp = AudioPreprocessor(sample_rate=SEND_SAMPLE_RATE)
+        except Exception:
+            self._audio_dsp = None
+        try:
+            from core.listening_fsm import ListeningStateMachine
+            self._fsm = ListeningStateMachine(followup_timeout_sec=20.0)
+        except Exception:
+            self._fsm = None
+        try:
+            from core.speaker_id import SpeakerIdentifier
+            self._speaker_id = SpeakerIdentifier()
+        except Exception:
+            self._speaker_id = None
         # `stream.write()` returns when the buffer accepts the audio, not when the
         # speaker has finished with it, so sound is still in the room after the
         # speaking flag drops. Streaming the microphone during that gap is how an
@@ -1812,24 +1827,19 @@ class JarvisLive:
             with self._speaking_lock:
                 jarvis_speaking = self._is_speaking
 
-            # ── Barge-in ─────────────────────────────────────────────────────
-            # While JARVIS talks the mic is not streamed, but it is still worth
-            # listening to locally: if the user starts speaking, cut the answer
-            # short the way a person would stop when interrupted.
-            #
-            # The whole difficulty is echo — on speakers the mic hears JARVIS.
-            # So the test is not "is the mic loud" but "is the mic louder than
-            # the echo of what we are playing right now", sustained long enough
-            # that a cough or a keystroke cannot trigger it.
+            # ── Barge-in & Interruption Detection ───────────────────────────
+            # When DAZY speaks, her output is fed into AEC reference.
+            # If the microphone detects user speech (barge-in), interrupt immediately!
             if jarvis_speaking:
-                # Nothing is streamed while JARVIS talks.
-                #
-                # Interrupting by voice used to live here: `EchoGuard` can pick a
-                # user out from under our own echo, and `core/echo.py` still does
-                # that for the tail below. Re-enabling is small — classify each
-                # block here and call interrupt() after `required_blocks` of
-                # agreement — but it depends on the listener's room, so it stays
-                # out until it can be tried on real hardware.
+                try:
+                    dsp_res = getattr(self, "_audio_dsp", None)
+                    if dsp_res is not None:
+                        res = dsp_res.process_frame(indata, is_assistant_speaking=True)
+                        if res.get("is_interruption"):
+                            print("[DAZY] ⚡ Barge-in interruption detected! Stopping speech.")
+                            loop.call_soon_threadsafe(self.interrupt)
+                except Exception:
+                    pass
                 return
 
             # ── Echo tail ────────────────────────────────────────────────────
@@ -2216,6 +2226,8 @@ class JarvisLive:
                         self.ui.set_audio_level(lvl)
                         self._out_level = lvl
                         self._echo.note_output(pcm, RECEIVE_SAMPLE_RATE, lvl)
+                    if getattr(self, "_audio_dsp", None) is not None:
+                        self._audio_dsp.feed_playback_reference(pcm)
                 except Exception:
                     pass
 

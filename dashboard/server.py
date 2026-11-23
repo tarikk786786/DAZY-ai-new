@@ -12,6 +12,7 @@ Install deps:  pip install fastapi "uvicorn[standard]" cryptography
 import asyncio
 import base64
 import hashlib
+import os
 import re
 import secrets
 import socket
@@ -50,8 +51,8 @@ STATIC_DIR  = Path(__file__).parent / "static"
 # So the port people reach for answers in the protocol they reach for it with,
 # and sends them one hop to the secure one. The QR code carries the secure URL
 # directly, so it never takes the hop.
-PORT        = 8000      # HTTP, redirects to SECURE_PORT
-SECURE_PORT = 8001      # HTTPS, the dashboard itself
+PORT        = int(os.environ.get("DAZY_DASHBOARD_PORT", "8080"))      # HTTP, redirects to SECURE_PORT
+SECURE_PORT = int(os.environ.get("DAZY_DASHBOARD_SECURE_PORT", "8081"))      # HTTPS, the dashboard itself
 MAX_UPLOAD_MB = 500
 
 
