@@ -1,9 +1,13 @@
 {
   "assistant": {
     "name": "DAZY",
+    "owner_name": "Tarik",
+    "user_name": "tarikk786786",
     "identity": "original_indian_female_ai",
     "version": "1.0.0",
     "default_language": "hinglish",
+    "default_llm_provider": "openrouter",
+    "default_llm_model": "openai/gpt-4o-mini",
     "languages": {
       "primary": ["hi", "en", "hi-en"],
       "secondary": ["ur", "bn", "or", "te", "ta", "mr", "gu"]
