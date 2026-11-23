@@ -88,6 +88,9 @@ from gui.providers_panel import (
 from gui.automation_panel import (
     AutomationPanel,
 )
+from gui.devices_panel import (
+    DevicesPanel,
+)
 
 from PyQt6.QtWidgets import QGridLayout
 
@@ -1660,6 +1663,7 @@ class MainWindow(QMainWindow):
         # was being drawn as an underscore — "ENGINE _PROVIDERS".
         _btn("🔌  ENGINE && PROVIDERS", self._open_providers)
         _btn("⚡  AUTOMATION && ADVISOR", self._open_automation_panel)
+        _btn("📱  DEVICES && ECOSYSTEM", self._open_devices_panel)
 
         w.adjustSize()
         return w
@@ -2797,6 +2801,20 @@ class MainWindow(QMainWindow):
             ov.raise_()
         except Exception as e:
             self._log.append_log(f"SYS: Automation panel unavailable: {e}")
+
+    # ── Devices panel ────────────────────────────────────────────────────────
+
+    def _open_devices_panel(self):
+        try:
+            ov = getattr(self, "_devices_overlay", None)
+            if ov is None:
+                ov = DevicesPanel(parent=self.centralWidget())
+                self._devices_overlay = ov
+            self._centre_overlay(ov)
+            ov.show()
+            ov.raise_()
+        except Exception as e:
+            self._log.append_log(f"SYS: Devices panel unavailable: {e}")
 
     # ── Irreversible-action confirmation ─────────────────────────────────────
 
