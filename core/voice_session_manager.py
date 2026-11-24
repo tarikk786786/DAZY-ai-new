@@ -171,6 +171,46 @@ class VoiceSessionManager:
         self.active_mic_sessions_count: int = 0
         self.active_tts_sessions_count: int = 0
 
+        # Structured audio diagnostic counters
+        self.input_callbacks_count: int = 0
+        self.frames_captured_count: int = 0
+        self.frames_processed_count: int = 0
+        self.bytes_queued_count: int = 0
+        self.bytes_sent_to_ai_count: int = 0
+        self.transcripts_received_count: int = 0
+        self.responses_received_count: int = 0
+
+    def record_input_callback(self, frames: int = 1024) -> None:
+        with self._lock:
+            self.input_callbacks_count += 1
+            self.frames_captured_count += frames
+
+    def record_frame_processed(self) -> None:
+        with self._lock:
+            self.frames_processed_count += 1
+
+    def record_bytes_queued(self, nbytes: int) -> None:
+        with self._lock:
+            self.bytes_queued_count += nbytes
+
+    def record_bytes_sent_to_ai(self, nbytes: int) -> None:
+        with self._lock:
+            self.bytes_sent_to_ai_count += nbytes
+
+    def record_transcript_received(self) -> None:
+        with self._lock:
+            self.transcripts_received_count += 1
+
+    def record_response_received(self) -> None:
+        with self._lock:
+            self.responses_received_count += 1
+        self.frames_captured: int = 0
+        self.frames_queued: int = 0
+        self.frames_dropped_overflow: int = 0
+        self.audio_status_warnings: int = 0
+        self.last_audio_warning: str = ""
+        self.is_mic_open: bool = False
+
     def set_auto_speak_mode(self, mode: AutoSpeakMode | str) -> None:
         if isinstance(mode, str):
             mode = AutoSpeakMode[mode.upper()]
@@ -323,6 +363,29 @@ class VoiceSessionManager:
             if self.active_mic_stream == stream_obj:
                 self.active_mic_stream = None
                 self.active_mic_sessions_count = 0
+                self.is_mic_open = False
+
+    def set_mic_active(self, active: bool) -> None:
+        with self._lock:
+            self.is_mic_open = active
+            self.active_mic_sessions_count = 1 if active else 0
+
+    def record_audio_warning(self, warning: str) -> None:
+        with self._lock:
+            self.audio_status_warnings += 1
+            self.last_audio_warning = str(warning)
+
+    def record_frame_captured(self) -> None:
+        with self._lock:
+            self.frames_captured += 1
+
+    def record_frame_queued(self) -> None:
+        with self._lock:
+            self.frames_queued += 1
+
+    def record_frame_dropped_overflow(self) -> None:
+        with self._lock:
+            self.frames_dropped_overflow += 1
 
     # ── Atomic Single-Voice Fallback Execution ──────────────────────────────
 
@@ -424,6 +487,19 @@ class VoiceSessionManager:
                 "cancellations_count": self.player.cancellation_count,
                 "is_speaking": self.player.is_playing,
                 "is_echo_tail": time.monotonic() < self._tail_until,
+                "is_mic_open": self.is_mic_open,
+                "frames_captured": self.frames_captured,
+                "frames_queued": self.frames_queued,
+                "frames_dropped_overflow": self.frames_dropped_overflow,
+                "audio_status_warnings": self.audio_status_warnings,
+                "last_audio_warning": self.last_audio_warning,
+                "input_callbacks_count": self.input_callbacks_count,
+                "frames_captured_count": self.frames_captured_count,
+                "frames_processed_count": self.frames_processed_count,
+                "bytes_queued_count": self.bytes_queued_count,
+                "bytes_sent_to_ai_count": self.bytes_sent_to_ai_count,
+                "transcripts_received_count": self.transcripts_received_count,
+                "responses_received_count": self.responses_received_count,
             }
 
     def shutdown(self) -> None:

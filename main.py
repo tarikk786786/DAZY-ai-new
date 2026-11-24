@@ -128,7 +128,7 @@ CHUNK_SIZE          = 1024
 # RMS below which 16-bit PCM is treated as room silence; above _LEVEL_FULL it
 # reads as a full-height waveform. Tuned so ordinary speech lands mid-range and
 # the bars still move for a quiet talker — language- and device-independent.
-_LEVEL_FLOOR = 60.0
+_LEVEL_FLOOR = 15.0
 _LEVEL_FULL  = 2600.0
 
 
@@ -1945,18 +1945,32 @@ class JarvisLive:
             # mic / phone PCM through the new `audio` field instead. Queue items
             # are {"data": <bytes>, "mime_type": <str>} from _listen_audio and
             # the phone relay.
-            await self.session.send_realtime_input(
-                audio=types.Blob(
-                    data=msg["data"],
-                    mime_type=msg.get("mime_type", "audio/pcm"),
+            try:
+                data_bytes = msg["data"]
+                if getattr(self, "_vsm", None):
+                    self._vsm.record_bytes_sent_to_ai(len(data_bytes))
+                await self.session.send_realtime_input(
+                    audio=types.Blob(
+                        data=data_bytes,
+                        mime_type=msg.get("mime_type", "audio/pcm"),
+                    )
                 )
-            )
+            except Exception as e:
+                print(f"[JARVIS] ⚠️  _send_realtime send error: {e}")
+                await asyncio.sleep(0.05)
 
     async def _listen_audio(self):
         print("[JARVIS] 🎤 Mic started")
         loop = asyncio.get_event_loop()
 
         def callback(indata, frames, time_info, status):
+            vsm = getattr(self, "_vsm", None)
+            if vsm:
+                vsm.record_input_callback(frames)
+            if status:
+                if vsm:
+                    vsm.record_audio_warning(str(status))
+
             # ── Wake-word gate ───────────────────────────────────────────────
             # While asleep, the mic audio NEVER goes to Gemini (nothing is
             # streamed, so JARVIS can't respond to speech not addressed to it and
@@ -2039,8 +2053,30 @@ class JarvisLive:
             
             if not self.ui.muted and not self._phone_active:
                 data = indata.tobytes()
+                vsm_cb = getattr(self, "_vsm", None)
+                if vsm_cb:
+                    vsm_cb.record_frame_captured()
+                    vsm_cb.record_frame_processed()
+                    vsm_cb.record_bytes_queued(len(data))
+
+                def _safe_enqueue(q, payload):
+                    if q.full():
+                        try:
+                            q.get_nowait()
+                            if vsm_cb:
+                                vsm_cb.record_frame_dropped_overflow()
+                        except Exception:
+                            pass
+                    try:
+                        q.put_nowait(payload)
+                        if vsm_cb:
+                            vsm_cb.record_frame_queued()
+                    except Exception:
+                        pass
+
                 loop.call_soon_threadsafe(
-                    self.out_queue.put_nowait,
+                    _safe_enqueue,
+                    self.out_queue,
                     {"data": data, "mime_type": "audio/pcm"}
                 )
                 # Feed the live mic level to the HUD so the waveform reacts to
@@ -2051,57 +2087,80 @@ class JarvisLive:
                 except Exception:
                     pass
 
-        try:
-            def _open_mic(dev):
-                st = sd.InputStream(
-                    samplerate=SEND_SAMPLE_RATE,
-                    channels=CHANNELS,
-                    dtype="int16",
-                    blocksize=CHUNK_SIZE,
-                    device=dev,
-                    callback=callback,
-                )
-                if getattr(self, "_vsm", None):
-                    self._vsm.register_mic_stream(st)
-                return st
+        def _open_mic(dev):
+            st = sd.InputStream(
+                samplerate=SEND_SAMPLE_RATE,
+                channels=CHANNELS,
+                dtype="int16",
+                blocksize=CHUNK_SIZE,
+                device=dev,
+                callback=callback,
+            )
+            vsm_ref = getattr(self, "_vsm", None)
+            if vsm_ref:
+                vsm_ref.register_mic_stream(st)
+                vsm_ref.set_mic_active(True)
+            return st
 
-            # Which microphone. resolve() returns None for "system default" and
-            # for a saved device that is no longer present — so a headset
-            # unplugged since the last run falls back to the built-in mic
-            # instead of raising on startup and taking the session with it.
-            _mic_name = get_input_device()
-            _mic_dev  = audio_devices.resolve(_mic_name, "input")
-            if _mic_dev is not None:
-                print(f"[JARVIS] 🎤 Input device: {_mic_name}")
+        while True:
             try:
-                _mic_stream = _open_mic(_mic_dev)
-            except Exception as _e:
-                print(f"[JARVIS] ⚠️  Mic '{_mic_name}' failed: {_e} — trying system default")
-                try:
-                    _mic_stream = _open_mic(None)
-                except Exception as _e2:
-                    print(f"[JARVIS] ⚠️  Default mic failed: {_e2} — entering text-only mode")
-                    self.ui.write_log(
-                        f"SYS: Microphone unavailable ({_e2}) — text input mode active."
-                    )
-                    while True:
-                        await asyncio.sleep(4.0)
-                        try:
-                            _mic_stream = _open_mic(None)
-                            self.ui.write_log("SYS: Microphone restored.")
-                            break
-                        except Exception:
-                            continue
+                _mic_name = get_input_device()
+                _mic_dev = audio_devices.resolve(_mic_name, "input")
+                if _mic_dev is None and not _mic_name:
+                    try:
+                        candidates = audio_devices.list_devices("input")
+                        chosen_candidate = None
+                        for c in candidates:
+                            if any(k in c.lower() for k in ("array", "smart sound", "intel", "realtek", "usb")):
+                                chosen_candidate = c
+                                break
+                        if not chosen_candidate and candidates:
+                            chosen_candidate = candidates[0]
+                        if chosen_candidate:
+                            cand_dev = audio_devices.resolve(chosen_candidate, "input")
+                            if cand_dev is not None:
+                                _mic_dev = cand_dev
+                                _mic_name = chosen_candidate
+                                print(f"[DAZY] 🎤 Auto-selected best active mic: {_mic_name} (index {_mic_dev})")
+                    except Exception as _cand_err:
+                        print(f"[DAZY] ⚠️  Mic auto-detect warning: {_cand_err}")
 
-            with _mic_stream:
-                print("[JARVIS] 🎤 Mic stream open")
-                while True:
-                    await asyncio.sleep(0.1)
-        except Exception as e:
-            print(f"[JARVIS] ❌ Mic loop warning: {e}")
-            self.ui.write_log(f"SYS: Mic stream suspended: {e}")
-            while True:
-                await asyncio.sleep(1.0)
+                if _mic_dev is not None:
+                    print(f"[DAZY] 🎤 Input device: {_mic_name} (index {_mic_dev})")
+                try:
+                    _mic_stream = _open_mic(_mic_dev)
+                except Exception as _e:
+                    print(f"[DAZY] ⚠️  Mic '{_mic_name}' failed: {_e} — trying system default")
+                    try:
+                        _mic_stream = _open_mic(None)
+                    except Exception as _e2:
+                        print(f"[DAZY] ⚠️  Default mic failed: {_e2} — waiting for input device")
+                        self.ui.write_log(
+                            f"SYS: Microphone unavailable ({_e2}) — retrying in 3 seconds..."
+                        )
+                        vsm_dev = getattr(self, "_vsm", None)
+                        if vsm_dev:
+                            vsm_dev.set_mic_active(False)
+                        await asyncio.sleep(3.0)
+                        continue
+
+                with _mic_stream:
+                    print("[DAZY] 🎤 Mic stream active and listening")
+                    self.ui.write_log("SYS: Microphone active and listening.")
+                    vsm_open = getattr(self, "_vsm", None)
+                    if vsm_open:
+                        vsm_open.set_mic_active(True)
+                    while True:
+                        await asyncio.sleep(0.2)
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                print(f"[DAZY] ❌ Mic loop warning: {e}. Reconnecting...")
+                self.ui.write_log(f"SYS: Mic stream suspended: {e}. Auto-reconnecting...")
+                vsm_err = getattr(self, "_vsm", None)
+                if vsm_err:
+                    vsm_err.set_mic_active(False)
+                await asyncio.sleep(2.0)
 
     async def _flush_pending_vision(self) -> bool:
         """Send a captured frame immediately after its tool response.
@@ -2173,6 +2232,8 @@ class JarvisLive:
                             self._resume_handle = _sru.new_handle
 
                     if response.data:
+                        if getattr(self, "_vsm", None):
+                            self._vsm.record_response_received()
                         if self._interrupted:
                             pass  # discard: interrupted
                         else:
@@ -2194,6 +2255,8 @@ class JarvisLive:
                                 self._visemes.feed_text(added)
 
                         if sc.input_transcription and sc.input_transcription.text:
+                            if getattr(self, "_vsm", None):
+                                self._vsm.record_transcript_received()
                             added = _append_transcript_chunk(in_buf, sc.input_transcription.text)
                             if added:
                                 self._last_user_speech = time.monotonic()

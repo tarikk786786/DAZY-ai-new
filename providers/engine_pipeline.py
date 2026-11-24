@@ -80,9 +80,8 @@ _DEFAULT_HISTORY_CHARS = 24_000
 _VAD_SILENCE_MS = 700      # quiet for this long after speech = the turn ended
 _VAD_MIN_SPEECH_MS = 250   # shorter than this is a cough, a click, a door
 _VAD_MAX_TURN_S = 30.0     # a runaway stream is flushed rather than kept for ever
-_VAD_FLOOR_MARGIN = 3.5    # speech is this many times the measured noise floor
-_VAD_ABSOLUTE_MIN = 0.006  # ...and never below this, so a silent room's own
-                           # floor of near-zero cannot make hiss into speech
+_VAD_FLOOR_MARGIN = 2.2    # speech is this many times the measured noise floor
+_VAD_ABSOLUTE_MIN = 0.0008 # ...and never below this, tuned for normal conversational speech (int16 RMS ~26)
 
 # ── Stopping a model that will not stop ──────────────────────────────────────
 # Gemini Live ends a turn itself. A chat API does not: every tool result is a

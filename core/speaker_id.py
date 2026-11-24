@@ -115,7 +115,7 @@ class SpeakerIdentifier:
             if np.max(np.abs(samples)) > 1.0:
                 samples = samples / 32768.0
 
-        if len(samples) < 1600:  # Need at least 0.1s
+        if len(samples) < 512:  # Need at least one 512-sample FFT window
             return np.zeros(64, dtype=np.float32)
 
         if self._sherpa_extractor is not None:
