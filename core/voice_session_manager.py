@@ -172,6 +172,12 @@ class VoiceSessionManager:
         self.active_tts_sessions_count: int = 0
 
         # Structured audio diagnostic counters
+        self.is_mic_open: bool = False
+        self.frames_captured: int = 0
+        self.frames_queued: int = 0
+        self.frames_dropped_overflow: int = 0
+        self.audio_status_warnings: int = 0
+        self.last_audio_warning: str = ""
         self.input_callbacks_count: int = 0
         self.frames_captured_count: int = 0
         self.frames_processed_count: int = 0

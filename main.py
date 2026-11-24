@@ -2759,6 +2759,20 @@ class JarvisLive:
             except Exception as e:
                 print(f"[Proactive] ⚠️ {e}")
 
+    # ── Safe queue enqueue (anti-overflow & bounded latency) ─────────────────────
+
+    def _safe_put_out_queue(self, chunk: dict) -> None:
+        """Safely enqueues audio chunk with drop-oldest-on-full policy to avoid queue overflow."""
+        try:
+            self.out_queue.put_nowait(chunk)
+        except asyncio.QueueFull:
+            try:
+                # Discard stale oldest frame to eliminate unbounded latency & avoid unhandled exceptions
+                self.out_queue.get_nowait()
+                self.out_queue.put_nowait(chunk)
+            except Exception:
+                pass
+
     # ── Phone audio relay ────────────────────────────────────────────────────────
 
     async def _relay_phone_audio(self) -> None:
@@ -2775,10 +2789,7 @@ class JarvisLive:
             with self._speaking_lock:
                 speaking = self._is_speaking
             if not speaking and not self.ui.muted:
-                try:
-                    self.out_queue.put_nowait(chunk)
-                except asyncio.QueueFull:
-                    pass
+                self._safe_put_out_queue(chunk)
 
     def _on_phone_connected(self) -> None:
         self.ui.write_log("SYS: Phone connected via Remote Dashboard.")
@@ -2971,6 +2982,20 @@ class JarvisLive:
             from dashboard.server import DashboardServer
             self._dashboard = DashboardServer()
             self._dashboard.set_connect_callback(self._on_phone_connected)
+            self._dashboard.set_interrupt_callback(self.interrupt)
+            if getattr(self, "_fsm", None):
+                def _on_fsm_state_broadcast(old_st, new_st):
+                    if self._dashboard:
+                        try:
+                            asyncio.create_task(self._dashboard.broadcast({
+                                "type": "voice_state",
+                                "state": new_st.value,
+                                "old_state": old_st.value,
+                                "ts": datetime.now().isoformat(),
+                            }))
+                        except Exception:
+                            pass
+                self._fsm.on_state_changed = _on_fsm_state_broadcast
             self._keep_task(asyncio.create_task(self._dashboard.serve()))
             # Runs for the whole lifetime, not just inside an active session
             self._keep_task(asyncio.create_task(self._process_dashboard_commands()))
