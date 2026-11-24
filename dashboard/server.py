@@ -1288,6 +1288,17 @@ class DashboardServer:
             except Exception as e:
                 return JSONResponse({"ok": False, "test": "speech_roundtrip", "status": "FAIL", "error": str(e)})
 
+        @app.get("/api/voice-mode")
+        async def get_voice_mode_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.voice_session_manager import VoiceSessionManager
+                vsm = VoiceSessionManager.get_instance()
+                return JSONResponse({"ok": True, "mode": vsm.auto_speak_mode.value})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         @app.post("/api/voice-mode")
         async def voice_mode_ep(req: Request):
             if not _auth(req):

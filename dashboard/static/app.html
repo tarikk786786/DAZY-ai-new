@@ -477,6 +477,23 @@
       <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
       <div class="crumb"><h1 class="crumb-title" id="topTitle" style="font-size:13px;font-weight:750;letter-spacing:.01em;margin:0;">Conversation</h1><div class="crumb-sub" id="topSubtitle">Your personal AI workspace</div></div>
       <div class="top-spacer"></div>
+      
+      <!-- Live Voice & Microphone Management -->
+      <div class="voice-topbar-controls" style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+        <button id="topbarMicToggle" class="action-btn" title="Toggle Microphone Mute/Unmute" style="padding:6px 11px;font-size:10px;display:inline-flex;align-items:center;gap:5px;border-radius:10px;">
+          <span id="topbarMicIcon">🎙️</span> <span id="topbarMicText">MIC: LIVE</span>
+        </button>
+        <select id="topbarVoiceModeSelect" title="Select Voice Listening Mode" style="border:1px solid var(--line2);background:rgba(12,19,35,.9);color:var(--text);padding:6px 9px;border-radius:10px;font-size:10px;font-weight:650;cursor:pointer;">
+          <option value="WAKE_ONLY">🎙️ Wake / Tap Only</option>
+          <option value="CONTINUOUS">⚡ Always Listening (VAD)</option>
+          <option value="PUSH_TO_TALK">🔒 Push-to-Talk (Ctrl+Space)</option>
+          <option value="SILENT">🔇 Mute Microphone</option>
+        </select>
+        <div class="lang-badge" id="topbarLangBadge" style="border:1px solid rgba(167,139,250,.35);background:rgba(167,139,250,.12);color:var(--violet);padding:6px 9px;border-radius:10px;font-size:10px;font-weight:750;display:inline-flex;align-items:center;gap:4px;" title="Conversational Hinglish Active">
+          🗣️ Hinglish
+        </div>
+      </div>
+
       <div class="connection" id="connection"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div>
       <div class="secure-badge" id="secureBadge">SECURE SESSION</div>
       <div class="clock" id="clock">--:--</div>
@@ -486,7 +503,7 @@
         <section class="page" id="page-overview" role="region" aria-label="Overview dashboard">
           <div class="overview-scroll">
             <div class="hero card" id="heroCard" data-state="offline">
-              <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> <span id="heroGreetingTag">WELCOME, TARIK</span></div><h2 id="heroGreetingHeading">Good day, Tarik.<br><span>Everything is online.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button></div></div>
+              <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> <span id="heroGreetingTag">WELCOME, TARIK</span></div><h2 id="heroGreetingHeading">Good day, Tarik.<br><span>Everything is online.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button><button class="action-btn" id="heroMuteToggle" style="border-color:rgba(251,113,133,.3);color:#ffd1d9;" title="Toggle mute">🔇 Mute Mic</button></div></div>
               <div class="orb-stage">
                 <div class="orb" id="dazyOrb" data-state="idle">
                   <div class="orb-rings">
@@ -2553,6 +2570,46 @@
     $('clearActivity').addEventListener('click',()=>{$('activityList').innerHTML='<div class="rail-note">Activity view cleared. New events will appear here.</div>';state.activity=[];});
     document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{goTo('chat');$('chatInput').value=btn.dataset.prompt;$('chatForm').requestSubmit();}));
     $('speechLang').value=localStorage.getItem('dazy_speech_language')||'hi-IN';$('speechLang').addEventListener('change',()=>localStorage.setItem('dazy_speech_language',$('speechLang').value));
+    
+    // ── Voice & Microphone Mode Controller Integration ──
+    async function syncVoiceModeUI() {
+      try {
+        const res = await authFetch('/api/voice-mode');
+        if (res.ok) {
+          const d = await res.json();
+          const mode = d.mode || 'WAKE_ONLY';
+          if ($('topbarVoiceModeSelect')) $('topbarVoiceModeSelect').value = mode;
+          const isSilent = mode === 'SILENT';
+          if ($('topbarMicText')) $('topbarMicText').textContent = isSilent ? 'MIC: MUTED' : (mode === 'CONTINUOUS' ? 'MIC: ALWAYS ON' : 'MIC: LIVE');
+          if ($('topbarMicIcon')) $('topbarMicIcon').textContent = isSilent ? '🔇' : '🎙️';
+          if ($('heroMuteToggle')) $('heroMuteToggle').textContent = isSilent ? '🎙️ Unmute Mic' : '🔇 Mute Mic';
+          if ($('dazyOrb')) $('dazyOrb').setAttribute('data-state', isSilent ? 'muted' : 'idle');
+        }
+      } catch (err) {}
+    }
+
+    $('topbarVoiceModeSelect')?.addEventListener('change', async (e) => {
+      const mode = e.target.value;
+      await updateAutoSpeakMode(mode);
+      syncVoiceModeUI();
+    });
+
+    $('topbarMicToggle')?.addEventListener('click', async () => {
+      const cur = $('topbarVoiceModeSelect')?.value;
+      const next = cur === 'SILENT' ? 'WAKE_ONLY' : 'SILENT';
+      await updateAutoSpeakMode(next);
+      syncVoiceModeUI();
+    });
+
+    $('heroMuteToggle')?.addEventListener('click', async () => {
+      const cur = $('topbarVoiceModeSelect')?.value;
+      const next = cur === 'SILENT' ? 'WAKE_ONLY' : 'SILENT';
+      await updateAutoSpeakMode(next);
+      syncVoiceModeUI();
+    });
+
+    syncVoiceModeUI();
+
     document.addEventListener('keydown',event=>{if(event.key==='Escape'){ $('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');$('newTaskModal')?.classList.remove('show');selectBrainNode(null);}});
 
     // ── Brain 3D Stage Controls ──

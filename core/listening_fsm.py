@@ -91,6 +91,8 @@ _ALLOWED_TRANSITIONS: Dict[AssistantState, Set[AssistantState]] = {
     AssistantState.FOLLOW_UP_LISTENING: {
         AssistantState.LISTENING,
         AssistantState.TRANSCRIBING,
+        AssistantState.THINKING,
+        AssistantState.SPEAKING,
         AssistantState.STANDBY,
         AssistantState.ERROR,
     },

@@ -77,11 +77,11 @@ _DEFAULT_HISTORY_CHARS = 24_000
 # never triggers in a noisy room and never stops in a silent one — so the noise
 # floor is measured continuously from the quietest recent frames and speech is
 # whatever stands well above it.
-_VAD_SILENCE_MS = 700      # quiet for this long after speech = the turn ended
-_VAD_MIN_SPEECH_MS = 250   # shorter than this is a cough, a click, a door
+_VAD_SILENCE_MS = 850      # quiet for this long after speech = the turn ended
+_VAD_MIN_SPEECH_MS = 350   # shorter than this is a cough, a click, room rustle
 _VAD_MAX_TURN_S = 30.0     # a runaway stream is flushed rather than kept for ever
-_VAD_FLOOR_MARGIN = 2.2    # speech is this many times the measured noise floor
-_VAD_ABSOLUTE_MIN = 0.0008 # ...and never below this, tuned for normal conversational speech (int16 RMS ~26)
+_VAD_FLOOR_MARGIN = 2.8    # speech is this many times the measured noise floor
+_VAD_ABSOLUTE_MIN = 0.0055 # tuned for genuine human conversational speech (~180 int16 RMS), completely rejects ambient fan/mic hiss
 
 # ── Stopping a model that will not stop ──────────────────────────────────────
 # Gemini Live ends a turn itself. A chat API does not: every tool result is a
@@ -259,6 +259,18 @@ class PipelineEngine:
         data = _pcm_of(audio)
         if not data:
             return
+
+        # Acoustic echo protection & Mute mode guard
+        try:
+            from core.voice_session_manager import VoiceSessionManager, AutoSpeakMode
+            vsm = VoiceSessionManager.get_instance()
+            if vsm.auto_speak_mode == AutoSpeakMode.SILENT:
+                return  # Microphone muted
+            if vsm.is_assistant_speaking_or_echo():
+                return  # Assistant is currently speaking or in acoustic decay tail
+        except Exception:
+            pass
+
         self._mic.append(data)
         self._mic_bytes += len(data)
         if self.auto_turn:
@@ -805,6 +817,23 @@ class PipelineEngine:
             return ""
         self._timing["stt"] = time.monotonic() - t0
         if text:
+            # Filter common Whisper hallucination noise on empty/ambient murmur
+            clean_lower = text.strip().lower().rstrip(".").rstrip(",").rstrip("!")
+            _NOISE_PHRASES = {
+                "", "you", "thank you", "thank you.", "thanks for watching",
+                "subtitles by", "bye", "okay", "um", "uh", "so", "thank you very much"
+            }
+            if clean_lower in _NOISE_PHRASES and _a.duration_s(pcm, sample_rate) < 1.2:
+                return ""
+
+            try:
+                from core.voice_session_manager import VoiceSessionManager
+                vsm = VoiceSessionManager.get_instance()
+                if vsm.is_duplicate_transcript(text):
+                    return ""
+            except Exception:
+                pass
+
             if hasattr(self, "_emotion_controller") and self._emotion_controller and _accepts_emotion(self._tts):
                 try:
                     self._emotion_controller.step(text)

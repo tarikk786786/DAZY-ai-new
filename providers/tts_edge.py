@@ -50,21 +50,33 @@ class EdgeTTSProvider:
         rate_str = f"{self.rate_offset:+d}%" if self.rate_offset else "+0%"
         pitch_str = f"{self.pitch_offset:+d}Hz" if self.pitch_offset else "+0Hz"
 
-        try:
-            comm = edge_tts.Communicate(
-                clean_text,
-                voice=self.voice,
-                rate=rate_str,
-                pitch=pitch_str,
-            )
-            mp3_buf = bytearray()
+        async def _try_stream(v: str, r: str, p: str) -> bytearray:
+            comm = edge_tts.Communicate(clean_text, voice=v, rate=r, pitch=p)
+            buf = bytearray()
             async for chunk in comm.stream():
                 if chunk["type"] == "audio":
-                    mp3_buf.extend(chunk["data"])
+                    buf.extend(chunk["data"])
+            return buf
 
-            if not mp3_buf:
-                return
+        mp3_buf = bytearray()
+        try:
+            mp3_buf = await _try_stream(self.voice, rate_str, pitch_str)
+        except Exception as err:
+            logger.warning("EdgeTTS initial stream error with %s: %s (retrying vanilla...)", self.voice, err)
+            try:
+                mp3_buf = await _try_stream(self.voice, "+0%", "+0Hz")
+            except Exception as err2:
+                logger.warning("EdgeTTS secondary stream error with %s: %s (trying Swara fallback...)", self.voice, err2)
+                try:
+                    mp3_buf = await _try_stream("hi-IN-SwaraNeural", "+0%", "+0Hz")
+                except Exception as err3:
+                    logger.error("EdgeTTS all retry attempts failed: %s", err3)
+                    return
 
+        if not mp3_buf:
+            return
+
+        try:
             # Decode MP3 to 24 kHz signed 16-bit mono PCM
             decoded = miniaudio.decode(
                 bytes(mp3_buf),
@@ -78,8 +90,8 @@ class EdgeTTSProvider:
                 yield piece
 
         except Exception as exc:
-            logger.warning("EdgeTTS synthesis error: %s", exc)
-            raise
+            logger.warning("EdgeTTS miniaudio decode error: %s", exc)
+            return
 
 
 def _make(cfg: dict) -> EdgeTTSProvider:
