@@ -29,7 +29,7 @@
     .overview-scroll{overflow:auto;min-height:0;padding:2px 2px 18px}.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(230px,.85fr);align-items:center;min-height:245px;padding:25px 28px;background:radial-gradient(ellipse at 78% 50%,rgba(142,111,241,.2),transparent 42%),linear-gradient(125deg,rgba(28,32,61,.94),rgba(12,23,38,.92));border-color:rgba(167,139,250,.2)}.hero:after{content:"";position:absolute;width:320px;height:320px;right:10%;top:-56%;border:1px solid rgba(181,164,255,.13);border-radius:50%;box-shadow:0 0 0 28px rgba(181,164,255,.025),0 0 0 58px rgba(181,164,255,.018);pointer-events:none}.hero-copy{position:relative;z-index:2}.hero-tag{display:inline-flex;align-items:center;gap:7px;color:#c7b7ff;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);padding:6px 10px;border-radius:30px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.12;letter-spacing:-.05em;margin:17px 0 10px;max-width:540px}.hero h2 span{background:linear-gradient(95deg,#c4aaff,#70dfff 55%,#f59bc9);background-size:180% auto;color:transparent;background-clip:text;animation:shimmer 8s linear infinite}.hero-copy p{font-size:11px;color:#a5b1c9;line-height:1.7;max-width:420px;margin:0 0 18px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.orb-stage{height:195px;display:grid;place-items:center;position:relative;z-index:2}.orb{width:132px;height:132px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 27%,#e2c9ff 0%,#9a80ed 13%,#536cd0 34%,#12213c 67%,#070c18 100%);box-shadow:inset -15px -18px 28px rgba(0,0,0,.55),inset 5px 6px 18px rgba(255,255,255,.25),0 0 38px rgba(139,116,250,.5),0 0 90px rgba(90,177,231,.19);animation:float 5s ease-in-out infinite}.orb:before{content:"";position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(150,194,255,.32);transform:rotate(-20deg) scaleY(.33);box-shadow:0 0 18px rgba(133,186,255,.13)}.orb:after{content:"";position:absolute;inset:-37px;border:1px solid rgba(189,161,255,.2);border-radius:50%;transform:rotate(62deg) scaleY(.4)}.orb-core{position:absolute;inset:31%;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,rgba(166,206,255,.9) 22%,rgba(148,120,245,.1) 73%);filter:blur(1px);box-shadow:0 0 26px #a7cfff;animation:pulse 3.2s ease-in-out infinite}.orb-caption{position:absolute;bottom:2px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#aeb9d0}.hero[data-state="offline"] .orb{filter:grayscale(.65);opacity:.6;animation:none}
     .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:13px 0}.stat-card{padding:15px 16px;min-height:92px}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:9px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}.stat-icon{font-size:14px;color:var(--violet)}.stat-value{font-size:18px;font-weight:780;letter-spacing:-.035em;margin-top:12px}.stat-note{font-size:9px;color:var(--muted);margin-top:4px}.overview-lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:12px}.mini-chat{min-height:175px;display:flex;flex-direction:column}.mini-feed{padding:13px 17px 17px;display:grid;gap:9px;overflow:hidden}.mini-item{display:flex;gap:9px;align-items:flex-start;font-size:10px;line-height:1.55;color:#b8c3d9}.mini-avatar{width:21px;height:21px;flex:none;border-radius:7px;background:rgba(167,139,250,.17);display:grid;place-items:center;color:#c4b1ff;font-size:10px}.mini-avatar.user{background:rgba(100,216,255,.12);color:var(--cyan)}.mini-item span{display:block;color:var(--muted);font-size:8px;margin-top:2px}.quick-card{padding-bottom:14px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px}.quick-tile{border:1px solid var(--line);background:rgba(255,255,255,.025);padding:12px;border-radius:13px;text-align:left;cursor:pointer;transition:.2s}.quick-tile:hover{border-color:rgba(167,139,250,.4);transform:translateY(-2px);background:rgba(167,139,250,.07)}.quick-tile i{font-style:normal;font-size:17px;display:block;margin-bottom:8px}.quick-tile b{display:block;font-size:10px}.quick-tile small{font-size:8px;color:var(--muted);display:block;margin-top:4px}
     /* Chat */
-    .chat-page{gap:0}.chat-toolbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid var(--line);border-radius:16px 16px 0 0;background:rgba(15,21,37,.85)}.chat-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(140deg,rgba(167,139,250,.6),rgba(100,216,255,.35));display:grid;place-items:center;font-weight:850;color:white}.chat-agent-name{font-size:11px;font-weight:760}.chat-agent-state{font-size:9px;color:var(--muted);margin-top:3px}.chat-feed{flex:1;min-height:0;overflow:auto;padding:17px 17px 20px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(7,11,20,.43);display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.chat-feed::-webkit-scrollbar,.overview-scroll::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:5px}.chat-feed::-webkit-scrollbar-thumb,.overview-scroll::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:rgba(145,160,195,.16);border-radius:8px}.chat-empty{margin:auto;text-align:center;max-width:360px;padding:25px}.chat-empty .empty-orb{width:65px;height:65px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#e5d7ff,#9275e8 35%,#192d51 72%);box-shadow:0 0 35px rgba(152,120,245,.28);animation:float 5s ease-in-out infinite}.chat-empty h3{font-size:19px;letter-spacing:-.03em;margin:0 0 8px}.chat-empty p{font-size:10px;color:var(--muted);line-height:1.6;margin:0}.suggestions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:17px}.suggestions button{font-size:9px;color:#bac5dd;padding:7px 9px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer}.suggestions button:hover{border-color:rgba(167,139,250,.4)}.message{max-width:min(82%,760px);padding:11px 13px;border-radius:15px;line-height:1.65;font-size:11px;word-break:break-word;animation:rise .2s ease}.message.assistant{align-self:flex-start;background:linear-gradient(135deg,rgba(142,115,231,.14),rgba(43,68,107,.18));border:1px solid rgba(167,139,250,.17);border-bottom-left-radius:5px}.message.user{align-self:flex-end;background:rgba(53,126,158,.13);border:1px solid rgba(100,216,255,.14);border-bottom-right-radius:5px}.message.system{align-self:center;color:var(--muted);font-size:9px;padding:3px 9px;background:transparent;border:0}.message-meta{font-size:8px;letter-spacing:.12em;color:#95a0b8;opacity:.75;margin-bottom:5px;text-transform:uppercase;font-weight:800}.message p{margin:0 0 7px}.message p:last-child{margin-bottom:0}.message ul,.message ol{padding-left:18px;margin:6px 0}.message pre{white-space:pre-wrap;overflow:auto;padding:9px;background:rgba(0,0,0,.25);border-radius:8px;font-size:10px}.message code{font-family:ui-monospace,Consolas,monospace;color:#b6e9ff;background:rgba(0,0,0,.2);padding:1px 4px;border-radius:4px}.message strong{color:#f0e9ff}.message a{color:var(--cyan)}.pending-dot{display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle}.pending-dot i{width:4px;height:4px;border-radius:50%;background:var(--violet);animation:pulse 1s infinite}.pending-dot i:nth-child(2){animation-delay:.15s}.pending-dot i:nth-child(3){animation-delay:.3s}.chat-composer{padding:12px;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;background:rgba(15,21,37,.88)}.composer-box{display:flex;align-items:flex-end;gap:8px;border:1px solid rgba(153,169,207,.18);border-radius:14px;background:rgba(4,8,16,.55);padding:7px}.composer-box:focus-within{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.07)}#chatInput{flex:1;min-height:37px;max-height:130px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:9px 7px;font-size:11px;line-height:1.5}#chatInput::placeholder{color:#69758e}.composer-tool{height:35px;min-width:35px;border:0;border-radius:10px;background:transparent;color:#a5b0c8;cursor:pointer;font-size:15px}.composer-tool:hover{background:rgba(255,255,255,.06);color:white}.composer-tool.recording{color:var(--red);background:rgba(251,113,133,.1);animation:pulse 1s infinite}.send-btn{height:35px;padding:0 16px;border:0;border-radius:10px;background:linear-gradient(110deg,#9c7cf2,#5dcce0);color:#0b1020;font-size:10px;letter-spacing:.09em;font-weight:900;cursor:pointer}.send-btn:disabled{opacity:.4;cursor:not-allowed}.composer-hint{display:flex;justify-content:space-between;gap:12px;color:#65718a;font-size:8px;margin:8px 4px 0}.composer-hint strong{color:#8a96af;font-weight:650}
+    .chat-page{gap:0}.chat-toolbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid var(--line);border-radius:16px 16px 0 0;background:rgba(15,21,37,.85)}.chat-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(140deg,rgba(167,139,250,.6),rgba(100,216,255,.35));display:grid;place-items:center;font-weight:850;color:white}.chat-agent-name{font-size:11px;font-weight:760}.chat-agent-state{font-size:9px;color:var(--muted);margin-top:3px}.chat-feed{flex:1;min-height:0;overflow:auto;padding:17px 17px 20px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(7,11,20,.43);display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.chat-feed::-webkit-scrollbar,.overview-scroll::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:5px}.chat-feed::-webkit-scrollbar-thumb,.overview-scroll::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:rgba(145,160,195,.16);border-radius:8px}.chat-empty{margin:auto;text-align:center;max-width:360px;padding:25px}.chat-empty .empty-orb{width:65px;height:65px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#e5d7ff,#9275e8 35%,#192d51 72%);box-shadow:0 0 35px rgba(152,120,245,.28);animation:float 5s ease-in-out infinite}.chat-empty h3{font-size:19px;letter-spacing:-.03em;margin:0 0 8px}.chat-empty p{font-size:10px;color:var(--muted);line-height:1.6;margin:0}.suggestions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:17px}.suggestions button{font-size:9px;color:#bac5dd;padding:7px 9px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer}.suggestions button:hover{border-color:rgba(167,139,250,.4)}.message{max-width:min(82%,760px);padding:11px 13px;border-radius:15px;line-height:1.65;font-size:11px;word-break:break-word;animation:rise .2s ease}.message.assistant{align-self:flex-start;background:linear-gradient(135deg,rgba(142,115,231,.14),rgba(43,68,107,.18));border:1px solid rgba(167,139,250,.17);border-bottom-left-radius:5px}.message.user{align-self:flex-end;background:rgba(53,126,158,.13);border:1px solid rgba(100,216,255,.14);border-bottom-right-radius:5px}.message.system{align-self:center;color:var(--muted);font-size:9px;padding:3px 9px;background:transparent;border:0}.message-meta{font-size:8px;letter-spacing:.12em;color:#95a0b8;opacity:.75;margin-bottom:5px;text-transform:uppercase;font-weight:800}.message p{margin:0 0 7px}.message p:last-child{margin-bottom:0}.message ul,.message ol{padding-left:18px;margin:6px 0}.message pre{white-space:pre-wrap;overflow:auto;padding:9px;background:rgba(0,0,0,.25);border-radius:8px;font-size:10px}.message code{font-family:ui-monospace,Consolas,monospace;color:#b6e9ff;background:rgba(0,0,0,.2);padding:1px 4px;border-radius:4px}.message strong{color:#f0e9ff}.message a{color:var(--cyan)}.pending-dot{display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle}.pending-dot i{width:4px;height:4px;border-radius:50%;background:var(--violet);animation:pulse 1s infinite}.pending-dot i:nth-child(2){animation-delay:.15s}.pending-dot i:nth-child(3){animation-delay:.3s}.chat-composer{padding:12px;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;background:rgba(15,21,37,.88)}.composer-box{display:flex;align-items:flex-end;gap:8px;border:1px solid rgba(153,169,207,.18);border-radius:14px;background:rgba(4,8,16,.55);padding:7px}.composer-box:focus-within{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.07)}#chatInput{flex:1;min-height:37px;max-height:130px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:9px 7px;font-size:11px;line-height:1.5}#chatInput::placeholder{color:#69758e}.composer-tool{height:35px;min-width:35px;border:0;border-radius:10px;background:transparent;color:#a5b0c8;cursor:pointer;font-size:15px}.composer-tool:hover{background:rgba(255,255,255,.06);color:white}.composer-tool.recording{color:var(--red);background:rgba(251,113,133,.1);animation:pulse 1s infinite}.voice-always-btn{transition:all .2s ease;font-weight:600}.voice-always-btn:hover{border-color:rgba(114,224,180,.6)!important;color:var(--mint)!important}.voice-always-btn.active{animation:pulse 1.8s infinite}.send-btn{height:35px;padding:0 16px;border:0;border-radius:10px;background:linear-gradient(110deg,#9c7cf2,#5dcce0);color:#0b1020;font-size:10px;letter-spacing:.09em;font-weight:900;cursor:pointer}.send-btn:disabled{opacity:.4;cursor:not-allowed}.composer-hint{display:flex;justify-content:space-between;gap:12px;color:#65718a;font-size:8px;margin:8px 4px 0}.composer-hint strong{color:#8a96af;font-weight:650}
     /* Files and activity */
     .section-scroll{flex:1;min-height:0;overflow:auto;padding:2px 2px 18px}.dropzone{border:1px dashed rgba(167,139,250,.34);border-radius:18px;padding:28px 18px;text-align:center;background:rgba(167,139,250,.045);transition:.2s}.dropzone.drag{border-color:var(--cyan);background:rgba(100,216,255,.08);transform:scale(.995)}.drop-icon{font-size:25px;margin-bottom:9px}.dropzone h3{font-size:13px;margin:0 0 5px}.dropzone p{font-size:10px;color:var(--muted);margin:0 0 14px}.file-list{display:grid;gap:8px;margin-top:14px}.file-row{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line)}.file-glyph{width:35px;height:35px;border-radius:10px;background:rgba(100,216,255,.09);display:grid;place-items:center;font-size:16px}.file-info{min-width:0;flex:1}.file-name{font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-size{font-size:9px;color:var(--muted);margin-top:4px}.file-open{font-size:9px;color:var(--cyan);text-decoration:none}.activity-list{display:grid;gap:8px}.activity-row{display:flex;gap:11px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.022)}.activity-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--violet);margin:4px 2px;box-shadow:0 0 10px rgba(167,139,250,.4)}.activity-row.user .activity-dot{background:var(--cyan)}.activity-row.system .activity-dot{background:var(--amber)}.activity-copy{font-size:10px;line-height:1.55;color:#bdc8dd;min-width:0}.activity-copy time{display:block;font-size:8px;color:var(--muted);margin-top:4px}
     /* Right rail */
@@ -531,7 +531,8 @@
               <button class="composer-tool" type="button" id="attachBtn" title="Attach file">＋</button>
               <textarea id="chatInput" rows="1" placeholder="Message DAZY… (Enter to send)" aria-label="Message DAZY"></textarea>
               <canvas id="micWaveCanvas" width="64" height="24" class="mic-wave-canvas" style="display:none"></canvas>
-              <button class="composer-tool" type="button" id="micBtn" title="Voice input">♩</button>
+              <button class="composer-tool voice-always-btn" type="button" id="alwaysListeningBtn" title="Toggle Continuous Always-Listening" style="font-size:10px;padding:0 9px;width:auto;border:1px solid var(--line);border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🎙️ Always: OFF</button>
+              <button class="composer-tool" type="button" id="micBtn" title="Voice input (Tap to speak)">♩</button>
               <button class="send-btn" id="sendBtn" type="submit">SEND ↑</button>
             </div></form><div class="composer-hint"><span><strong>Enter</strong> to send · <strong>Shift + Enter</strong> for a new line</span><span>Desktop assistant handles speech output · no duplicate browser voice</span></div><input type="file" id="fileInput" multiple hidden></div>
         </section>
@@ -885,7 +886,7 @@
           <div class="system-row"><div class="system-icon">▧</div><div><div class="system-label">File service</div><div class="system-value" id="railFiles">Available on request</div></div><span class="status-chip">API</span></div>
           <div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport security</div><div class="system-value" id="railSecurity">Checking</div></div><span class="status-chip wait" id="railSecurityChip">CHECK</span></div>
         </div>
-        <div class="card rail-card"><div class="rail-heading"><b>Quick controls</b><span>Assistant</span></div><div class="rail-actions"><button class="rail-action" data-action="wake"><i>⌁</i><span>Wake DAZY</span></button><button class="rail-action" data-goto="chat"><i>✧</i><span>Message</span></button><button class="rail-action" data-goto="files"><i>▧</i><span>Send file</span></button><button class="rail-action" data-goto="activity"><i>◷</i><span>Timeline</span></button></div></div>
+        <div class="card rail-card"><div class="rail-heading"><b>Quick controls</b><span>Assistant</span></div><div class="rail-actions"><button class="rail-action" data-action="wake"><i>⌁</i><span>Wake DAZY</span></button><button class="rail-action" id="railAlwaysListenBtn" title="Toggle Continuous Microphone"><i>🎙️</i><span id="railAlwaysListenLabel">Always Mic</span></button><button class="rail-action" data-goto="chat"><i>✧</i><span>Message</span></button><button class="rail-action" data-goto="files"><i>▧</i><span>Send file</span></button></div></div>
         <div class="card rail-card"><div class="rail-heading"><b>Session health</b><span id="healthText">—</span></div><div class="rail-note" id="healthNote">Waiting for the dashboard to receive a status event from the desktop application.</div><div class="engine-meter"><span id="healthBar" style="width:20%"></span></div></div>
         <div class="card rail-card"><div class="rail-heading"><b>Privacy note</b><span>LOCAL</span></div><p class="rail-note">The dashboard connects to your own DAZY instance. Mic access starts only after you tap the voice button. No browser speech synthesis is triggered automatically.</p></div>
       </aside>
@@ -937,7 +938,8 @@
     socket:null, socketOpen:false, reconnectTimer:null, reconnectDelay:1000, manuallyClosed:false,
     page:'chat', messages:0, files:[], seen:new Set(), recentSeen:new Map(), localUserEcho:[], activity:[], pending:new Map(),
     recognition:null, recognitionActive:false, phoneSocket:null, audioContext:null, micStream:null, audioNode:null,
-    micMode:'idle', currentStatus:'unknown', aesKey:null, encReady:false, sendBusy:false
+    micMode:'idle', currentStatus:'unknown', aesKey:null, encReady:false, sendBusy:false,
+    alwaysListening:false, userExplicitStop:false, connectedNoticeShown:false
   };
   const titles = {
     overview:['Overview','Your personal AI workspace'],
@@ -1025,9 +1027,9 @@
     const clean=String(text??'').trim(); if(!clean)return;
     const isSystem=speaker==='system'||speaker==='sys';
     const role=(speaker==='user'||speaker==='you')?'user':(isSystem?'system':'assistant');
-    const signature=role+'|'+clean+'|'+String(timestamp||'');
+    const signature=isSystem ? (role+'|'+clean) : (role+'|'+clean+'|'+String(timestamp||''));
     if(options.dedupe && state.seen.has(signature))return;
-    if(options.dedupe) {state.seen.add(signature); if(state.seen.size>700)state.seen.clear();}
+    if(options.dedupe || isSystem) {state.seen.add(signature); if(state.seen.size>700)state.seen.clear();}
     if(role==='user') {
       const idx=state.localUserEcho.findIndex(item=>item.text===clean && Date.now()-item.at<12000);
       if(idx>=0 && options.remote){state.localUserEcho.splice(idx,1);return;}
@@ -1310,7 +1312,13 @@
       addMessage('system','Wake word detected — assistant is waking.',null);
       updateVoiceState('listening');
     }
-    else if(type==='sys') {addMessage('system',message.text,null);}
+    else if(type==='sys') {
+      if (message.text && (message.text.includes('connection established') || message.text.includes('Remote connection'))) {
+        if (state.connectedNoticeShown) return;
+        state.connectedNoticeShown = true;
+      }
+      addMessage('system',message.text,null,{dedupe:true});
+    }
     else if(type==='file_received') {toast('File received: '+(message.name||'upload'),'success');loadFiles(false);}
     else if(type==='error') {
       toast(message.text||message.error||'Assistant reported an error','error');
@@ -1386,8 +1394,154 @@
   async function loadFiles(showToast=true){$('fileListState').textContent='Loading…';try{const res=await authFetch('/api/files');const data=await res.json();if(!res.ok)throw new Error(data.error||'Could not load files');state.files=Array.isArray(data.files)?data.files:[];$('statFiles').textContent=String(state.files.length);$('fileCount').textContent=String(state.files.length);$('fileListState').textContent=state.files.length+' item(s)';const box=$('fileList');box.innerHTML='';if(!state.files.length){box.innerHTML='<div class="rail-note">No uploaded files yet. Send a file from this device to get started.</div>';return;}for(const file of state.files){const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name||'');const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name||'Unnamed file';const size=document.createElement('div');size.className='file-size';size.textContent=fileSize(Number(file.size)||0);info.append(name,size);const link=document.createElement('a');link.className='file-open';link.textContent='Download';link.href='/uploads/'+encodeURIComponent(file.name||'')+'?token='+encodeURIComponent(authToken);link.setAttribute('download',file.name||'file');row.append(glyph,info,link);box.appendChild(row);}}catch(err){$('fileListState').textContent='Unavailable';$('fileList').innerHTML='<div class="rail-note">'+escapeHTML(err.message||'File list unavailable')+'</div>';if(showToast)toast(err.message||'Could not load files','error');}}
   function uploadFile(file){if(!file)return;const form=new FormData();form.append('file',file);const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name);const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name;const size=document.createElement('div');size.className='file-size';size.textContent='Uploading · '+fileSize(file.size);const bar=document.createElement('div');bar.className='engine-meter';const fill=document.createElement('span');fill.style.width='0%';bar.append(fill);info.append(name,size,bar);const pct=document.createElement('div');pct.className='fc-status';pct.textContent='0%';row.append(glyph,info,pct);$('fileList').prepend(row);const xhr=new XMLHttpRequest();xhr.open('POST','/api/upload');xhr.setRequestHeader('Authorization','Bearer '+authToken);xhr.upload.onprogress=(event)=>{if(event.lengthComputable){const p=Math.round(event.loaded/event.total*100);fill.style.width=p+'%';pct.textContent=p+'%';}};xhr.onload=()=>{let result={};try{result=JSON.parse(xhr.responseText);}catch{}if(xhr.status>=200&&xhr.status<300){size.textContent='Uploaded · '+fileSize(file.size);pct.textContent='✓';pct.style.color='var(--mint)';toast('Uploaded '+file.name,'success');loadFiles(false);}else{size.textContent=result.error||'Upload failed';pct.textContent='ERR';pct.style.color='var(--red)';toast(result.error||'Upload failed','error');}};xhr.onerror=()=>{size.textContent='Network error';pct.textContent='ERR';pct.style.color='var(--red)';};xhr.send(form);}
   function selectFiles(files){Array.from(files||[]).forEach(uploadFile);}
-  function setMicState(mode,label){state.micMode=mode;$('micBtn').classList.toggle('recording',mode!=='idle');$('micBtn').textContent=mode==='browser'?'●':mode==='stream'?'■':'♩';$('micBtn').title=label||'Voice input';$('railMic').textContent=mode==='idle'?'Not active':mode==='browser'?'Browser speech recognition':'Phone microphone stream';$('railMicChip').textContent=mode==='idle'?'IDLE':'LIVE';$('railMicChip').className='status-chip'+(mode==='idle'?'':' wait');$('statVoice').textContent=mode==='idle'?'Ready':'Listening';$('statVoiceNote').textContent=mode==='idle'?'Microphone starts only on tap':'Stop listening when finished';}
-  function startBrowserSpeech(){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition)return false;try{setMicState('starting','Starting voice recognition');const recognition=new Recognition();recognition.lang=$('speechLang').value;recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;recognition.onstart=()=>{state.recognitionActive=true;setMicState('browser','Stop voice input');toast('Listening… speak now');};recognition.onresult=(event)=>{const transcript=Array.from(event.results||[]).map(result=>result[0]?.transcript||'').join(' ').trim();if(transcript)sendMessage(transcript);};recognition.onerror=(event)=>{toast('Voice recognition: '+(event.error||'failed'),'error');};recognition.onend=()=>{state.recognitionActive=false;state.recognition=null;setMicState('idle');};state.recognition=recognition;recognition.start();return true;}catch(err){console.warn('Browser speech unavailable',err);state.recognition=null;setMicState('idle');return false;}}
+  function setMicState(mode, label) {
+    state.micMode = mode;
+    const isListening = mode !== 'idle';
+    $('micBtn').classList.toggle('recording', isListening);
+    $('micBtn').textContent = mode === 'browser' ? '●' : mode === 'stream' ? '■' : '♩';
+    $('micBtn').title = label || 'Voice input (Tap to speak)';
+
+    const alwaysBtn = $('alwaysListeningBtn');
+    if (alwaysBtn) {
+      if (state.alwaysListening && isListening) {
+        alwaysBtn.classList.add('active');
+        alwaysBtn.innerHTML = '🎙️ Always: ON';
+        alwaysBtn.style.color = '#72e0b4';
+        alwaysBtn.style.borderColor = 'rgba(114,224,180,0.5)';
+        alwaysBtn.style.background = 'rgba(114,224,180,0.12)';
+      } else {
+        alwaysBtn.classList.remove('active');
+        alwaysBtn.innerHTML = '🎙️ Always: OFF';
+        alwaysBtn.style.color = '#a5b0c8';
+        alwaysBtn.style.borderColor = 'var(--line)';
+        alwaysBtn.style.background = 'transparent';
+      }
+    }
+
+    const railBtn = $('railAlwaysListenLabel');
+    if (railBtn) {
+      railBtn.textContent = state.alwaysListening && isListening ? 'Listening' : 'Always Mic';
+    }
+
+    $('railMic').textContent = mode === 'idle' ? 'Not active' : (state.alwaysListening ? 'Continuous Listening (ACTIVE)' : (mode === 'browser' ? 'Browser speech recognition' : 'Continuous phone stream'));
+    $('railMicChip').textContent = mode === 'idle' ? 'IDLE' : 'LIVE';
+    $('railMicChip').className = 'status-chip' + (mode === 'idle' ? '' : ' ok');
+    $('statVoice').textContent = mode === 'idle' ? 'Ready' : (state.alwaysListening ? 'Continuous' : 'Listening');
+    $('statVoiceNote').textContent = mode === 'idle' ? 'Microphone starts on tap or Always-Listen' : 'Listening continuously for your voice';
+  }
+
+  function startBrowserSpeech(isContinuous = true) {
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Recognition) return false;
+    try {
+      setMicState('starting', 'Starting voice recognition');
+      const recognition = new Recognition();
+      recognition.lang = $('speechLang').value || 'en-US';
+      recognition.continuous = Boolean(isContinuous || state.alwaysListening);
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        state.recognitionActive = true;
+        setMicState('browser', state.alwaysListening ? 'Always Listening · Speak freely' : 'Listening · Click to stop');
+        updateVoiceState('listening');
+        toast(state.alwaysListening ? 'Continuous Listening active: Speak anytime!' : 'Listening… speak now');
+      };
+
+      recognition.onresult = (event) => {
+        let interimText = '';
+        let finalText = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const res = event.results[i];
+          if (res.isFinal) {
+            finalText += res[0].transcript;
+          } else {
+            interimText += res[0].transcript;
+          }
+        }
+        if (interimText.trim()) {
+          showLiveTranscript(true, interimText.trim());
+          if (voiceEngine.state !== 'speaking') updateVoiceState('transcribing');
+        }
+        if (finalText.trim()) {
+          showLiveTranscript(false);
+          sendMessage(finalText.trim());
+        }
+      };
+
+      recognition.onerror = (event) => {
+        if (event.error === 'no-speech') {
+          return;
+        }
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          toast('Microphone permission blocked in browser. Please allow microphone in browser URL bar.', 'error');
+          state.alwaysListening = false;
+          setMicState('idle');
+          updateVoiceState('error');
+        } else {
+          console.warn('Speech recognition warning:', event.error);
+        }
+      };
+
+      recognition.onend = () => {
+        state.recognitionActive = false;
+        if (state.alwaysListening && !state.userExplicitStop) {
+          setTimeout(() => {
+            if (state.alwaysListening && !state.userExplicitStop) {
+              try {
+                recognition.start();
+                state.recognitionActive = true;
+                setMicState('browser', 'Always Listening active');
+                updateVoiceState('listening');
+              } catch (e) {
+                console.warn('Continuous recognition restart error', e);
+              }
+            }
+          }, 250);
+          return;
+        }
+        state.recognition = null;
+        setMicState('idle');
+        updateVoiceState('idle');
+      };
+
+      state.recognition = recognition;
+      recognition.start();
+      return true;
+    } catch (err) {
+      console.warn('Browser speech unavailable, falling back to audio stream', err);
+      state.recognition = null;
+      setMicState('idle');
+      return false;
+    }
+  }
+
+  function toggleAlwaysListening() {
+    state.alwaysListening = !state.alwaysListening;
+    if (state.alwaysListening) {
+      state.userExplicitStop = false;
+      toast('Always Listening activated: DAZY is listening continuously', 'success');
+      if (state.recognition) {
+        try { state.recognition.stop(); } catch(e) {}
+      }
+      if (!startBrowserSpeech(true)) {
+        startPhoneAudio();
+      }
+    } else {
+      state.userExplicitStop = true;
+      toast('Always Listening deactivated', 'info');
+      if (state.recognition) {
+        try { state.recognition.stop(); } catch(e) {}
+        state.recognition = null;
+      }
+      if (state.micMode === 'stream') {
+        stopPhoneAudio();
+      }
+      setMicState('idle');
+      updateVoiceState('idle');
+    }
+  }
+
   function floatToPcm16(input,sourceRate){const targetRate=16000;const ratio=sourceRate/targetRate;const outLength=Math.max(1,Math.floor(input.length/ratio));const out=new Int16Array(outLength);for(let i=0;i<outLength;i++){const position=i*ratio;const left=Math.floor(position);const right=Math.min(left+1,input.length-1);const fraction=position-left;const sample=input[left]*(1-fraction)+input[right]*fraction;out[i]=Math.max(-32768,Math.min(32767,Math.round(sample*32767)));}return out;}
   async function startPhoneAudio(){
     if(!navigator.mediaDevices?.getUserMedia){toast('Microphone capture is unavailable in this browser context. Use HTTPS or localhost.','error');return;}
@@ -1442,7 +1596,26 @@
     updateVoiceState('idle');
     showLiveTranscript(false);
   }
-  function toggleMic(){if(state.recognition){try{state.recognition.stop();}catch{}return;}if(state.micMode==='stream'){stopPhoneAudio();return;}if(state.micMode==='starting')return;if(!startBrowserSpeech())startPhoneAudio();}
+  function toggleMic(){
+    if(state.recognition){
+      state.userExplicitStop=true;
+      state.alwaysListening=false;
+      try{state.recognition.stop();}catch{}
+      state.recognition=null;
+      setMicState('idle');
+      updateVoiceState('idle');
+      return;
+    }
+    if(state.micMode==='stream'){
+      state.userExplicitStop=true;
+      state.alwaysListening=false;
+      stopPhoneAudio();
+      return;
+    }
+    if(state.micMode==='starting')return;
+    state.userExplicitStop=false;
+    if(!startBrowserSpeech(state.alwaysListening))startPhoneAudio();
+  }
   function openFilePicker(){ $('fileInput').click(); }
   
   // ── Pronunciation & Diagnostics Telemetry ──
@@ -2138,7 +2311,10 @@
     $('chatForm').addEventListener('submit',event=>{event.preventDefault();sendMessage($('chatInput').value);});
     $('chatInput').addEventListener('input',autoGrow);
     $('chatInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();$('chatForm').requestSubmit();}});
-    $('micBtn').addEventListener('click',toggleMic);$('attachBtn').addEventListener('click',openFilePicker);
+    $('micBtn').addEventListener('click',toggleMic);
+    $('alwaysListeningBtn')?.addEventListener('click',toggleAlwaysListening);
+    $('railAlwaysListenBtn')?.addEventListener('click',toggleAlwaysListening);
+    $('attachBtn').addEventListener('click',openFilePicker);
     $('fileInput').addEventListener('change',event=>{selectFiles(event.target.files);event.target.value='';});
     $('browseFiles').addEventListener('click',openFilePicker);$('refreshFiles').addEventListener('click',()=>loadFiles());
     $('dropzone').addEventListener('dragover',event=>{event.preventDefault();$('dropzone').classList.add('drag');});

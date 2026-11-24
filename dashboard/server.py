@@ -922,13 +922,13 @@ class DashboardServer:
             try:
                 body = await req.json()
                 if isinstance(body, dict):
-                    entered = str(body.get("pin", "")).strip().upper()
+                    entered = str(body.get("pin") or body.get("key") or "").strip().upper()
             except Exception:
                 pass
             if not entered:
                 try:
                     form = await req.form()
-                    entered = str(form.get("pin", "")).strip().upper()
+                    entered = str(form.get("pin") or form.get("key") or "").strip().upper()
                 except Exception:
                     pass
             now     = time.time()
@@ -947,9 +947,12 @@ class DashboardServer:
                 self._aes_key(entered)                   # pre-derive & cache
                 if self._connect_callback:
                     self._connect_callback()
-                asyncio.create_task(self.broadcast(
-                    {"type": "sys", "text": "Remote connection established."}
-                ))
+                # Broadcast connection notice only once
+                if not getattr(self, "_connection_announced", False):
+                    self._connection_announced = True
+                    asyncio.create_task(self.broadcast(
+                        {"type": "sys", "text": "Remote connection established."}
+                    ))
                 res = JSONResponse({"ok": True, "token": tok})
                 res.set_cookie("session_token", tok, max_age=_TOKEN_TTL_SECONDS, httponly=True, samesite="lax")
                 return res

@@ -415,7 +415,12 @@ class OpenAICompatLLM:
 
     # -- headers ------------------------------------------------------------
     def _headers(self) -> dict:
-        h = {"Content-Type": "application/json"}
+        h = {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 DAZY-AI-OS/1.0",
+            "HTTP-Referer": "http://localhost:8080",
+            "X-Title": "DAZY AI OS"
+        }
         if self.key:
             h["Authorization"] = f"Bearer {self.key}"
         return h
@@ -427,6 +432,22 @@ class OpenAICompatLLM:
             clean_msgs.pop()
         if not clean_msgs:
             clean_msgs = messages
+
+        # Tight token budget protection for rate-limited endpoints like Groq (8,000 TPM limit)
+        if "groq.com" in self.base:
+            budgeted_msgs = []
+            for m in clean_msgs:
+                if m.get("role") == "system" and isinstance(m.get("content"), str):
+                    content = m["content"]
+                    if len(content) > 3500:
+                        content = content[:2200] + "\n\n[...Core Behavioral Directives...]\n" + content[-1200:]
+                    budgeted_msgs.append({**m, "content": content})
+                else:
+                    budgeted_msgs.append(m)
+            clean_msgs = budgeted_msgs
+            if tools and len(tools) > 4:
+                tools = tools[:4]
+
         body: dict[str, Any] = {"model": self.model, "messages": clean_msgs,
                                 "stream": stream}
         if tools and self.caps["tools"]:
