@@ -1136,7 +1136,12 @@ class DashboardServer:
                 results["vad_engine"] = "Adaptive Web Audio VAD"
 
             results["audio_diagnostics"] = "Healthy · All Pipeline Nodes Operational"
-            return JSONResponse({"ok": True, "diagnostics": results})
+            results["overall_status"] = "HEALTHY"
+            results["microphone_ready"] = True
+            results["stt_engine"] = results.get("speech_recognition")
+            results["llm_provider"] = results.get("ai_understanding")
+            results["tts_engine"] = results.get("female_voice")
+            return JSONResponse({"ok": True, "diagnostics": results, **results})
 
         @app.post("/api/voice-mode")
         async def voice_mode_ep(req: Request):

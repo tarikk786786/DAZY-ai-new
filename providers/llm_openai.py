@@ -423,7 +423,12 @@ class OpenAICompatLLM:
 
     def _body(self, messages: list[dict], tools: list[dict] | None,
               stream: bool, temperature: float | None) -> dict:
-        body: dict[str, Any] = {"model": self.model, "messages": messages,
+        clean_msgs = [m for m in messages if m.get("content") or m.get("tool_calls")]
+        while clean_msgs and clean_msgs[-1].get("role") == "assistant" and not clean_msgs[-1].get("tool_calls"):
+            clean_msgs.pop()
+        if not clean_msgs:
+            clean_msgs = messages
+        body: dict[str, Any] = {"model": self.model, "messages": clean_msgs,
                                 "stream": stream}
         if tools and self.caps["tools"]:
             body["tools"] = tools
