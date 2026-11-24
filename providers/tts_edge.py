@@ -38,9 +38,16 @@ class EdgeTTSProvider:
 
     async def speak(self, text: str, **kwargs) -> AsyncIterator[bytes]:
         """Synthesizes text into 24 kHz 16-bit mono PCM chunks."""
-        clean_text = text.strip()
+        try:
+            from core.pronunciation_engine import normalize_text_for_speech
+            clean_text = normalize_text_for_speech(text)
+        except Exception:
+            clean_text = text.strip()
+
         if not clean_text:
             return
+
+        logger.info("[EdgeTTS] Speaking (%s): '%s'", self.voice, clean_text[:80])
 
         rate_str = f"{self.rate_offset:+d}%" if self.rate_offset else "+0%"
         pitch_str = f"{self.pitch_offset:+d}Hz" if self.pitch_offset else "+0Hz"

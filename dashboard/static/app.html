@@ -1,596 +1,531 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DAZY AI Companion — Dashboard</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b14">
+  <meta name="color-scheme" content="dark">
+  <title>DAZY — Personal AI</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:      #07090f;
-      --surface: rgba(255,255,255,0.04);
-      --border:  rgba(255,255,255,0.07);
-      --accent:  #ec4899;
-      --adim:    rgba(236,72,153,0.14);
-      --text:    #dde3ed;
-      --muted:   #5e6a7e;
-      --green:   #22c55e;
-      --gdim:    rgba(34,197,94,0.14);
+    :root{
+      color-scheme:dark;--bg:#080b14;--bg2:#0b1020;--panel:rgba(16,22,39,.78);--panel2:rgba(21,29,50,.78);
+      --line:rgba(159,180,226,.13);--line2:rgba(159,180,226,.22);--text:#eef3ff;--muted:#8793ad;--dim:#56627b;
+      --violet:#a78bfa;--pink:#fb83bd;--cyan:#64d8ff;--mint:#72e0b4;--amber:#f6c779;--red:#fb7185;
+      --shadow:0 22px 70px rgba(0,0,0,.36);--radius:22px;--sidebar:246px;--rail:292px;
     }
-    html, body {
-      height: 100%; background: var(--bg); color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-
-    /* ── HEADER ── */
-    header {
-      flex-shrink: 0; display: flex; align-items: center; gap: 10px;
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-      background: rgba(7,9,15,0.95);
-    }
-    .logo { font-size: 15px; font-weight: 700; letter-spacing: 6px; }
-    .logo em { color: var(--accent); font-style: normal; }
-    .pill {
-      display: flex; align-items: center; gap: 6px; padding: 4px 11px;
-      border-radius: 99px; background: var(--surface); border: 1px solid var(--border);
-      font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); transition: all 0.3s;
-    }
-    .pill.on { background: var(--gdim); border-color: rgba(34,197,94,0.3); color: var(--green); }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
-    .pill.on .dot { background: var(--green); animation: blink 2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .spacer { flex: 1; }
-    .enc-badge {
-      font-size: 9px; font-weight: 700; letter-spacing: 1.5px; padding: 3px 8px;
-      border-radius: 4px; display: none;
-    }
-    .enc-badge.on  { display: block; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); color: var(--green); }
-    .enc-badge.off { display: block; background: rgba(255,100,100,0.08); border: 1px solid rgba(255,100,100,0.2); color: #f87171; }
-    .url { font-size: 10px; font-family: monospace; color: var(--muted); padding: 4px 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
-
-    /* ── FEED ── */
-    main { flex: 1; overflow-y: auto; padding: 14px 16px 8px; display: flex; flex-direction: column; gap: 10px; }
-    main::-webkit-scrollbar { width: 3px; }
-    main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    .msg { max-width: 82%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.55; animation: pop 0.18s ease; }
-    @keyframes pop { from { opacity:0; transform:translateY(4px); } }
-    .msg-j   { align-self:flex-start; background:var(--adim);   border:1px solid rgba(99,102,241,0.18); border-bottom-left-radius:4px; }
-    .msg-u   { align-self:flex-end;   background:var(--surface); border:1px solid var(--border);        border-bottom-right-radius:4px; }
-    .msg-sys { align-self:center; font-size:11px; color:var(--muted); padding:2px 0; background:transparent; border:none; letter-spacing:0.3px; }
-    .lbl { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; opacity:0.45; margin-bottom:4px; }
-    .msg-j .lbl { color:var(--accent); }
-    .msg-u .lbl { color:var(--muted); text-align:right; }
-
-    /* ── FILE CARD ── */
-    .msg-file {
-      align-self: flex-end;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; border-bottom-right-radius: 4px;
-      padding: 11px 14px; display: flex; align-items: center; gap: 12px;
-      max-width: 82%; animation: pop 0.18s ease;
-    }
-    .fc-icon { font-size: 26px; flex-shrink: 0; }
-    .fc-meta { flex: 1; min-width: 0; }
-    .fc-lbl  { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; opacity:0.45; color:var(--muted); margin-bottom:4px; }
-    .fc-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .fc-size { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .fc-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 7px; overflow: hidden; }
-    .fc-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width 0.12s linear; }
-    .fc-status { font-size: 10px; font-weight: 700; letter-spacing: 1px; flex-shrink: 0; color: var(--muted); }
-    .fc-status.done { color: var(--green); }
-    .fc-status.err  { color: #f87171; }
-    .fc-dl { display:block; margin-top:6px; font-size:11px; color:var(--accent); text-decoration:none; font-weight:600; }
-    .fc-dl:hover { opacity: 0.8; }
-
-    /* ── FOOTER ── */
-    footer { flex-shrink:0; padding:10px 14px; border-top:1px solid var(--border); background:rgba(7,9,15,0.95); display:flex; gap:8px; align-items:center; }
-    #inp { flex:1; padding:11px 14px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; outline:none; transition:border-color 0.15s; }
-    #inp:focus { border-color: var(--accent); }
-    #inp::placeholder { color: var(--muted); }
-    .btn { padding:11px 15px; border:none; border-radius:12px; font-size:11px; font-weight:700; letter-spacing:1.5px; cursor:pointer; transition:opacity 0.15s,transform 0.1s; }
-    .btn:active { transform: scale(0.96); }
-    .btn:hover  { opacity: 0.82; }
-    .btn-send { background: var(--accent); color: #fff; }
-    .btn-wake { background:var(--surface); border:1px solid var(--border); color:var(--muted); display:none; }
-    .btn-wake.show { display:block; color:var(--green); border-color:rgba(34,197,94,0.35); }
-    .btn-attach {
-      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-      padding: 11px 13px; font-size: 16px; line-height: 1; border-radius: 12px;
-      cursor: pointer; transition: opacity 0.15s, transform 0.1s; display: flex;
-      align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .btn-attach:hover  { opacity: 0.82; border-color: var(--accent); color: var(--accent); }
-    .btn-attach:active { transform: scale(0.96); }
-
-    /* ── MIC BUTTON ── */
-    #mic-btn {
-      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-      padding: 11px 13px; font-size: 16px; line-height: 1; border-radius: 12px;
-      cursor: pointer; transition: opacity 0.15s, transform 0.1s, background 0.2s, border-color 0.2s;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    #mic-btn:hover  { opacity: 0.82; border-color: var(--accent); color: var(--accent); }
-    #mic-btn:active { transform: scale(0.96); }
-    #mic-btn.recording {
-      background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.45); color: #ef4444;
-      animation: mic-pulse 1s ease-in-out infinite;
-    }
-    #mic-btn.unsupported { opacity: 0.3; cursor: not-allowed; }
-    @keyframes mic-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.65;transform:scale(0.97)} }
-
-    /* ── TOAST ── */
-    #toast {
-      position:fixed; top:66px; left:50%; transform:translateX(-50%) translateY(-8px);
-      background:rgba(34,197,94,0.16); border:1px solid rgba(34,197,94,0.4);
-      color:var(--green); font-size:12px; font-weight:700; letter-spacing:1px;
-      padding:7px 18px; border-radius:99px;
-      opacity:0; transition:opacity 0.22s,transform 0.22s;
-      pointer-events:none; white-space:nowrap;
-    }
-    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    body{overflow:hidden;background:radial-gradient(ellipse at 50% -25%,rgba(101,91,192,.18),transparent 50%),radial-gradient(ellipse at 100% 65%,rgba(50,153,191,.07),transparent 38%),var(--bg)}
+    button,input,textarea,select{font:inherit}button{color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+    .app{height:100dvh;min-height:520px;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);position:relative;isolation:isolate}
+    .ambient{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden}.ambient:before,.ambient:after{content:"";position:absolute;width:42vw;height:42vw;min-width:360px;min-height:360px;border-radius:50%;filter:blur(90px);opacity:.13;animation:drift 18s ease-in-out infinite alternate}.ambient:before{background:#7256e8;top:-26vw;left:23vw}.ambient:after{background:#1eabc2;bottom:-32vw;right:-10vw;animation-delay:-8s}
+    @keyframes drift{to{transform:translate(5vw,4vw) scale(1.14)}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}@keyframes pulse{0%,100%{opacity:.6;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+    .sidebar{display:flex;flex-direction:column;min-width:0;padding:22px 15px 16px;border-right:1px solid var(--line);background:rgba(8,11,20,.76);backdrop-filter:blur(24px);z-index:30}
+    .brand{display:flex;align-items:center;gap:11px;padding:4px 10px 25px}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,rgba(167,139,250,.28),rgba(100,216,255,.14));border:1px solid rgba(181,164,255,.35);box-shadow:0 0 30px rgba(167,139,250,.15);font-size:20px;font-weight:800;color:#e6dcff}.brand-name{font-weight:800;letter-spacing:.22em;font-size:15px}.brand-sub{font-size:9px;letter-spacing:.18em;color:var(--muted);margin-top:3px;text-transform:uppercase}
+    .nav-label{padding:8px 12px;color:#56627b;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}.nav{display:grid;gap:5px}.nav-btn{width:100%;display:flex;align-items:center;gap:12px;border:1px solid transparent;background:transparent;padding:11px 12px;border-radius:13px;color:#9ba7bf;text-align:left;cursor:pointer;transition:.2s}.nav-btn:hover{background:rgba(255,255,255,.04);color:var(--text)}.nav-btn.active{background:linear-gradient(100deg,rgba(167,139,250,.17),rgba(100,216,255,.055));border-color:rgba(167,139,250,.19);color:#f2ecff;box-shadow:inset 2px 0 0 var(--violet)}.nav-ico{width:19px;text-align:center;font-size:16px;opacity:.9}.nav-text{font-size:12px;font-weight:650}.nav-count{margin-left:auto;color:#7f8ba4;font-size:10px}.sidebar-spacer{flex:1}.side-card{padding:14px;border-radius:17px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(167,139,250,.09),rgba(100,216,255,.025));margin:12px 3px}.side-card-top{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:750}.tiny-orb{width:9px;height:9px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px rgba(114,224,180,.8)}.side-card p{font-size:10px;color:var(--muted);line-height:1.5;margin:9px 0 0}.profile{display:flex;align-items:center;gap:10px;padding:13px 9px 2px;border-top:1px solid var(--line)}.avatar{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#a78bfa,#65d5e8);color:#11152a;font-size:12px;font-weight:900}.profile-name{font-size:11px;font-weight:700}.profile-caption{font-size:9px;color:var(--muted);margin-top:3px}.icon-btn{height:34px;width:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.035);color:#a8b3ca;cursor:pointer}.profile .icon-btn{margin-left:auto}
+    .main-shell{min-width:0;display:flex;flex-direction:column;height:100dvh}.topbar{height:68px;flex-shrink:0;display:flex;align-items:center;gap:13px;padding:0 27px;border-bottom:1px solid var(--line);background:rgba(8,11,20,.42);backdrop-filter:blur(22px)}.mobile-menu{display:none}.crumb{min-width:0}.crumb-title{font-size:13px;font-weight:750;letter-spacing:.01em}.crumb-sub{font-size:10px;color:var(--muted);margin-top:3px}.top-spacer{flex:1}.connection{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:30px;background:rgba(255,255,255,.025);font-size:10px;color:var(--muted)}.connection-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px rgba(246,199,121,.6)}.connection.online .connection-dot{background:var(--mint);box-shadow:0 0 12px rgba(114,224,180,.7)}.connection.offline .connection-dot{background:var(--red);box-shadow:0 0 12px rgba(251,113,133,.6)}.secure-badge{font-size:9px;letter-spacing:.12em;color:var(--mint);border:1px solid rgba(114,224,180,.2);background:rgba(114,224,180,.06);padding:6px 8px;border-radius:8px}.clock{font-variant-numeric:tabular-nums;color:#a8b3ca;font-size:11px;min-width:68px;text-align:right}
+    .workspace{flex:1;min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) var(--rail);gap:18px;padding:20px 22px 22px}.main-column{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}.right-rail{min-width:0;display:flex;flex-direction:column;gap:13px;overflow:auto;padding:1px 2px 8px}.page{display:none;min-height:0;height:100%;animation:rise .28s ease}.page.active{display:flex;flex-direction:column}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin:4px 2px 16px}.eyebrow{font-size:9px;font-weight:800;letter-spacing:.2em;color:var(--violet);text-transform:uppercase}.page-title{font-size:clamp(20px,2.2vw,28px);letter-spacing:-.035em;font-weight:760;margin:7px 0 0}.page-description{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6}.action-btn{border:1px solid var(--line2);background:rgba(255,255,255,.045);color:#dce5fa;border-radius:11px;padding:9px 12px;font-size:10px;font-weight:750;letter-spacing:.06em;cursor:pointer;transition:.2s;white-space:nowrap}.action-btn:hover{border-color:rgba(167,139,250,.45);background:rgba(167,139,250,.12)}.action-btn.primary{border-color:transparent;background:linear-gradient(110deg,#9676ef,#4bbdd5);color:#0a1020;box-shadow:0 8px 24px rgba(100,150,230,.18)}.action-btn:disabled{opacity:.45;cursor:not-allowed}
+    .card{background:linear-gradient(145deg,rgba(19,27,47,.82),rgba(12,17,31,.78));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 0}.card-title{font-size:11px;font-weight:780;letter-spacing:.02em}.card-kicker{font-size:9px;color:var(--muted)}.muted{color:var(--muted)}
+    /* Overview */
+    .overview-scroll{overflow:auto;min-height:0;padding:2px 2px 18px}.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(230px,.85fr);align-items:center;min-height:245px;padding:25px 28px;background:radial-gradient(ellipse at 78% 50%,rgba(142,111,241,.2),transparent 42%),linear-gradient(125deg,rgba(28,32,61,.94),rgba(12,23,38,.92));border-color:rgba(167,139,250,.2)}.hero:after{content:"";position:absolute;width:320px;height:320px;right:10%;top:-56%;border:1px solid rgba(181,164,255,.13);border-radius:50%;box-shadow:0 0 0 28px rgba(181,164,255,.025),0 0 0 58px rgba(181,164,255,.018);pointer-events:none}.hero-copy{position:relative;z-index:2}.hero-tag{display:inline-flex;align-items:center;gap:7px;color:#c7b7ff;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);padding:6px 10px;border-radius:30px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.12;letter-spacing:-.05em;margin:17px 0 10px;max-width:540px}.hero h2 span{background:linear-gradient(95deg,#c4aaff,#70dfff 55%,#f59bc9);background-size:180% auto;color:transparent;background-clip:text;animation:shimmer 8s linear infinite}.hero-copy p{font-size:11px;color:#a5b1c9;line-height:1.7;max-width:420px;margin:0 0 18px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.orb-stage{height:195px;display:grid;place-items:center;position:relative;z-index:2}.orb{width:132px;height:132px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 27%,#e2c9ff 0%,#9a80ed 13%,#536cd0 34%,#12213c 67%,#070c18 100%);box-shadow:inset -15px -18px 28px rgba(0,0,0,.55),inset 5px 6px 18px rgba(255,255,255,.25),0 0 38px rgba(139,116,250,.5),0 0 90px rgba(90,177,231,.19);animation:float 5s ease-in-out infinite}.orb:before{content:"";position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(150,194,255,.32);transform:rotate(-20deg) scaleY(.33);box-shadow:0 0 18px rgba(133,186,255,.13)}.orb:after{content:"";position:absolute;inset:-37px;border:1px solid rgba(189,161,255,.2);border-radius:50%;transform:rotate(62deg) scaleY(.4)}.orb-core{position:absolute;inset:31%;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,rgba(166,206,255,.9) 22%,rgba(148,120,245,.1) 73%);filter:blur(1px);box-shadow:0 0 26px #a7cfff;animation:pulse 3.2s ease-in-out infinite}.orb-caption{position:absolute;bottom:2px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#aeb9d0}.hero[data-state="offline"] .orb{filter:grayscale(.65);opacity:.6;animation:none}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:13px 0}.stat-card{padding:15px 16px;min-height:92px}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:9px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}.stat-icon{font-size:14px;color:var(--violet)}.stat-value{font-size:18px;font-weight:780;letter-spacing:-.035em;margin-top:12px}.stat-note{font-size:9px;color:var(--muted);margin-top:4px}.overview-lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:12px}.mini-chat{min-height:175px;display:flex;flex-direction:column}.mini-feed{padding:13px 17px 17px;display:grid;gap:9px;overflow:hidden}.mini-item{display:flex;gap:9px;align-items:flex-start;font-size:10px;line-height:1.55;color:#b8c3d9}.mini-avatar{width:21px;height:21px;flex:none;border-radius:7px;background:rgba(167,139,250,.17);display:grid;place-items:center;color:#c4b1ff;font-size:10px}.mini-avatar.user{background:rgba(100,216,255,.12);color:var(--cyan)}.mini-item span{display:block;color:var(--muted);font-size:8px;margin-top:2px}.quick-card{padding-bottom:14px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px}.quick-tile{border:1px solid var(--line);background:rgba(255,255,255,.025);padding:12px;border-radius:13px;text-align:left;cursor:pointer;transition:.2s}.quick-tile:hover{border-color:rgba(167,139,250,.4);transform:translateY(-2px);background:rgba(167,139,250,.07)}.quick-tile i{font-style:normal;font-size:17px;display:block;margin-bottom:8px}.quick-tile b{display:block;font-size:10px}.quick-tile small{font-size:8px;color:var(--muted);display:block;margin-top:4px}
+    /* Chat */
+    .chat-page{gap:0}.chat-toolbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid var(--line);border-radius:16px 16px 0 0;background:rgba(15,21,37,.85)}.chat-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(140deg,rgba(167,139,250,.6),rgba(100,216,255,.35));display:grid;place-items:center;font-weight:850;color:white}.chat-agent-name{font-size:11px;font-weight:760}.chat-agent-state{font-size:9px;color:var(--muted);margin-top:3px}.chat-feed{flex:1;min-height:0;overflow:auto;padding:17px 17px 20px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(7,11,20,.43);display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.chat-feed::-webkit-scrollbar,.overview-scroll::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:5px}.chat-feed::-webkit-scrollbar-thumb,.overview-scroll::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:rgba(145,160,195,.16);border-radius:8px}.chat-empty{margin:auto;text-align:center;max-width:360px;padding:25px}.chat-empty .empty-orb{width:65px;height:65px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#e5d7ff,#9275e8 35%,#192d51 72%);box-shadow:0 0 35px rgba(152,120,245,.28);animation:float 5s ease-in-out infinite}.chat-empty h3{font-size:19px;letter-spacing:-.03em;margin:0 0 8px}.chat-empty p{font-size:10px;color:var(--muted);line-height:1.6;margin:0}.suggestions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:17px}.suggestions button{font-size:9px;color:#bac5dd;padding:7px 9px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer}.suggestions button:hover{border-color:rgba(167,139,250,.4)}.message{max-width:min(82%,760px);padding:11px 13px;border-radius:15px;line-height:1.65;font-size:11px;word-break:break-word;animation:rise .2s ease}.message.assistant{align-self:flex-start;background:linear-gradient(135deg,rgba(142,115,231,.14),rgba(43,68,107,.18));border:1px solid rgba(167,139,250,.17);border-bottom-left-radius:5px}.message.user{align-self:flex-end;background:rgba(53,126,158,.13);border:1px solid rgba(100,216,255,.14);border-bottom-right-radius:5px}.message.system{align-self:center;color:var(--muted);font-size:9px;padding:3px 9px;background:transparent;border:0}.message-meta{font-size:8px;letter-spacing:.12em;color:#95a0b8;opacity:.75;margin-bottom:5px;text-transform:uppercase;font-weight:800}.message p{margin:0 0 7px}.message p:last-child{margin-bottom:0}.message ul,.message ol{padding-left:18px;margin:6px 0}.message pre{white-space:pre-wrap;overflow:auto;padding:9px;background:rgba(0,0,0,.25);border-radius:8px;font-size:10px}.message code{font-family:ui-monospace,Consolas,monospace;color:#b6e9ff;background:rgba(0,0,0,.2);padding:1px 4px;border-radius:4px}.message strong{color:#f0e9ff}.message a{color:var(--cyan)}.pending-dot{display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle}.pending-dot i{width:4px;height:4px;border-radius:50%;background:var(--violet);animation:pulse 1s infinite}.pending-dot i:nth-child(2){animation-delay:.15s}.pending-dot i:nth-child(3){animation-delay:.3s}.chat-composer{padding:12px;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;background:rgba(15,21,37,.88)}.composer-box{display:flex;align-items:flex-end;gap:8px;border:1px solid rgba(153,169,207,.18);border-radius:14px;background:rgba(4,8,16,.55);padding:7px}.composer-box:focus-within{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.07)}#chatInput{flex:1;min-height:37px;max-height:130px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:9px 7px;font-size:11px;line-height:1.5}#chatInput::placeholder{color:#69758e}.composer-tool{height:35px;min-width:35px;border:0;border-radius:10px;background:transparent;color:#a5b0c8;cursor:pointer;font-size:15px}.composer-tool:hover{background:rgba(255,255,255,.06);color:white}.composer-tool.recording{color:var(--red);background:rgba(251,113,133,.1);animation:pulse 1s infinite}.send-btn{height:35px;padding:0 16px;border:0;border-radius:10px;background:linear-gradient(110deg,#9c7cf2,#5dcce0);color:#0b1020;font-size:10px;letter-spacing:.09em;font-weight:900;cursor:pointer}.send-btn:disabled{opacity:.4;cursor:not-allowed}.composer-hint{display:flex;justify-content:space-between;gap:12px;color:#65718a;font-size:8px;margin:8px 4px 0}.composer-hint strong{color:#8a96af;font-weight:650}
+    /* Files and activity */
+    .section-scroll{flex:1;min-height:0;overflow:auto;padding:2px 2px 18px}.dropzone{border:1px dashed rgba(167,139,250,.34);border-radius:18px;padding:28px 18px;text-align:center;background:rgba(167,139,250,.045);transition:.2s}.dropzone.drag{border-color:var(--cyan);background:rgba(100,216,255,.08);transform:scale(.995)}.drop-icon{font-size:25px;margin-bottom:9px}.dropzone h3{font-size:13px;margin:0 0 5px}.dropzone p{font-size:10px;color:var(--muted);margin:0 0 14px}.file-list{display:grid;gap:8px;margin-top:14px}.file-row{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line)}.file-glyph{width:35px;height:35px;border-radius:10px;background:rgba(100,216,255,.09);display:grid;place-items:center;font-size:16px}.file-info{min-width:0;flex:1}.file-name{font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-size{font-size:9px;color:var(--muted);margin-top:4px}.file-open{font-size:9px;color:var(--cyan);text-decoration:none}.activity-list{display:grid;gap:8px}.activity-row{display:flex;gap:11px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.022)}.activity-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--violet);margin:4px 2px;box-shadow:0 0 10px rgba(167,139,250,.4)}.activity-row.user .activity-dot{background:var(--cyan)}.activity-row.system .activity-dot{background:var(--amber)}.activity-copy{font-size:10px;line-height:1.55;color:#bdc8dd;min-width:0}.activity-copy time{display:block;font-size:8px;color:var(--muted);margin-top:4px}
+    /* Right rail */
+    .rail-card{padding:15px 15px 14px}.rail-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.rail-heading b{font-size:10px}.rail-heading span{font-size:8px;color:var(--muted)}.system-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid rgba(159,180,226,.07)}.system-row:first-of-type{border-top:0;padding-top:0}.system-icon{width:27px;height:27px;border-radius:9px;background:rgba(167,139,250,.1);display:grid;place-items:center;color:var(--violet);font-size:12px}.system-label{font-size:9px;color:var(--muted)}.system-value{font-size:10px;font-weight:750;margin-top:3px}.status-chip{margin-left:auto;font-size:8px;color:var(--mint);background:rgba(114,224,180,.08);padding:4px 6px;border-radius:6px}.status-chip.wait{color:var(--amber);background:rgba(246,199,121,.08)}.rail-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.rail-action{padding:11px 8px;text-align:center;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.022);cursor:pointer;transition:.2s}.rail-action:hover{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.07)}.rail-action i{display:block;font-style:normal;font-size:16px;margin-bottom:6px}.rail-action span{font-size:8px;color:#b6c1d7;font-weight:700}.rail-note{font-size:9px;color:var(--muted);line-height:1.6}.engine-meter{height:5px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:8px}.engine-meter span{display:block;height:100%;width:100%;border-radius:6px;background:linear-gradient(90deg,var(--violet),var(--cyan))}
+    /* Toast and modal */
+    .toast-stack{position:fixed;right:20px;top:82px;z-index:100;display:grid;gap:8px;pointer-events:none}.toast{max-width:min(340px,calc(100vw - 30px));padding:11px 14px;border-radius:12px;border:1px solid var(--line2);background:rgba(15,22,39,.96);box-shadow:var(--shadow);font-size:10px;color:#e7edfb;animation:rise .2s ease}.toast.error{border-color:rgba(251,113,133,.35)}.toast.success{border-color:rgba(114,224,180,.3)}.overlay{position:fixed;inset:0;background:rgba(1,3,9,.68);backdrop-filter:blur(8px);z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.overlay.show{display:flex}.dialog{width:min(450px,100%);border:1px solid var(--line2);border-radius:20px;background:#10172a;box-shadow:var(--shadow);padding:20px}.dialog h3{font-size:15px;margin:0 0 8px}.dialog p{font-size:10px;color:var(--muted);line-height:1.6;margin:0 0 15px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 0;border-top:1px solid var(--line)}.setting-row:first-of-type{border-top:0}.setting-row label{font-size:10px;font-weight:700}.setting-row small{display:block;color:var(--muted);font-size:9px;font-weight:400;margin-top:4px}.setting-row select{max-width:160px;padding:8px 9px;background:#0c1323;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:10px}
+    .mobile-backdrop{display:none}
+    @media(max-width:1180px){:root{--sidebar:220px;--rail:255px}.workspace{padding:17px;gap:13px}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr 220px;padding:22px}.orb{width:112px;height:112px}}
+    @media(max-width:920px){.workspace{grid-template-columns:minmax(0,1fr)}.right-rail{display:none}.sidebar{position:fixed;left:0;top:0;bottom:0;width:min(280px,85vw);transform:translateX(-102%);transition:transform .25s ease;box-shadow:var(--shadow)}.sidebar.open{transform:translateX(0)}.mobile-backdrop.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.56);z-index:20}.app{grid-template-columns:minmax(0,1fr)}.mobile-menu{display:grid}.topbar{padding:0 17px}.workspace{padding:15px}.hero{grid-template-columns:minmax(0,1fr) 190px}}
+    @media(max-width:620px){.topbar{height:58px;padding:0 12px;gap:8px}.crumb-sub,.secure-badge,.clock{display:none}.workspace{padding:10px;gap:0}.page-head{margin:4px 1px 12px}.page-title{font-size:23px}.hero{display:block;padding:20px 19px 13px;min-height:0}.hero h2{font-size:27px;max-width:100%}.hero-copy p{max-width:100%}.orb-stage{height:128px;margin-top:4px}.orb{width:82px;height:82px}.orb:before{inset:-13px}.orb:after{inset:-24px}.orb-caption{bottom:0}.stat-grid{gap:8px;margin:9px 0}.stat-card{padding:12px;min-height:82px}.stat-value{font-size:16px;margin-top:9px}.overview-lower{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(4,minmax(0,1fr));padding:10px}.quick-tile{padding:10px 6px;text-align:center}.quick-tile i{font-size:15px}.quick-tile b{font-size:8px}.quick-tile small{display:none}.workspace{overflow:hidden}.chat-toolbar{padding:10px 11px}.chat-feed{padding:12px 10px}.message{max-width:94%;font-size:10px}.chat-composer{padding:8px}.composer-hint{font-size:7px}.composer-hint span:last-child{display:none}.composer-tool{min-width:31px;width:31px}.send-btn{padding:0 12px}.connection{padding:6px 8px;font-size:9px}.url{display:none}.mobile-menu{width:32px;height:32px}.dropzone{padding:24px 13px}}
+    @media(max-width:390px){.connection{font-size:0;gap:0;padding:8px}.connection-dot{width:8px;height:8px}.brand-name{font-size:13px}.quick-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
   </style>
 </head>
 <body>
-  <div id="toast"></div>
-  <header>
-    <div class="logo"><em>D</em>AZY</div>
-    <div class="pill" id="pill"><span class="dot"></span><span id="st">Connecting</span></div>
-    <div class="enc-badge" id="enc">AES-GCM</div>
-    <div class="spacer"></div>
-    <div class="url">__IP__:__PORT__</div>
-  </header>
-  <main id="feed"></main>
-  <footer>
-    <input id="inp" placeholder="Send a message or command to DAZY…" autocomplete="off">
-    <label class="btn-attach" for="file-inp" title="Send file">📎</label>
-    <input type="file" id="file-inp" multiple accept="*/*" style="display:none">
-    <button id="mic-btn" onclick="doMic()" title="Voice command">🎤</button>
-    <button class="btn btn-wake" id="wake" onclick="doWake()">WAKE</button>
-    <button class="btn btn-send" onclick="doSend()">SEND</button>
-  </footer>
+<div class="ambient" aria-hidden="true"></div>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="brand"><div class="brand-mark">D</div><div><div class="brand-name">DAZY</div><div class="brand-sub">Personal intelligence</div></div></div>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav">
+      <button class="nav-btn" data-page="overview"><span class="nav-ico">◈</span><span class="nav-text">Overview</span></button>
+      <button class="nav-btn active" data-page="chat"><span class="nav-ico">✧</span><span class="nav-text">Conversation</span></button>
+      <button class="nav-btn" data-page="files"><span class="nav-ico">▧</span><span class="nav-text">Files</span><span class="nav-count" id="fileCount">—</span></button>
+      <button class="nav-btn" data-page="activity"><span class="nav-ico">◷</span><span class="nav-text">Activity</span></button>
+      <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice & Diarization</span></button>
+    </nav>
+    <div class="nav-label" style="margin-top:18px">Preferences</div>
+    <nav class="nav"><button class="nav-btn" data-page="settings"><span class="nav-ico">⚙</span><span class="nav-text">Settings</span></button></nav>
+    <div class="sidebar-spacer"></div>
+    <div class="side-card"><div class="side-card-top"><span class="tiny-orb"></span><span id="sideStatus">Starting secure link</span></div><p>DAZY is connected through your local assistant session. Your desktop remains the primary voice engine.</p></div>
+    <div class="profile"><div class="avatar">D</div><div><div class="profile-name">DAZY Companion</div><div class="profile-caption">Private workspace</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
+  </aside>
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
+  <div class="main-shell">
+    <header class="topbar">
+      <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
+      <div class="crumb"><div class="crumb-title" id="topTitle">Conversation</div><div class="crumb-sub" id="topSubtitle">Your personal AI workspace</div></div>
+      <div class="top-spacer"></div>
+      <div class="connection" id="connection"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div>
+      <div class="secure-badge" id="secureBadge">SECURE SESSION</div>
+      <div class="clock" id="clock">--:--</div>
+    </header>
+    <div class="workspace">
+      <main class="main-column">
+        <section class="page" id="page-overview">
+          <div class="overview-scroll">
+            <div class="hero card" id="heroCard" data-state="offline">
+              <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> YOUR AI COMPANION</div><h2>A calmer way to get<br><span>everything done.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button></div></div>
+              <div class="orb-stage"><div class="orb"><div class="orb-core"></div></div><div class="orb-caption" id="orbCaption">WAITING FOR LINK</div></div>
+            </div>
+            <div class="stat-grid">
+              <div class="card stat-card"><div class="stat-top"><span>Remote connection</span><span class="stat-icon">⌁</span></div><div class="stat-value" id="statConnection">Offline</div><div class="stat-note" id="statConnectionNote">Waiting for WebSocket</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Session messages</span><span class="stat-icon">✧</span></div><div class="stat-value" id="statMessages">0</div><div class="stat-note">Received in this browser session</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Uploaded files</span><span class="stat-icon">▧</span></div><div class="stat-value" id="statFiles">—</div><div class="stat-note">Files available to this device</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Voice input</span><span class="stat-icon">◉</span></div><div class="stat-value" id="statVoice">Ready</div><div class="stat-note" id="statVoiceNote">Microphone starts only on tap</div></div>
+            </div>
+            <div class="overview-lower">
+              <div class="card mini-chat"><div class="card-head"><div><div class="card-title">Recent conversation</div><div class="card-kicker" style="margin-top:4px">Live session activity</div></div><button class="action-btn" data-goto="chat">View chat →</button></div><div class="mini-feed" id="miniFeed"><div class="mini-item"><div class="mini-avatar">✧</div><div>Waiting for your first message.<span>DAZY will appear here when the session responds.</span></div></div></div></div>
+              <div class="card quick-card"><div class="card-head"><div><div class="card-title">Quick actions</div><div class="card-kicker" style="margin-top:4px">Shortcuts</div></div></div><div class="quick-grid"><button class="quick-tile" data-goto="chat"><i>✧</i><b>Chat</b><small>Send a message</small></button><button class="quick-tile" data-action="wake"><i>⌁</i><b>Wake</b><small>Wake assistant</small></button><button class="quick-tile" data-goto="files"><i>▧</i><b>Files</b><small>Send documents</small></button><button class="quick-tile" data-goto="activity"><i>◷</i><b>Activity</b><small>View events</small></button></div></div>
+            </div>
+          </div>
+        </section>
+        <section class="page active chat-page" id="page-chat">
+          <div class="chat-toolbar"><div class="chat-avatar">D</div><div><div class="chat-agent-name">DAZY <span style="color:var(--violet);font-size:8px;letter-spacing:.12em">AI COMPANION</span></div><div class="chat-agent-state" id="chatAgentState">Waiting for desktop session</div></div><div class="top-spacer"></div><button class="action-btn" data-action="wake">Wake</button><button class="icon-btn" id="clearChat" title="Clear this browser view">↺</button></div>
+          <div class="chat-feed" id="chatFeed" aria-live="polite"><div class="chat-empty" id="chatEmpty"><div class="empty-orb"></div><h3>Hey, I'm DAZY.</h3><p>Your conversation is routed to the assistant running on your computer. Send a message or tap the microphone to speak.</p><div class="suggestions"><button data-prompt="Hey DAZY, are you connected?">Check connection</button><button data-prompt="Let's continue where we left off.">Continue conversation</button><button data-prompt="Give me a quick system status update.">System status</button></div></div></div>
+          <div class="chat-composer"><form id="chatForm"><div class="composer-box"><button class="composer-tool" type="button" id="attachBtn" title="Attach file">＋</button><textarea id="chatInput" rows="1" placeholder="Message DAZY… (Enter to send)" aria-label="Message DAZY"></textarea><button class="composer-tool" type="button" id="micBtn" title="Voice input">♩</button><button class="send-btn" id="sendBtn" type="submit">SEND ↑</button></div></form><div class="composer-hint"><span><strong>Enter</strong> to send · <strong>Shift + Enter</strong> for a new line</span><span>Desktop assistant handles speech output · no duplicate browser voice</span></div><input type="file" id="fileInput" multiple hidden></div>
+        </section>
+        <section class="page" id="page-files">
+          <div class="page-head"><div><div class="eyebrow">PERSONAL STORAGE</div><h1 class="page-title">Files & transfers</h1><p class="page-description">Send files from this device to the computer running DAZY.</p></div><button class="action-btn" id="refreshFiles">↻ Refresh</button></div>
+          <div class="section-scroll"><div class="dropzone" id="dropzone"><div class="drop-icon">▧</div><h3>Drop files here to send to DAZY</h3><p>Or browse from your device · Maximum upload size is controlled by the server.</p><button class="action-btn primary" id="browseFiles">Browse files</button></div><div class="card" style="margin-top:14px;padding:15px"><div class="card-head" style="padding:0 0 12px"><div><div class="card-title">Available files</div><div class="card-kicker" style="margin-top:4px">Saved in the assistant's uploads folder</div></div><span class="card-kicker" id="fileListState">Not loaded</span></div><div class="file-list" id="fileList"><div class="rail-note">Connect to DAZY to load the file list.</div></div></div></div>
+        </section>
+        <section class="page" id="page-activity">
+          <div class="page-head"><div><div class="eyebrow">SESSION TIMELINE</div><h1 class="page-title">Activity</h1><p class="page-description">Messages and system events received from your assistant.</p></div><button class="action-btn" id="clearActivity">Clear view</button></div>
+          <div class="section-scroll"><div class="activity-list" id="activityList"><div class="rail-note">No events have arrived yet.</div></div></div>
+        </section>
+                <section class="page" id="page-diagnostics">
+          <div class="page-head"><div><div class="eyebrow">NEURAL AUDIO PIPELINE</div><h1 class="page-title">Voice & Diarization</h1><p class="page-description">Real-time status of speech synthesis, speaker identification, and half-duplex echo suppression.</p></div><button class="action-btn" id="refreshDiagBtn">Refresh status</button></div>
+          <div class="section-scroll">
+            <div class="card" style="padding:17px 18px">
+              <div class="card-title" style="margin-bottom:12px">Authoritative Voice Engine</div>
+              <div class="setting-row"><div><label>Voice Identity</label><small>Single immutable neural voice across all sessions.</small></div><span class="status-chip" id="diagVoiceName">en-IN-NeerjaNeural</span></div>
+              <div class="setting-row"><div><label>Playback Duplex Mode</label><small>Half-duplex mic suppression to prevent audio feedback loop.</small></div><span class="status-chip" id="diagDuplexMode">HALF-DUPLEX ACTIVE</span></div>
+              <div class="setting-row"><div><label>Auto-Speak Trigger Mode</label><small>Select when the assistant is permitted to speak aloud.</small></div>
+                <select id="autoSpeakSelect" style="max-width:180px;padding:6px 9px;background:#0c1323;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:10px">
+                  <option value="WAKE_ONLY">Wake-word Only (Hey Dazy)</option>
+                  <option value="CONTINUOUS">Continuous Conversation</option>
+                  <option value="PUSH_TO_TALK">Push-to-Talk Only</option>
+                  <option value="SILENT">Silent Mode (Text Only)</option>
+                </select>
+              </div>
+              <div class="setting-row"><div><label>Playback State</label><small>Live audio synthesis and streaming status.</small></div><span class="status-chip" id="diagPlaybackState">IDLE</span></div>
+              <div class="setting-row"><div><label>Active Turn ID</label><small>UUID of the currently synthesized conversation turn.</small></div><span id="diagTurnId" style="font-size:9px;font-family:monospace;color:var(--cyan)">—</span></div>
+            </div>
 
-  <script>
-    // ── Auth — bearer token ───────────────────────────────────────────────────
-    const _authToken  = sessionStorage.getItem('jarvis_token');
-    const _sessionKey = sessionStorage.getItem('jarvis_key');
+            <div class="card" style="padding:17px 18px;margin-top:13px">
+              <div class="card-title" style="margin-bottom:12px">Dual-Speaker Diarization & Echo Guard</div>
+              <div class="system-row"><div class="system-icon">👤</div><div><div class="system-label">Speaker A (Admin)</div><div class="system-value" id="diagSpeakerA">Tarik · Enrolled & Verified</div></div><span class="status-chip">PRIMARY</span></div>
+              <div class="system-row"><div class="system-icon">👥</div><div><div class="system-label">Speaker B (Companion)</div><div class="system-value" id="diagSpeakerB">Configured Separately</div></div><span class="status-chip wait">SECONDARY</span></div>
+              <div class="system-row"><div class="system-icon">🛡️</div><div><div class="system-label">Self-Hearing Echo Rejection</div><div class="system-value" id="diagEchoStatus">Active · Registered Assistant Playback Filtered</div></div><span class="status-chip">PROTECTED</span></div>
+              <div class="system-row"><div class="system-icon">🚫</div><div><div class="system-label">Unknown Speaker Policy</div><div class="system-value">Strict Rejection · Labeled 'Unknown'</div></div><span class="status-chip">ENFORCED</span></div>
+            </div>
 
-    if (!_authToken) {
-      location.replace('/login');
-    }
+            <div class="card" style="padding:17px 18px;margin-top:13px">
+              <div class="card-title" style="margin-bottom:12px">User Pronunciation & Phonetics Dictionary</div>
+              <p class="rail-note" style="margin-bottom:12px">Configure exact pronunciations for your name, nicknames, technical terms, and Hinglish vocabulary.</p>
+              
+              <div style="display:grid;grid-template-columns:1fr 1fr 100px 1fr auto;gap:8px;align-items:center;margin-bottom:12px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid var(--line)">
+                <input type="text" id="dictWordInput" placeholder="Word (e.g. Tarik)" style="padding:6px 8px;background:#0c1323;border:1px solid var(--line2);border-radius:6px;color:var(--text);font-size:10px" />
+                <input type="text" id="dictSpokenInput" placeholder="Spoken / Phonetic" style="padding:6px 8px;background:#0c1323;border:1px solid var(--line2);border-radius:6px;color:var(--text);font-size:10px" />
+                <select id="dictLangSelect" style="padding:6px 4px;background:#0c1323;border:1px solid var(--line2);border-radius:6px;color:var(--text);font-size:10px">
+                  <option value="hinglish">Hinglish</option>
+                  <option value="hindi">Hindi</option>
+                  <option value="en">English</option>
+                </select>
+                <input type="text" id="dictNoteInput" placeholder="Note" style="padding:6px 8px;background:#0c1323;border:1px solid var(--line2);border-radius:6px;color:var(--text);font-size:10px" />
+                <button class="action-btn primary" id="saveDictEntryBtn" style="padding:6px 12px;font-size:9px">Save Entry</button>
+              </div>
 
-    function _authHeader() { return { 'Authorization': `Bearer ${_authToken}` }; }
-    function _authFetch(url, opts = {}) {
-      opts.headers = Object.assign({}, opts.headers, _authHeader());
-      return fetch(url, opts);
-    }
-
-    // ── AES-256-GCM encryption (Web Crypto) ──────────────────────────────────
-    //
-    // WHAT CHANGED, AND WHY THE LIBRARY WENT WITH IT
-    //   This used CryptoJS with AES-CBC and a key of SHA256(pairingKey+salt).
-    //   Two problems, both on the server side of the same conversation:
-    //
-    //   CBC hides a message but does not authenticate it, so an attacker on the
-    //   same network could alter the ciphertext and the assistant would act on
-    //   whatever fell out. GCM refuses a message that has been touched.
-    //
-    //   One round of SHA-256 over an eight-character key is an offline search
-    //   measured in seconds on a GPU. PBKDF2 at 200k rounds makes each guess
-    //   about a hundred thousand times more expensive, and costs this page one
-    //   derivation at pairing time.
-    //
-    //   Both are native in Web Crypto, so the 60 KB CryptoJS bundle is no
-    //   longer needed. crypto.subtle exists only in a secure context, which is
-    //   why the server now insists on HTTPS instead of quietly falling back.
-    const _AES_SALT   = 'JARVIS-DASHBOARD-v1';
-    const _KDF_ROUNDS = 200000;
-    let _aesKey = null;
-
-    async function _initCrypto(key) {
-      if (!window.crypto || !crypto.subtle) return false;
-      try {
-        const enc  = new TextEncoder();
-        const base = await crypto.subtle.importKey(
-          'raw', enc.encode(key), 'PBKDF2', false, ['deriveKey']);
-        _aesKey = await crypto.subtle.deriveKey(
-          { name: 'PBKDF2', salt: enc.encode(_AES_SALT),
-            iterations: _KDF_ROUNDS, hash: 'SHA-256' },
-          base, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
-        return true;
-      } catch { return false; }
-    }
-
-    async function _encrypt(plaintext) {
-      if (!_aesKey) return null;
-      try {
-        // A fresh 12-byte nonce per message. Reusing one under the same key is
-        // the single way to break GCM, so it is generated here and never
-        // stored, cached or derived from anything.
-        const nonce = crypto.getRandomValues(new Uint8Array(12));
-        const ct    = new Uint8Array(await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: nonce },
-          _aesKey, new TextEncoder().encode(plaintext)));
-        const out = new Uint8Array(nonce.length + ct.length);
-        out.set(nonce, 0);
-        out.set(ct, nonce.length);
-        let bin = '';
-        for (const b of out) bin += String.fromCharCode(b);
-        return btoa(bin);
-      } catch { return null; }
-    }
-
-    let _encReady  = false;
-    const encBadge = document.getElementById('enc');
-    encBadge.textContent = 'AES-GCM';
-    // Deriving the key is PBKDF2 over 200k rounds, so it is awaited rather than
-    // done inline — on a phone that is a few hundred milliseconds, and blocking
-    // the parse for it would stall the whole page.
-    (async () => {
-      _encReady = _sessionKey ? await _initCrypto(_sessionKey) : false;
-      if (_encReady) {
-        encBadge.className = 'enc-badge on';
-      } else {
-        encBadge.className = 'enc-badge off';
-        encBadge.textContent = 'NO ENC';
-      }
-    })();
-
-    // ── WebSocket ─────────────────────────────────────────────────────────────
-    const feed  = document.getElementById('feed');
-    const pill  = document.getElementById('pill');
-    const stTxt = document.getElementById('st');
-    const wake  = document.getElementById('wake');
-
-    const _wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const _wsUrl   = `${_wsProto}://${location.host}/ws?token=${encodeURIComponent(_authToken)}`;
-    const ws       = new WebSocket(_wsUrl);
-
-    ws.onopen    = () => { sys('Remote session active.'); toast('Connected to JARVIS'); };
-    ws.onclose   = () => sys('Connection lost — refresh to reconnect.');
-    ws.onerror   = () => sys('Connection error.');
-    ws.onmessage = (e) => {
-      const m = JSON.parse(e.data);
-      if (m.type === 'log')           append(m.speaker, m.text);
-      if (m.type === 'status')        setStatus(m.state);
-      if (m.type === 'wake')          sys('Wake word detected — connecting…');
-      if (m.type === 'sys')           sys(m.text);
-      if (m.type === 'file_received') _onFileReceived(m);
-    };
-
-    function setStatus(s) {
-      if (s === 'active') {
-        pill.className = 'pill on'; stTxt.textContent = 'Active'; wake.classList.remove('show');
-      } else {
-        pill.className = 'pill'; stTxt.textContent = 'Sleeping'; wake.classList.add('show');
-      }
-    }
-
-    function append(speaker, text) {
-      const d = document.createElement('div');
-      if (speaker === 'jarvis') {
-        d.className = 'msg msg-j';
-        d.innerHTML = `<div class="lbl">Jarvis</div>${esc(text)}`;
-      } else {
-        d.className = 'msg msg-u';
-        d.innerHTML = `<div class="lbl">You</div>${esc(text)}`;
-      }
-      feed.appendChild(d);
-      feed.scrollTop = feed.scrollHeight;
-    }
-
-    function sys(text) {
-      const d = document.createElement('div');
-      d.className = 'msg msg-sys'; d.textContent = text;
-      feed.appendChild(d); feed.scrollTop = feed.scrollHeight;
-    }
-
-    function esc(s) {
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    // ── File helpers ──────────────────────────────────────────────────────────
-    function _fileIcon(name) {
-      const ext = (name.split('.').pop() || '').toLowerCase();
-      if (['jpg','jpeg','png','gif','webp','heic','heif','avif','bmp','svg'].includes(ext)) return '🖼️';
-      if (['mp4','mov','avi','mkv','webm','m4v','3gp'].includes(ext))                       return '🎬';
-      if (['mp3','m4a','wav','flac','aac','ogg','opus'].includes(ext))                      return '🎵';
-      if (['pdf'].includes(ext))                                                             return '📋';
-      if (['doc','docx','txt','md','rtf','odt'].includes(ext))                              return '📝';
-      if (['xls','xlsx','csv','ods'].includes(ext))                                         return '📊';
-      if (['ppt','pptx','odp'].includes(ext))                                               return '📑';
-      if (['zip','rar','7z','tar','gz','bz2','xz'].includes(ext))                          return '📦';
-      if (['apk','exe','dmg','deb','rpm','msi'].includes(ext))                              return '⚙️';
-      return '📎';
-    }
-
-    function _fmtSize(bytes) {
-      if (bytes < 1024)             return bytes + ' B';
-      if (bytes < 1024 * 1024)     return (bytes / 1024).toFixed(1) + ' KB';
-      if (bytes < 1024 ** 3)       return (bytes / 1024 / 1024).toFixed(1) + ' MB';
-      return (bytes / 1024 ** 3).toFixed(2) + ' GB';
-    }
-
-    // ── File upload (phone → computer) ────────────────────────────────────────
-    function _uploadFile(file) {
-      const id = 'fc_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-
-      // Create file card in feed
-      const card = document.createElement('div');
-      card.className = 'msg-file';
-      card.id = id;
-      card.innerHTML = `
-        <div class="fc-icon">${_fileIcon(file.name)}</div>
-        <div class="fc-meta">
-          <div class="fc-lbl">Sending</div>
-          <div class="fc-name">${esc(file.name)}</div>
-          <div class="fc-size">${_fmtSize(file.size)}</div>
-          <div class="fc-bar-wrap"><div class="fc-bar" id="${id}_bar"></div></div>
+              <div id="dictEntriesList" style="display:grid;gap:6px;max-height:260px;overflow-y:auto">
+                <div class="rail-note">Loading pronunciation dictionary…</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="page" id="page-settings">
+          <div class="page-head"><div><div class="eyebrow">YOUR WORKSPACE</div><h1 class="page-title">Preferences</h1><p class="page-description">Browser-side controls for this remote dashboard.</p></div></div>
+          <div class="section-scroll"><div class="card" style="padding:17px 18px"><div class="card-title" style="margin-bottom:12px">Voice input</div><div class="setting-row"><div><label for="speechLang">Recognition language</label><small>Used only when your browser supports speech recognition.</small></div><select id="speechLang"><option value="hi-IN">Hindi · India</option><option value="en-IN">English · India</option><option value="en-US">English · US</option><option value="bn-IN">Bengali · India</option></select></div><div class="setting-row"><div><label>Voice replies</label><small>Browser auto-speech is disabled to avoid a second voice. DAZY speaks through the desktop engine.</small></div><span class="status-chip">DESKTOP AUDIO</span></div><div class="setting-row"><div><label>Reduced motion</label><small>Respect your device's accessibility setting.</small></div><span class="status-chip">AUTO</span></div></div><div class="card" style="padding:17px 18px;margin-top:13px"><div class="card-title">Connection details</div><div class="system-row" style="margin-top:12px"><div class="system-icon">⌁</div><div><div class="system-label">WebSocket</div><div class="system-value" id="settingsSocket">Connecting</div></div></div><div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport</div><div class="system-value" id="settingsTransport">Detecting browser context</div></div></div><div class="system-row"><div class="system-icon">◷</div><div><div class="system-label">Session token</div><div class="system-value">Stored in this tab session</div></div></div><p class="rail-note" style="margin:12px 0 0">This interface does not store API keys or assistant memories. Provider settings remain in the desktop application.</p></div></div>
+        </section>
+      </main>
+      <aside class="right-rail" aria-label="Live system panel">
+        <div class="card rail-card"><div class="rail-heading"><b>Live system</b><span id="systemUpdated">Waiting</span></div>
+          <div class="system-row"><div class="system-icon">⌁</div><div><div class="system-label">Assistant link</div><div class="system-value" id="railLink">Connecting…</div></div><span class="status-chip wait" id="railLinkChip">WAIT</span></div>
+          <div class="system-row"><div class="system-icon">◉</div><div><div class="system-label">Microphone</div><div class="system-value" id="railMic">Not active</div></div><span class="status-chip" id="railMicChip">IDLE</span></div>
+          <div class="system-row"><div class="system-icon">▧</div><div><div class="system-label">File service</div><div class="system-value" id="railFiles">Available on request</div></div><span class="status-chip">API</span></div>
+          <div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport security</div><div class="system-value" id="railSecurity">Checking</div></div><span class="status-chip wait" id="railSecurityChip">CHECK</span></div>
         </div>
-        <div class="fc-status" id="${id}_st">0%</div>
-      `;
-      feed.appendChild(card);
-      feed.scrollTop = feed.scrollHeight;
+        <div class="card rail-card"><div class="rail-heading"><b>Quick controls</b><span>Assistant</span></div><div class="rail-actions"><button class="rail-action" data-action="wake"><i>⌁</i><span>Wake DAZY</span></button><button class="rail-action" data-goto="chat"><i>✧</i><span>Message</span></button><button class="rail-action" data-goto="files"><i>▧</i><span>Send file</span></button><button class="rail-action" data-goto="activity"><i>◷</i><span>Timeline</span></button></div></div>
+        <div class="card rail-card"><div class="rail-heading"><b>Session health</b><span id="healthText">—</span></div><div class="rail-note" id="healthNote">Waiting for the dashboard to receive a status event from the desktop application.</div><div class="engine-meter"><span id="healthBar" style="width:20%"></span></div></div>
+        <div class="card rail-card"><div class="rail-heading"><b>Privacy note</b><span>LOCAL</span></div><p class="rail-note">The dashboard connects to your own DAZY instance. Mic access starts only after you tap the voice button. No browser speech synthesis is triggered automatically.</p></div>
+      </aside>
+    </div>
+  </div>
+</div>
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+<div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><div class="dialog"><h3 id="confirmTitle">Confirm action</h3><p id="confirmText">Are you sure?</p><div class="dialog-actions"><button class="action-btn" id="confirmCancel">Cancel</button><button class="action-btn primary" id="confirmOK">Continue</button></div></div></div>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const authToken = sessionStorage.getItem('jarvis_token');
+  const sessionKey = sessionStorage.getItem('jarvis_key');
+  if (!authToken) { location.replace('/login'); return; }
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/api/upload');
-      xhr.setRequestHeader('Authorization', `Bearer ${_authToken}`);
+  const state = {
+    socket:null, socketOpen:false, reconnectTimer:null, reconnectDelay:1000, manuallyClosed:false,
+    page:'chat', messages:0, files:[], seen:new Set(), recentSeen:new Map(), localUserEcho:[], activity:[], pending:new Map(),
+    recognition:null, recognitionActive:false, phoneSocket:null, audioContext:null, micStream:null, audioNode:null,
+    micMode:'idle', currentStatus:'unknown', aesKey:null, encReady:false, sendBusy:false
+  };
+  const titles = {
+    overview:['Overview','Your personal AI workspace'], chat:['Conversation','A private conversation with DAZY'],
+    files:['Files','Transfer files to your computer'], activity:['Activity','Live events from your assistant'],
+    settings:['Settings','Manage this browser session'], diagnostics:['Voice & Diarization','Neural audio pipeline & speaker telemetry']
+  };
+  const encoder = new TextEncoder();
+  const AES_SALT = 'JARVIS-DASHBOARD-v1';
+  const KDF_ROUNDS = 200000;
 
-      xhr.upload.onprogress = (e) => {
-        if (!e.lengthComputable) return;
-        const pct = Math.round(e.loaded / e.total * 100);
-        const bar = document.getElementById(`${id}_bar`);
-        const st  = document.getElementById(`${id}_st`);
-        if (bar) bar.style.width = pct + '%';
-        if (st)  st.textContent  = pct + '%';
-      };
-
-      xhr.onload = () => {
-        const bar  = document.getElementById(`${id}_bar`);
-        const st   = document.getElementById(`${id}_st`);
-        const meta = card.querySelector('.fc-meta');
-        const lbl  = card.querySelector('.fc-lbl');
-        if (xhr.status === 200) {
-          let savedName = file.name;
-          try { savedName = JSON.parse(xhr.responseText).name || file.name; } catch {}
-          const dlUrl = `/uploads/${encodeURIComponent(savedName)}?token=${encodeURIComponent(_authToken)}`;
-          if (bar)  { bar.style.width = '100%'; bar.style.background = 'var(--green)'; }
-          if (st)   { st.textContent = '✓'; st.className = 'fc-status done'; }
-          if (lbl)  lbl.textContent = 'Sent';
-          if (meta) meta.insertAdjacentHTML('beforeend',
-            `<a class="fc-dl" href="${dlUrl}" download="${esc(savedName)}">⬇ Download back</a>`);
-          toast('File sent!');
-        } else {
-          let errMsg = 'Upload failed';
-          try { errMsg = JSON.parse(xhr.responseText).error || errMsg; } catch {}
-          if (bar) bar.style.background = '#f87171';
-          if (st)  { st.textContent = 'ERR'; st.className = 'fc-status err'; }
-          if (lbl) lbl.textContent = errMsg;
-        }
-      };
-
-      xhr.onerror = () => {
-        const st  = document.getElementById(`${id}_st`);
-        const lbl = card.querySelector('.fc-lbl');
-        if (st)  { st.textContent = 'ERR'; st.className = 'fc-status err'; }
-        if (lbl) lbl.textContent = 'Connection error';
-      };
-
-      const fd = new FormData();
-      fd.append('file', file);
-      xhr.send(fd);
-    }
-
-    // File received by another WebSocket client (e.g., second open tab)
-    function _onFileReceived(m) {
-      const dlUrl = `/uploads/${encodeURIComponent(m.name)}?token=${encodeURIComponent(_authToken)}`;
-      const card  = document.createElement('div');
-      card.className = 'msg-file';
-      card.innerHTML = `
-        <div class="fc-icon">${_fileIcon(m.name)}</div>
-        <div class="fc-meta">
-          <div class="fc-lbl">Received</div>
-          <div class="fc-name">${esc(m.name)}</div>
-          <div class="fc-size">${_fmtSize(m.size)}</div>
-          <a class="fc-dl" href="${dlUrl}" download="${esc(m.name)}">⬇ Download</a>
-        </div>
-        <div class="fc-status done">✓</div>
-      `;
-      feed.appendChild(card);
-      feed.scrollTop = feed.scrollHeight;
-      toast('File received on computer!');
-    }
-
-    // File input change handler
-    document.getElementById('file-inp').addEventListener('change', function () {
-      Array.from(this.files).forEach(_uploadFile);
-      this.value = ''; // reset so the same file can be re-sent
+  function toast(message, type='') {
+    const node=document.createElement('div'); node.className='toast '+type; node.textContent=String(message||'');
+    $('toastStack').appendChild(node); setTimeout(()=>node.remove(),4200);
+  }
+  function nowTime(){ return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+  function setConnection(online, label) {
+    state.socketOpen=online;
+    $('connection').className='connection '+(online?'online':'offline');
+    $('connectionText').textContent=label || (online?'Connected':'Disconnected');
+    $('sideStatus').textContent=online?'Live session connected':'Waiting for connection';
+    $('statConnection').textContent=online?'Online':'Offline';
+    $('statConnectionNote').textContent=online?'Live event stream connected':'Trying to reconnect';
+    $('railLink').textContent=online?'Connected':'Disconnected';
+    $('railLinkChip').textContent=online?'LIVE':'WAIT';
+    $('railLinkChip').className='status-chip'+(online?'':' wait');
+    $('settingsSocket').textContent=online?'Connected':'Disconnected';
+    $('chatAgentState').textContent=online?'Connected to desktop assistant':'Waiting for desktop session';
+    $('heroCard').dataset.state=online?'online':'offline';
+    $('orbCaption').textContent=online?'SESSION ONLINE':'WAITING FOR LINK';
+    $('healthText').textContent=online?'Connected':'Reconnecting';
+    $('healthNote').textContent=online?'The dashboard event channel is active. Assistant state updates appear as they arrive.':'The dashboard cannot currently receive live events. Text commands may still queue if the HTTP API is reachable.';
+    $('healthBar').style.width=online?'100%':'22%';
+    $('systemUpdated').textContent='Updated '+nowTime();
+  }
+  async function initCrypto() {
+    if (!sessionKey || !window.crypto || !crypto.subtle) return false;
+    try {
+      const base=await crypto.subtle.importKey('raw',encoder.encode(sessionKey),'PBKDF2',false,['deriveKey']);
+      state.aesKey=await crypto.subtle.deriveKey({name:'PBKDF2',salt:encoder.encode(AES_SALT),iterations:KDF_ROUNDS,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt']);
+      state.encReady=true;
+      return true;
+    } catch(err) { console.warn('Browser encryption unavailable',err); return false; }
+  }
+  async function encryptText(text) {
+    if (!state.aesKey) return null;
+    try {
+      const nonce=crypto.getRandomValues(new Uint8Array(12));
+      const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv:nonce},state.aesKey,encoder.encode(text)));
+      const result=new Uint8Array(nonce.length+encrypted.length); result.set(nonce); result.set(encrypted,nonce.length);
+      let binary=''; for (const byte of result) binary+=String.fromCharCode(byte);
+      return btoa(binary);
+    } catch(err) { console.warn('Could not encrypt message',err); return null; }
+  }
+  async function authFetch(url, options={}) {
+    const headers=Object.assign({},options.headers||{},{Authorization:'Bearer '+authToken});
+    const response=await fetch(url,Object.assign({},options,{headers}));
+    if (response.status===401) { sessionStorage.removeItem('jarvis_token');sessionStorage.removeItem('jarvis_key');location.replace('/login');throw new Error('Session expired. Please connect again.'); }
+    return response;
+  }
+  function escapeHTML(value) { return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  function markdownSafe(source) {
+    // Lightweight safe renderer: escape first, then allow a small Markdown subset.
+    let s=escapeHTML(source);
+    s=s.replace(/```([\s\S]*?)```/g,(_,code)=>'<pre><code>'+code.trim()+'</code></pre>');
+    s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+    s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+)__/g,'<strong>$1</strong>');
+    s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>').replace(/~~([^~]+)~~/g,'<del>$1</del>');
+    const blocks=s.split(/\n{2,}/).map(block=>{
+      const trimmed=block.trim(); if(!trimmed)return '';
+      if(/^<pre>/.test(trimmed))return trimmed;
+      const lines=trimmed.split('\n');
+      if(lines.every(line=>/^\s*[-*]\s+/.test(line)))return '<ul>'+lines.map(line=>'<li>'+line.replace(/^\s*[-*]\s+/,'')+'</li>').join('')+'</ul>';
+      if(lines.every(line=>/^\s*\d+[.)]\s+/.test(line)))return '<ol>'+lines.map(line=>'<li>'+line.replace(/^\s*\d+[.)]\s+/,'')+'</li>').join('')+'</ol>';
+      return '<p>'+trimmed.replace(/\n/g,'<br>')+'</p>';
     });
+    return blocks.join('');
+  }
+  function addMessage(speaker, text, timestamp, options={}) {
+    const clean=String(text??'').trim(); if(!clean)return;
+    const isSystem=speaker==='system'||speaker==='sys';
+    const role=(speaker==='user'||speaker==='you')?'user':(isSystem?'system':'assistant');
+    const signature=role+'|'+clean+'|'+String(timestamp||'');
+    if(options.dedupe && state.seen.has(signature))return;
+    if(options.dedupe) {state.seen.add(signature); if(state.seen.size>700)state.seen.clear();}
+    if(role==='user') {
+      const idx=state.localUserEcho.findIndex(item=>item.text===clean && Date.now()-item.at<12000);
+      if(idx>=0 && options.remote){state.localUserEcho.splice(idx,1);return;}
+    }
+    state.messages++; $('statMessages').textContent=String(state.messages);
+    const feed=$('chatFeed'); const empty=$('chatEmpty'); if(empty)empty.remove();
+    const node=document.createElement('article'); node.className='message '+role;
+    if(role==='system')node.textContent=clean;
+    else {const meta=document.createElement('div');meta.className='message-meta';meta.textContent=(role==='assistant'?'DAZY':'YOU')+' · '+(timestamp?formatTime(timestamp):nowTime());node.appendChild(meta);const body=document.createElement('div');body.className='message-body';body.innerHTML=markdownSafe(clean);node.appendChild(body);}
+    feed.appendChild(node);feed.scrollTop=feed.scrollHeight;
+    const mini=document.createElement('div');mini.className='mini-item';const avatar=document.createElement('div');avatar.className='mini-avatar '+(role==='user'?'user':'');avatar.textContent=role==='assistant'?'✧':role==='user'?'◉':'•';const copy=document.createElement('div');copy.textContent=clean.length>170?clean.slice(0,167)+'…':clean;const time=document.createElement('span');time.textContent=timestamp?formatTime(timestamp):nowTime();copy.appendChild(time);mini.append(avatar,copy);$('miniFeed').prepend(mini);while($('miniFeed').children.length>5)$('miniFeed').lastElementChild.remove();
+    if(role!=='system') addActivity(role,clean,timestamp);
+  }
+  function formatTime(value){try{const d=new Date(value);return Number.isNaN(d.getTime())?nowTime():d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch{return nowTime();}}
+  function addActivity(role,text,timestamp){
+    const row={role,text:String(text).slice(0,500),time:timestamp||new Date().toISOString()};state.activity.unshift(row);if(state.activity.length>300)state.activity.length=300;
+    const box=$('activityList');if(box.querySelector('.rail-note'))box.innerHTML='';const el=document.createElement('div');el.className='activity-row '+(role==='system'?'system':role==='user'?'user':'');const dot=document.createElement('i');dot.className='activity-dot';const copy=document.createElement('div');copy.className='activity-copy';copy.textContent=row.text;const time=document.createElement('time');time.textContent=(role==='assistant'?'DAZY':role==='user'?'You':'System')+' · '+formatTime(row.time);copy.appendChild(time);el.append(dot,copy);box.prepend(el);while(box.children.length>120)box.lastElementChild.remove();
+  }
+  function handleEvent(message){
+    if(!message||typeof message!=='object')return;
+    const type=String(message.type||'');
+    if(type==='log') {addMessage(message.speaker||'assistant',message.text,message.ts,{dedupe:true,remote:true});}
+    else if(type==='status') {state.currentStatus=String(message.state||'unknown');$('chatAgentState').textContent='Assistant state: '+state.currentStatus;$('systemUpdated').textContent='Updated '+nowTime();}
+    else if(type==='wake') {addMessage('system','Wake word detected — assistant is waking.',null);}
+    else if(type==='sys') {addMessage('system',message.text,null);}
+    else if(type==='file_received') {toast('File received: '+(message.name||'upload'),'success');loadFiles(false);}
+    else if(type==='error') {toast(message.text||message.error||'Assistant reported an error','error');}
+  }
+  function connectSocket(){
+    if(state.manuallyClosed)return;
+    clearTimeout(state.reconnectTimer);
+    const protocol=location.protocol==='https:'?'wss':'ws';
+    let ws;
+    try {ws=new WebSocket(protocol+'://'+location.host+'/ws?token='+encodeURIComponent(authToken));}
+    catch(err){setConnection(false,'Connection error');scheduleReconnect();return;}
+    state.socket=ws;
+    ws.onopen=()=>{if(state.socket!==ws)return;state.reconnectDelay=1000;setConnection(true,'Connected');toast('DAZY session connected','success');};
+    ws.onmessage=(event)=>{if(state.socket!==ws)return;try{handleEvent(JSON.parse(event.data));}catch(err){console.warn('Ignored malformed dashboard event',err);}};
+    ws.onerror=()=>{if(state.socket===ws)setConnection(false,'Connection error');};
+    ws.onclose=()=>{if(state.socket!==ws)return;state.socket=null;setConnection(false,'Reconnecting');scheduleReconnect();};
+  }
+  function scheduleReconnect(){if(state.manuallyClosed)return;clearTimeout(state.reconnectTimer);const delay=state.reconnectDelay;state.reconnectDelay=Math.min(30000,Math.round(state.reconnectDelay*1.8));state.reconnectTimer=setTimeout(connectSocket,delay);}
+  async function sendMessage(text){
+    const value=String(text||'').trim();if(!value||state.sendBusy)return;
+    state.sendBusy=true;$('sendBtn').disabled=true;
+    state.localUserEcho.push({text:value,at:Date.now()});if(state.localUserEcho.length>10)state.localUserEcho.shift();
+    addMessage('user',value,null);$('chatInput').value='';autoGrow();
+    const pendingId='pending-'+Date.now();const pending=document.createElement('div');pending.className='message system';pending.id=pendingId;pending.innerHTML='Sending to DAZY <span class="pending-dot"><i></i><i></i><i></i></span>';$('chatFeed').appendChild(pending);$('chatFeed').scrollTop=$('chatFeed').scrollHeight;
+    try{
+      const encrypted=await encryptText(value);const body=encrypted?{enc:encrypted}:{text:value};
+      const response=await authFetch('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const payload=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(payload.error||('Request failed ('+response.status+')'));
+      pending.remove();
+      if(payload.reply){addMessage('assistant',payload.reply,null,{dedupe:true});}
+      else {const note=document.createElement('div');note.className='message system';note.textContent=state.socketOpen?'Delivered to DAZY · waiting for response':'Delivered to command queue · live updates reconnecting';$('chatFeed').appendChild(note);$('chatFeed').scrollTop=$('chatFeed').scrollHeight;}
+    }catch(err){pending.remove();addMessage('system','Message could not be delivered: '+(err.message||'unknown error'));toast(err.message||'Message failed','error');}
+    finally{state.sendBusy=false;$('sendBtn').disabled=false;$('chatInput').focus();}
+  }
+  function autoGrow(){const el=$('chatInput');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
+  async function wakeAssistant(){try{const res=await authFetch('/api/wake',{method:'POST'});if(!res.ok)throw new Error('Wake request failed');toast('Wake signal sent','success');}catch(err){toast(err.message||'Could not wake DAZY','error');}}
+  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
+  function fileSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';if(bytes<1073741824)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1073741824).toFixed(2)+' GB';}
+  function fileGlyph(name){const ext=(name.split('.').pop()||'').toLowerCase();if(['png','jpg','jpeg','webp','gif','svg'].includes(ext))return'▧';if(['mp3','wav','m4a','ogg','flac'].includes(ext))return'♫';if(['mp4','mov','mkv','webm'].includes(ext))return'▶';if(ext==='pdf')return'▤';if(['doc','docx','txt','md'].includes(ext))return'≡';if(['zip','rar','7z'].includes(ext))return'▣';return'◈';}
+  async function loadFiles(showToast=true){$('fileListState').textContent='Loading…';try{const res=await authFetch('/api/files');const data=await res.json();if(!res.ok)throw new Error(data.error||'Could not load files');state.files=Array.isArray(data.files)?data.files:[];$('statFiles').textContent=String(state.files.length);$('fileCount').textContent=String(state.files.length);$('fileListState').textContent=state.files.length+' item(s)';const box=$('fileList');box.innerHTML='';if(!state.files.length){box.innerHTML='<div class="rail-note">No uploaded files yet. Send a file from this device to get started.</div>';return;}for(const file of state.files){const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name||'');const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name||'Unnamed file';const size=document.createElement('div');size.className='file-size';size.textContent=fileSize(Number(file.size)||0);info.append(name,size);const link=document.createElement('a');link.className='file-open';link.textContent='Download';link.href='/uploads/'+encodeURIComponent(file.name||'')+'?token='+encodeURIComponent(authToken);link.setAttribute('download',file.name||'file');row.append(glyph,info,link);box.appendChild(row);}}catch(err){$('fileListState').textContent='Unavailable';$('fileList').innerHTML='<div class="rail-note">'+escapeHTML(err.message||'File list unavailable')+'</div>';if(showToast)toast(err.message||'Could not load files','error');}}
+  function uploadFile(file){if(!file)return;const form=new FormData();form.append('file',file);const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name);const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name;const size=document.createElement('div');size.className='file-size';size.textContent='Uploading · '+fileSize(file.size);const bar=document.createElement('div');bar.className='engine-meter';const fill=document.createElement('span');fill.style.width='0%';bar.append(fill);info.append(name,size,bar);const pct=document.createElement('div');pct.className='fc-status';pct.textContent='0%';row.append(glyph,info,pct);$('fileList').prepend(row);const xhr=new XMLHttpRequest();xhr.open('POST','/api/upload');xhr.setRequestHeader('Authorization','Bearer '+authToken);xhr.upload.onprogress=(event)=>{if(event.lengthComputable){const p=Math.round(event.loaded/event.total*100);fill.style.width=p+'%';pct.textContent=p+'%';}};xhr.onload=()=>{let result={};try{result=JSON.parse(xhr.responseText);}catch{}if(xhr.status>=200&&xhr.status<300){size.textContent='Uploaded · '+fileSize(file.size);pct.textContent='✓';pct.style.color='var(--mint)';toast('Uploaded '+file.name,'success');loadFiles(false);}else{size.textContent=result.error||'Upload failed';pct.textContent='ERR';pct.style.color='var(--red)';toast(result.error||'Upload failed','error');}};xhr.onerror=()=>{size.textContent='Network error';pct.textContent='ERR';pct.style.color='var(--red)';};xhr.send(form);}
+  function selectFiles(files){Array.from(files||[]).forEach(uploadFile);}
+  function setMicState(mode,label){state.micMode=mode;$('micBtn').classList.toggle('recording',mode!=='idle');$('micBtn').textContent=mode==='browser'?'●':mode==='stream'?'■':'♩';$('micBtn').title=label||'Voice input';$('railMic').textContent=mode==='idle'?'Not active':mode==='browser'?'Browser speech recognition':'Phone microphone stream';$('railMicChip').textContent=mode==='idle'?'IDLE':'LIVE';$('railMicChip').className='status-chip'+(mode==='idle'?'':' wait');$('statVoice').textContent=mode==='idle'?'Ready':'Listening';$('statVoiceNote').textContent=mode==='idle'?'Microphone starts only on tap':'Stop listening when finished';}
+  function startBrowserSpeech(){const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition)return false;try{setMicState('starting','Starting voice recognition');const recognition=new Recognition();recognition.lang=$('speechLang').value;recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;recognition.onstart=()=>{state.recognitionActive=true;setMicState('browser','Stop voice input');toast('Listening… speak now');};recognition.onresult=(event)=>{const transcript=Array.from(event.results||[]).map(result=>result[0]?.transcript||'').join(' ').trim();if(transcript)sendMessage(transcript);};recognition.onerror=(event)=>{toast('Voice recognition: '+(event.error||'failed'),'error');};recognition.onend=()=>{state.recognitionActive=false;state.recognition=null;setMicState('idle');};state.recognition=recognition;recognition.start();return true;}catch(err){console.warn('Browser speech unavailable',err);state.recognition=null;setMicState('idle');return false;}}
+  function floatToPcm16(input,sourceRate){const targetRate=16000;const ratio=sourceRate/targetRate;const outLength=Math.max(1,Math.floor(input.length/ratio));const out=new Int16Array(outLength);for(let i=0;i<outLength;i++){const position=i*ratio;const left=Math.floor(position);const right=Math.min(left+1,input.length-1);const fraction=position-left;const sample=input[left]*(1-fraction)+input[right]*fraction;out[i]=Math.max(-32768,Math.min(32767,Math.round(sample*32767)));}return out;}
+  async function startPhoneAudio(){
+    if(!navigator.mediaDevices?.getUserMedia){toast('Microphone capture is unavailable in this browser context. Use HTTPS or localhost.','error');return;}
+    setMicState('starting','Starting microphone');
+    let stream=null,ctx=null,ws=null;
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+      try{ctx=new AudioContextClass({sampleRate:16000});}catch{ctx=new AudioContextClass();}
+      if(ctx.state==='suspended')await ctx.resume();
+      const protocol=location.protocol==='https:'?'wss':'ws';ws=new WebSocket(protocol+'://'+location.host+'/ws/phone-audio?token='+encodeURIComponent(authToken));ws.binaryType='arraybuffer';
+      state.micStream=stream;state.audioContext=ctx;state.phoneSocket=ws;
+      ws.onopen=async()=>{
+        if(state.phoneSocket!==ws)return;
+        const source=ctx.createMediaStreamSource(stream);const silent=ctx.createGain();silent.gain.value=0;silent.connect(ctx.destination);
+        let pending=[],pendingLength=0;
+        const sendSamples=(samples)=>{pending.push(samples);pendingLength+=samples.length;if(pendingLength>=1024){const merged=new Int16Array(pendingLength);let offset=0;for(const part of pending){merged.set(part,offset);offset+=part.length;}if(ws.readyState===WebSocket.OPEN&&ws.bufferedAmount<262144)ws.send(merged.buffer);pending=[];pendingLength=0;}};
+        try{
+          const workletCode=`class DazyCapture extends AudioWorkletProcessor{process(inputs,outputs){const input=inputs[0]&&inputs[0][0];const output=outputs[0]&&outputs[0][0];if(input)this.port.postMessage(input.slice());if(output)output.fill(0);return true;}}registerProcessor('dazy-capture',DazyCapture);`;
+          const blobUrl=URL.createObjectURL(new Blob([workletCode],{type:'text/javascript'}));await ctx.audioWorklet.addModule(blobUrl);URL.revokeObjectURL(blobUrl);
+          const node=new AudioWorkletNode(ctx,'dazy-capture',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});node.port.onmessage=e=>sendSamples(floatToPcm16(e.data,ctx.sampleRate));source.connect(node);node.connect(silent);state.audioNode=node;
+        }catch(workletError){
+          console.warn('AudioWorklet unavailable; using ScriptProcessor fallback',workletError);
+          const processor=ctx.createScriptProcessor(2048,1,1);processor.onaudioprocess=e=>sendSamples(floatToPcm16(e.inputBuffer.getChannelData(0),ctx.sampleRate));source.connect(processor);processor.connect(silent);state.audioNode=processor;
+        }
+        setMicState('stream','Stop microphone stream');toast('Microphone connected to DAZY','success');
+      };
+      ws.onerror=()=>{toast('Phone audio connection failed','error');stopPhoneAudio();};
+      ws.onclose=()=>{if(state.phoneSocket===ws)stopPhoneAudio(false);};
+    }catch(err){if(stream)stream.getTracks().forEach(track=>track.stop());if(ctx)ctx.close().catch(()=>{});state.micStream=null;state.audioContext=null;state.phoneSocket=null;setMicState('idle');toast(err.name==='NotAllowedError'?'Microphone permission was denied':(err.message||'Could not start microphone'),'error');}
+  }
+  function stopPhoneAudio(closeSocket=true){const ws=state.phoneSocket;state.phoneSocket=null;if(state.audioNode){try{state.audioNode.disconnect();}catch{}state.audioNode=null;}if(state.audioContext){state.audioContext.close().catch(()=>{});state.audioContext=null;}if(state.micStream){state.micStream.getTracks().forEach(track=>track.stop());state.micStream=null;}if(closeSocket&&ws&&ws.readyState<2){ws.close();}setMicState('idle');}
+  function toggleMic(){if(state.recognition){try{state.recognition.stop();}catch{}return;}if(state.micMode==='stream'){stopPhoneAudio();return;}if(state.micMode==='starting')return;if(!startBrowserSpeech())startPhoneAudio();}
+  function openFilePicker(){ $('fileInput').click(); }
+  
+  // ── Pronunciation & Diagnostics Telemetry ──
+  async function loadDiagnostics() {
+    try {
+      const res = await authFetch('/api/voice-diagnostics');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.ok || !data.diagnostics) return;
+      const d = data.diagnostics;
+      if ($('diagVoiceName')) $('diagVoiceName').textContent = d.authoritative_voice || 'en-IN-NeerjaNeural';
+      if ($('diagDuplexMode')) $('diagDuplexMode').textContent = d.half_duplex_mic_suppressed ? 'MIC SUPPRESSED (PLAYING)' : 'HALF-DUPLEX READY';
+      if ($('diagPlaybackState')) {
+        $('diagPlaybackState').textContent = d.tts_speaking ? 'SPEAKING' : 'IDLE';
+        $('diagPlaybackState').className = 'status-chip ' + (d.tts_speaking ? 'wait' : '');
+      }
+      if ($('diagTurnId')) $('diagTurnId').textContent = d.active_turn_id || '—';
+      if ($('autoSpeakSelect') && d.auto_speak_mode) {
+        $('autoSpeakSelect').value = d.auto_speak_mode;
+      }
+    } catch (e) {
+      console.warn('Diagnostics fetch error', e);
+    }
+  }
 
-    // ── Commands ──────────────────────────────────────────────────────────────
-    async function doSend() {
-      const inp = document.getElementById('inp');
-      const txt = inp.value.trim();
-      if (!txt) return;
-      inp.value = '';
-      append('user', txt);
-      const enc  = await _encrypt(txt);
-      const body = enc ? { enc } : { text: txt };
-      _authFetch('/api/command', {
+  async function loadPronunciationDict() {
+    const container = $('dictEntriesList');
+    if (!container) return;
+    try {
+      const res = await authFetch('/api/pronunciation');
+      if (!res.ok) throw new Error('Failed to load pronunciation dictionary');
+      const data = await res.json();
+      const entries = data.entries || {};
+      container.innerHTML = '';
+      const keys = Object.keys(entries);
+      if (keys.length === 0) {
+        container.innerHTML = '<div class="rail-note">No custom entries found. Default pronunciation rules active.</div>';
+        return;
+      }
+      keys.forEach(k => {
+        const item = entries[k];
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:8px;font-size:10px';
+        const left = document.createElement('div');
+        left.innerHTML = `<strong>${escapeHTML(k)}</strong> → <span style="color:var(--cyan)">${escapeHTML(item.spoken || item.phonetic || '')}</span> <small style="color:var(--muted);margin-left:6px">(${escapeHTML(item.lang || '')} · ${escapeHTML(item.note || '')})</small>`;
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '✕';
+        delBtn.style.cssText = 'border:none;background:transparent;color:var(--red);cursor:pointer;padding:2px 6px;font-size:11px';
+        delBtn.title = 'Delete entry';
+        delBtn.onclick = async () => {
+          if (!confirm(`Delete pronunciation rule for "${k}"?`)) return;
+          try {
+            const delRes = await authFetch(`/api/pronunciation/${encodeURIComponent(k)}`, { method: 'DELETE' });
+            if (delRes.ok) {
+              toast(`Deleted pronunciation for ${k}`, 'success');
+              loadPronunciationDict();
+            }
+          } catch (err) {
+            toast(err.message, 'error');
+          }
+        };
+        row.append(left, delBtn);
+        container.appendChild(row);
+      });
+    } catch (err) {
+      container.innerHTML = `<div class="rail-note">${escapeHTML(err.message)}</div>`;
+    }
+  }
+
+  async function savePronunciationEntry() {
+    const word = $('dictWordInput')?.value.trim();
+    const spoken = $('dictSpokenInput')?.value.trim();
+    const lang = $('dictLangSelect')?.value || 'hinglish';
+    const note = $('dictNoteInput')?.value.trim();
+    if (!word) {
+      toast('Word/Name is required', 'error');
+      return;
+    }
+    try {
+      const res = await authFetch('/api/pronunciation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify({ word, spoken, lang, note })
       });
-    }
-
-    function doWake() {
-      sys('Sending wake signal…');
-      _authFetch('/api/wake', { method: 'POST' });
-    }
-
-    document.getElementById('inp').addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
-    });
-
-    // ── Toast ─────────────────────────────────────────────────────────────────
-    let _toastTimer;
-    function toast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      clearTimeout(_toastTimer);
-      _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-    }
-
-    // ── Real-time Voice — PCM16 WebSocket → Gemini Live ──────────────────────
-    const micBtn  = document.getElementById('mic-btn');
-    let _voiceWs  = null;
-    let _audioCtx = null;
-    let _micStm   = null;
-    let _audioNd  = null;
-
-    function _micIdle() {
-      micBtn.innerHTML = '🎤';
-      micBtn.title     = 'Voice — tap to speak';
-      micBtn.classList.remove('recording');
-    }
-
-    // Float32 PCM → resample to 16 kHz + convert to Int16
-    function _f32toPcm16(f32, srcRate) {
-      let s = f32;
-      if (srcRate !== 16000) {
-        const ratio = srcRate / 16000;
-        const len   = Math.round(f32.length / ratio);
-        s = new Float32Array(len);
-        for (let i = 0; i < len; i++)
-          s[i] = f32[Math.min(Math.round(i * ratio), f32.length - 1)];
+      if (res.ok) {
+        toast(`Saved pronunciation for "${word}"`, 'success');
+        $('dictWordInput').value = '';
+        $('dictSpokenInput').value = '';
+        $('dictNoteInput').value = '';
+        loadPronunciationDict();
+      } else {
+        const err = await res.json();
+        toast(err.error || 'Failed to save entry', 'error');
       }
-      const out = new Int16Array(s.length);
-      for (let i = 0; i < s.length; i++)
-        out[i] = Math.max(-32768, Math.min(32767, Math.round(s[i] * 32768)));
-      return out.buffer;
+    } catch (e) {
+      toast(e.message, 'error');
     }
+  }
 
-    function _showVoiceSetup() {
-      if (document.getElementById('voice-setup')) return; // show once
-      const origin = location.origin;
-      const card = document.createElement('div');
-      card.id = 'voice-setup';
-      card.style.cssText = [
-        'align-self:stretch', 'background:rgba(99,102,241,0.07)',
-        'border:1px solid rgba(99,102,241,0.22)', 'border-radius:14px',
-        'padding:16px 18px', 'font-size:13px', 'line-height:1.8',
-        'animation:pop 0.18s ease'
-      ].join(';');
-      card.innerHTML =
-        '<div style="font-weight:700;color:#818cf8;letter-spacing:.5px;margin-bottom:10px">🎤 One-time voice setup</div>' +
-        '<ol style="padding-left:18px;color:#8899aa;margin:0;display:flex;flex-direction:column;gap:4px">' +
-        '<li>Open a new tab → go to <span style="background:rgba(255,255,255,0.07);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px">chrome://flags</span></li>' +
-        '<li>Search: <strong style="color:#dde3ed">Insecure origins treated as secure</strong></li>' +
-        '<li>Paste this URL into the box:<br><span id="flags-url" style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;user-select:all;cursor:pointer">' + esc(origin) + '</span></li>' +
-        '<li>Set to <strong style="color:#22c55e">Enabled</strong> → tap <strong style="color:#dde3ed">Relaunch</strong></li>' +
-        '<li>Return here and tap 🎤</li>' +
-        '</ol>';
-      feed.appendChild(card);
-      feed.scrollTop = feed.scrollHeight;
-      // tap to copy
-      card.querySelector('#flags-url').addEventListener('click', () => {
-        navigator.clipboard?.writeText(origin).then(() => toast('URL copied!')).catch(() => {});
+  async function updateAutoSpeakMode(mode) {
+    try {
+      const res = await authFetch('/api/voice-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode })
       });
-    }
-
-    async function doMic() {
-      if (_voiceWs) { _stopVoice(); return; }
-
-      if (!navigator.mediaDevices?.getUserMedia) {
-        _showVoiceSetup();
-        return;
+      if (res.ok) {
+        toast(`Voice mode set to ${mode}`, 'success');
       }
-      let stream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
-        });
-      } catch (e) {
-        sys(e.name === 'NotAllowedError'
-          ? 'Microphone denied — tap the address bar lock and allow microphone.'
-          : 'Mic error: ' + e.message);
-        return;
-      }
-
-      // 16 kHz context (fall back to native rate — _f32toPcm16 resamples)
-      let ctx;
-      try { ctx = new AudioContext({ sampleRate: 16000 }); }
-      catch (_) { ctx = new AudioContext(); }
-      if (ctx.state === 'suspended') await ctx.resume();
-
-      const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-      const ws = new WebSocket(
-        `${wsProto}://${location.host}/ws/phone-audio?token=${encodeURIComponent(_authToken)}`
-      );
-      ws.binaryType = 'arraybuffer';
-
-      ws.onopen = async () => {
-        const rate = ctx.sampleRate;
-        const src  = ctx.createMediaStreamSource(stream);
-
-        // AudioWorklet (modern) — runs in dedicated audio thread
-        const wCode = `class J extends AudioWorkletProcessor{process(i){const c=i[0]?.[0];if(c)this.port.postMessage(c.slice());return true;}}registerProcessor('j',J);`;
-        try {
-          const burl = URL.createObjectURL(new Blob([wCode], { type: 'application/javascript' }));
-          await ctx.audioWorklet.addModule(burl);
-          URL.revokeObjectURL(burl);
-          const nd = new AudioWorkletNode(ctx, 'j');
-          // Buffer to 1024 samples (64 ms at 16 kHz) before sending —
-          // matches PC mic chunk size, prevents queue flooding on the server.
-          let _pbuf = [], _plen = 0;
-          nd.port.onmessage = e => {
-            const chunk = new Int16Array(_f32toPcm16(e.data, rate));
-            _pbuf.push(chunk); _plen += chunk.length;
-            if (_plen >= 1024) {
-              const out = new Int16Array(_plen); let off = 0;
-              for (const c of _pbuf) { out.set(c, off); off += c.length; }
-              if (ws.readyState === 1) ws.send(out.buffer);
-              _pbuf = []; _plen = 0;
-            }
-          };
-          src.connect(nd);
-          _audioNd = nd;
-        } catch (_) {
-          // ScriptProcessor fallback (deprecated, still works everywhere)
-          const sp = ctx.createScriptProcessor(4096, 1, 1);
-          sp.onaudioprocess = e => {
-            if (ws.readyState === 1) ws.send(_f32toPcm16(e.inputBuffer.getChannelData(0), rate));
-          };
-          src.connect(sp); sp.connect(ctx.destination);
-          _audioNd = sp;
-        }
-
-        micBtn.innerHTML = '⏹';
-        micBtn.title     = 'Tap to stop';
-        micBtn.classList.add('recording');
-        sys('Voice live — speak now');
-        toast('🎤 Live');
-      };
-
-      ws.onclose = () => { _stopVoice(); };
-      ws.onerror = () => { sys('Voice connection failed.'); _stopVoice(); };
-
-      _voiceWs  = ws;
-      _audioCtx = ctx;
-      _micStm   = stream;
+    } catch (e) {
+      toast('Failed to change voice mode: ' + e.message, 'error');
     }
+  }
 
-    function _stopVoice() {
-      if (_audioNd)  { try { _audioNd.disconnect(); }  catch (_) {}; _audioNd  = null; }
-      if (_audioCtx) { try { _audioCtx.close(); }      catch (_) {}; _audioCtx = null; }
-      if (_micStm)   { _micStm.getTracks().forEach(t => t.stop()); _micStm = null; }
-      if (_voiceWs)  {
-        const w = _voiceWs; _voiceWs = null;
-        if (w.readyState < 2) w.close();
-      }
-      _micIdle();
-    }
-  </script>
+  function initEvents(){
+    document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.page)));
+    document.querySelectorAll('[data-goto]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.goto)));
+    document.querySelectorAll('[data-action="wake"]').forEach(btn=>btn.addEventListener('click',wakeAssistant));
+    $('menuBtn').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
+    $('mobileBackdrop').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');});
+    $('menuBtn').addEventListener('click',()=>$('mobileBackdrop').classList.toggle('show'));
+    $('openSettings').addEventListener('click',()=>goTo('settings'));
+    $('chatForm').addEventListener('submit',event=>{event.preventDefault();sendMessage($('chatInput').value);});
+    $('chatInput').addEventListener('input',autoGrow);
+    $('chatInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();$('chatForm').requestSubmit();}});
+    $('micBtn').addEventListener('click',toggleMic);$('attachBtn').addEventListener('click',openFilePicker);
+    $('fileInput').addEventListener('change',event=>{selectFiles(event.target.files);event.target.value='';});
+    $('browseFiles').addEventListener('click',openFilePicker);$('refreshFiles').addEventListener('click',()=>loadFiles());
+    $('dropzone').addEventListener('dragover',event=>{event.preventDefault();$('dropzone').classList.add('drag');});
+    $('dropzone').addEventListener('dragleave',()=> $('dropzone').classList.remove('drag'));
+    $('dropzone').addEventListener('drop',event=>{event.preventDefault();$('dropzone').classList.remove('drag');selectFiles(event.dataTransfer.files);});
+    $('clearChat').addEventListener('click',()=>{const feed=$('chatFeed');feed.innerHTML='';state.seen.clear();toast('Chat view cleared. Server history is unchanged.');});
+    $('clearActivity').addEventListener('click',()=>{$('activityList').innerHTML='<div class="rail-note">Activity view cleared. New events will appear here.</div>';state.activity=[];});
+    document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{goTo('chat');$('chatInput').value=btn.dataset.prompt;$('chatForm').requestSubmit();}));
+    $('speechLang').value=localStorage.getItem('dazy_speech_language')||'hi-IN';$('speechLang').addEventListener('change',()=>localStorage.setItem('dazy_speech_language',$('speechLang').value));
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'){ $('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');}});
+  }
+  function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+  async function init(){
+    $('settingsTransport').textContent=location.protocol==='https:'?'HTTPS / WSS':'HTTP / WS';
+    $('railSecurity').textContent=location.protocol==='https:'?'HTTPS protected':'Plain HTTP';
+    $('railSecurityChip').textContent=location.protocol==='https:'?'TLS':'INSECURE';
+    $('railSecurityChip').className='status-chip'+(location.protocol==='https:'?'':' wait');
+    $('secureBadge').textContent=location.protocol==='https:'?'TLS · CHECKING':'HTTP · LOCAL NETWORK';
+    if(location.protocol!=='https:')toast('This dashboard is using HTTP. Use HTTPS for encrypted transport on an untrusted network.','error');
+    initEvents();updateClock();setInterval(updateClock,15000);await initCrypto();
+    $('secureBadge').textContent=location.protocol==='https:'?(state.encReady?'HTTPS · AES-GCM':'HTTPS'):(state.encReady?'HTTP · PAYLOAD AES':'HTTP · NO ENC');
+    connectSocket();loadFiles(false);
+  }
+  init();
+})();
+</script>
 </body>
 </html>

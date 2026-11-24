@@ -1908,3 +1908,191 @@ class RemoteKeyOverlay(QWidget):
         self.closed.emit()
 
 
+class VoiceDiagnosticsOverlay(QWidget):
+    """Real-time HUD diagnostic panel for DAZY voice pipelines, speaker identification, and DSP."""
+
+    closed = pyqtSignal()
+    _OW, _OH = 460, 560
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setStyleSheet(f"""
+            QWidget {{
+                background-color: {C.PANEL};
+                border: 1px solid {C.BORDER};
+                border-radius: 12px;
+                color: {C.TEXT};
+            }}
+        """)
+        self.setFixedSize(self._OW, self._OH)
+
+        main_lay = QVBoxLayout(self)
+        main_lay.setContentsMargins(20, 16, 20, 16)
+        main_lay.setSpacing(12)
+
+        # ── Header ────────────────────────────────────────────────────────────
+        hdr = QHBoxLayout()
+        title = QLabel("VOICE & DSP DIAGNOSTICS")
+        title.setFont(hud_font(12, QFont.Weight.Bold))
+        title.setStyleSheet(f"color: {C.PRI}; border: none; background: transparent; letter-spacing: 2px;")
+        hdr.addWidget(title)
+        hdr.addStretch()
+
+        close_btn = QPushButton("✕")
+        close_btn.setFixedSize(28, 28)
+        close_btn.setFont(hud_font(11, QFont.Weight.Bold))
+        close_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: {C.PANEL2};
+                color: {C.TEXT_DIM};
+                border: 1px solid {C.BORDER};
+                border-radius: 6px;
+            }}
+            QPushButton:hover {{
+                color: #ff6b6b;
+                border-color: #ff6b6b;
+            }}
+        """)
+        close_btn.clicked.connect(self._do_close)
+        hdr.addWidget(close_btn)
+        main_lay.addLayout(hdr)
+
+        # ── Grid / Rows of metrics ───────────────────────────────────────────
+        self._labels: dict[str, QLabel] = {}
+
+        def _make_row(label_text: str, key: str, default_val: str = "—") -> QHBoxLayout:
+            row = QHBoxLayout()
+            lbl = QLabel(label_text)
+            lbl.setFont(hud_font(9, QFont.Weight.Normal))
+            lbl.setStyleSheet(f"color: {C.TEXT_MED}; border: none; background: transparent;")
+            row.addWidget(lbl)
+            row.addStretch()
+
+            val = QLabel(default_val)
+            val.setFont(hud_font(9, QFont.Weight.Bold))
+            val.setStyleSheet(f"color: {C.ACC}; border: none; background: transparent;")
+            row.addWidget(val)
+            self._labels[key] = val
+            return row
+
+        box = QFrame()
+        box.setStyleSheet(f"background: {C.PANEL2}; border: 1px solid {C.BORDER}; border-radius: 8px; padding: 6px;")
+        box_lay = QVBoxLayout(box)
+        box_lay.setSpacing(8)
+
+        box_lay.addLayout(_make_row("Active Mic Streams (Max 1):", "mic_streams", "1 (Optimal)"))
+        box_lay.addLayout(_make_row("Active TTS Streams (Max 1):", "tts_streams", "0 (Idle)"))
+        box_lay.addLayout(_make_row("Active Speaker Identity:", "active_speaker", "Tarik (Speaker A)"))
+        box_lay.addLayout(_make_row("Speaker Confidence:", "speaker_conf", "98%"))
+        box_lay.addLayout(_make_row("Authoritative Voice:", "voice", "en-IN-NeerjaNeural"))
+        box_lay.addLayout(_make_row("Auto-Speak Mode:", "auto_mode", "WAKE_ONLY"))
+        box_lay.addLayout(_make_row("Current Turn ID:", "turn_id", "idle"))
+        box_lay.addLayout(_make_row("Playback Transaction ID:", "playback_id", "none"))
+        box_lay.addLayout(_make_row("Echo Frames Suppressed:", "echo_suppressed", "0"))
+        box_lay.addLayout(_make_row("Duplicate Events Blocked:", "dups_blocked", "0"))
+        box_lay.addLayout(_make_row("Barge-in Cancellations:", "cancellations", "0"))
+
+        main_lay.addWidget(box)
+
+        # Mode controls
+        mode_hdr = QLabel("AUTO-SPEAK MODE")
+        mode_hdr.setFont(hud_font(8, QFont.Weight.Bold))
+        mode_hdr.setStyleSheet(f"color: {C.TEXT_DIM}; border: none; background: transparent; letter-spacing: 1px;")
+        main_lay.addWidget(mode_hdr)
+
+        btn_row = QHBoxLayout()
+        btn_row.setSpacing(6)
+        self._mode_btns: dict[str, QPushButton] = {}
+        for m in ("WAKE_ONLY", "CONTINUOUS", "PUSH_TO_TALK", "SILENT"):
+            b = QPushButton(m.replace("_", " "))
+            b.setCheckable(True)
+            b.setFont(hud_font(8, QFont.Weight.Medium))
+            b.setStyleSheet(f"""
+                QPushButton {{
+                    background: {C.PANEL2};
+                    color: {C.TEXT};
+                    border: 1px solid {C.BORDER};
+                    border-radius: 4px;
+                    padding: 4px 6px;
+                }}
+                QPushButton:checked {{
+                    background: {C.PRI};
+                    color: #000000;
+                    font-weight: bold;
+                }}
+            """)
+            b.clicked.connect(lambda _=False, mode_name=m: self._set_mode(mode_name))
+            self._mode_btns[m] = b
+            btn_row.addWidget(b)
+        main_lay.addLayout(btn_row)
+
+        main_lay.addStretch()
+
+        # Update timer
+        self._timer = QTimer(self)
+        self._timer.setInterval(500)
+        self._timer.timeout.connect(self._refresh_metrics)
+
+    def showEvent(self, ev):
+        super().showEvent(ev)
+        self._refresh_metrics()
+        self._timer.start()
+
+    def hideEvent(self, ev):
+        super().hideEvent(ev)
+        self._timer.stop()
+
+    def _do_close(self):
+        self._timer.stop()
+        self.hide()
+        self.closed.emit()
+
+    def _set_mode(self, mode_name: str):
+        try:
+            from core.voice_session_manager import VoiceSessionManager
+            VoiceSessionManager.get_instance().set_auto_speak_mode(mode_name)
+            self._refresh_metrics()
+        except Exception:
+            pass
+
+    def _refresh_metrics(self):
+        try:
+            from core.voice_session_manager import VoiceSessionManager
+            vsm = VoiceSessionManager.get_instance()
+            diag = vsm.get_diagnostics()
+
+            mic_count = diag.get("active_mic_sessions", 0)
+            self._labels["mic_streams"].setText(f"{mic_count} (OK)" if mic_count <= 1 else f"⚠️ {mic_count} (Duplicate!)")
+            self._labels["mic_streams"].setStyleSheet(f"color: {C.PRI if mic_count <= 1 else '#ff6b6b'}; border: none; background: transparent;")
+
+            tts_count = diag.get("active_tts_sessions", 0)
+            self._labels["tts_streams"].setText(f"{tts_count} (Speaking)" if tts_count == 1 else "0 (Idle)")
+
+            spk = diag.get("active_speaker", "unknown")
+            conf = int(diag.get("speaker_confidence", 0.0) * 100)
+            self._labels["active_speaker"].setText(spk.title())
+            self._labels["speaker_conf"].setText(f"{conf}%")
+
+            self._labels["voice"].setText(str(diag.get("authoritative_voice", "en-IN-NeerjaNeural")))
+            curr_mode = str(diag.get("auto_speak_mode", "WAKE_ONLY"))
+            self._labels["auto_mode"].setText(curr_mode)
+
+            # Update mode buttons state
+            for m, btn in self._mode_btns.items():
+                btn.setChecked(m == curr_mode)
+
+            t_id = str(diag.get("current_turn_id", "idle"))
+            self._labels["turn_id"].setText(t_id[:12] if len(t_id) > 12 else t_id)
+
+            p_id = str(diag.get("current_playback_id", "none"))
+            self._labels["playback_id"].setText(p_id)
+
+            self._labels["echo_suppressed"].setText(str(diag.get("self_echo_suppressed_count", 0)))
+            self._labels["dups_blocked"].setText(str(diag.get("duplicate_events_dropped", 0)))
+            self._labels["cancellations"].setText(str(diag.get("cancellations_count", 0)))
+        except Exception:
+            pass
+
+
+

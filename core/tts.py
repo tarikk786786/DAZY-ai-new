@@ -109,6 +109,13 @@ class EdgeTTSEngine:
         self.voice = voice
 
     def speak(self, text: str) -> None:
+        try:
+            from core.pronunciation_engine import normalize_text_for_speech
+            text = normalize_text_for_speech(text)
+        except Exception:
+            pass
+        if not text.strip():
+            return
         loop = asyncio.new_event_loop()
         try:
             audio_bytes = loop.run_until_complete(self._synth(text))
@@ -437,6 +444,6 @@ def create_tts_player(config: dict) -> TTSPlayer:
         voice_id = config.get("tts_voice", "pNInz6obpgDQGcFmaJgB")
         engine   = ElevenLabsTTSEngine(api_key=api_key, voice_id=voice_id)
     else:   # edgetts (default)
-        voice  = config.get("tts_voice", "en-US-GuyNeural")
+        voice  = config.get("tts_voice", "en-IN-NeerjaNeural")
         engine = EdgeTTSEngine(voice=voice)
     return TTSPlayer(engine)

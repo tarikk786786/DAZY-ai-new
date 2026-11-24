@@ -81,6 +81,7 @@ from gui.overlays import (
     PluginSettingsOverlay,
     RemoteKeyOverlay,
     SetupOverlay,
+    VoiceDiagnosticsOverlay,
 )
 from gui.providers_panel import (
     ProvidersOverlay,
@@ -2871,6 +2872,22 @@ class MainWindow(QMainWindow):
         ov.show()
         ov.raise_()
         self._plugin_settings_overlay = ov   # keep a reference so it isn't GC'd
+
+    def show_voice_diagnostics(self):
+        """Displays real-time voice intelligence, DSP, and speaker identification overlay."""
+        cw = self.centralWidget()
+        if getattr(self, "_voice_diag_overlay", None) is None:
+            self._voice_diag_overlay = VoiceDiagnosticsOverlay(parent=cw)
+            self._voice_diag_overlay.closed.connect(lambda: setattr(self, "_voice_diag_overlay", None))
+        ov = self._voice_diag_overlay
+        ow, oh = VoiceDiagnosticsOverlay._OW, VoiceDiagnosticsOverlay._OH
+        ov.setGeometry(
+            (cw.width()  - ow) // 2,
+            (cw.height() - oh) // 2,
+            ow, min(oh, cw.height() - 20),
+        )
+        ov.show()
+        ov.raise_()
 
     # ── Clipboard intelligence ───────────────────────────────────────────────────
 

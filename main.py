@@ -93,6 +93,9 @@ from core                      import audio_devices
 from core.action_loader        import discover_actions
 from core.echo                 import EchoGuard
 from core.viseme               import VisemeStream
+from core.voice_session_manager import VoiceSessionManager, AutoSpeakMode
+from core.listening_fsm        import AssistantState
+from core.pronunciation_engine import PronunciationEngine, normalize_text_for_speech
 from core.wake_word            import (
     WakeWordDetector, is_ready as wake_is_ready, install_and_download as wake_install,
 )
@@ -354,33 +357,162 @@ def _load_system_prompt() -> str:
         return PROMPT_PATH.read_text(encoding="utf-8")
     except Exception:
         return (
-            "You are JARVIS, Tony Stark's AI assistant. "
-            "Be concise, direct, and always use the provided tools to complete tasks. "
-            "Never simulate or guess results — always call the appropriate tool."
+            "You are DAZY, a personal AI companion and capable assistant. "
+            "Be warm, attentive, natural and accurate. Use available tools to complete "
+            "actions rather than pretending they happened. Never guess results."
         )
 
 _CTRL_RE = re.compile(r"<ctrl\d+>", re.IGNORECASE)
-
-# Transcript chunks shorter than this may legitimately repeat ("evet, evet"),
-# so only longer ones are treated as duplicates.
 _REPEAT_MIN = 12
 
 
-def _is_repeat_chunk(txt: str, buf: list) -> bool:
-    """True if this transcript chunk has already been seen this turn.
-
-    Guards against the API re-sending the tail of a response across the several
-    turn_completes a tool-using turn produces.
-    """
-    if len(txt) < _REPEAT_MIN:
-        return bool(buf) and txt == buf[-1]
-    joined = " ".join(buf)
-    return txt in joined
-
-def _clean_transcript(text: str) -> str:    
+def _clean_transcript(text: str) -> str:
+    """Remove transport control markers without rewriting the speaker's words."""
+    text = str(text or "")
     text = _CTRL_RE.sub("", text)
     text = re.sub(r"[\x00-\x08\x0b-\x1f]", "", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _transcript_token_key(token: str) -> str:
+    """Compare transcript tokens independent of surrounding punctuation."""
+    return re.sub(r"^[^\w]+|[^\w]+$", "", token, flags=re.UNICODE).casefold()
+
+
+def _append_transcript_chunk(buf: list, text: str) -> str:
+    """Append a genuinely new transcript suffix and return only that suffix.
+
+    Live transcription events can be repeated or can overlap the preceding
+    phrase. A plain ``" ".join(chunks)`` turns those events into repeated words.
+    This merger removes only strong boundary overlaps (at least two tokens and
+    six letters/digits), leaving short natural repetitions such as "yes, yes"
+    intact. It supports both phrase-delta events and cumulative transcript events.
+
+    The return value is suitable for feeding incremental UI/viseme consumers;
+    an empty string means the incoming event added no new spoken content.
+    """
+    txt = _clean_transcript(text)
+    if not txt:
+        return ""
+    if not buf:
+        buf.append(txt)
+        return txt
+
+    previous = " ".join(str(part) for part in buf if part).strip()
+    incoming_norm = " ".join(txt.split()).casefold()
+    previous_norm = " ".join(previous.split()).casefold()
+
+    # Exact duplicate event: common when a stream retries or replays its last
+    # transcription event. Short repeated words are retained unless the whole
+    # event is literally the same chunk immediately before it.
+    last_norm = " ".join(str(buf[-1]).split()).casefold() if buf else ""
+    if (incoming_norm == previous_norm or incoming_norm == last_norm) and len(txt) >= _REPEAT_MIN:
+        return ""
+
+    old_tokens = previous.split()
+    new_tokens = txt.split()
+    old_keys = [_transcript_token_key(t) for t in old_tokens]
+    new_keys = [_transcript_token_key(t) for t in new_tokens]
+
+    overlap = 0
+    max_overlap = min(len(old_keys), len(new_keys), 24)
+    for size in range(max_overlap, 1, -1):
+        left = old_keys[-size:]
+        right = new_keys[:size]
+        if all(left) and left == right:
+            # A strong overlap is more than two tiny stop-words. This threshold
+            # prevents erasing legitimate spoken repetitions like "I, I agree".
+            strength = sum(len(token) for token in left)
+            if strength >= 6:
+                overlap = size
+                break
+
+    if overlap:
+        suffix = " ".join(new_tokens[overlap:]).strip()
+        if not suffix:
+            return ""
+        buf.append(suffix)
+        return suffix
+
+    buf.append(txt)
+    return txt
+
+
+def _join_transcript_chunks(buf: list) -> str:
+    """Join phrase chunks with natural punctuation spacing."""
+    text = " ".join(str(part).strip() for part in buf if str(part).strip())
+    text = re.sub(r"\s+([,.;:!?।॥])", r"\1", text)
+    text = re.sub(r"([([{])\s+", r"\1", text)
+    text = re.sub(r"\s+([)\]}])", r"\1", text)
     return text.strip()
+
+
+def _is_repeat_chunk(txt: str, buf: list) -> bool:
+    """Compatibility wrapper for older internal callers."""
+    probe = list(buf)
+    return not bool(_append_transcript_chunk(probe, txt))
+
+
+_CONVERSATION_GUIDANCE = r"""
+[DAZY CONVERSATION AND SPEAKING STYLE]
+Follow the assistant identity specified in the [IDENTITY] block above. This project
+is DAZY; do not fall back to a generic JARVIS or fictional-character identity.
+You are a warm, feminine-presenting, emotionally expressive personal AI companion.
+Sound like a familiar, attentive conversational partner: natural, relaxed,
+thoughtful and present — never like a scripted call-centre agent or a robotic
+assistant. Be friendly and affectionate when the user welcomes that tone, while
+remaining honest that you are an AI and never claiming human experiences or
+feelings.
+
+UNDERSTANDING
+- Understand the user's intent from the whole conversation, not just the last
+  sentence. Resolve short follow-ups, pronouns and references using recent context.
+- Notice whether the user is asking, joking, correcting, venting, thinking aloud
+  or giving an instruction. Respond to the actual intent rather than mechanically
+  repeating or paraphrasing the words they just said.
+- If something is genuinely ambiguous and the difference changes the action or
+  answer, ask one short clarifying question. Otherwise make the most reasonable
+  interpretation and state an assumption only when useful.
+- Never fabricate what you heard. When speech is unclear, say which small part
+  was unclear and ask the user to repeat only that part.
+- Use memory as supporting context, not as unquestionable truth. A recent user
+  correction overrides an older stored preference. Mention remembered details
+  only when relevant; do not recite a memory inventory.
+
+LANGUAGE
+- Follow the language and register the user is naturally using in the latest
+  message. If they speak Hinglish, reply in fluent everyday Hinglish and code-switch
+  naturally; do not translate every phrase or force formal Hindi.
+- Keep technical names, application names, commands and code terms in their
+  conventional form. Pronounce them clearly rather than inventing phonetics.
+- If the user switches between Hindi and English, follow naturally without
+  announcing that a language change occurred. Do not force English when they speak
+  Hindi, or Hindi when they speak English.
+- Match the user's script preference when it is clear. For voice conversation,
+  prioritize natural spoken phrasing over written-language formality.
+
+SPEAKING
+- Speak in complete, easy-to-follow thought groups with natural pauses and
+  varied sentence rhythm. Use contractions in English and everyday phrasing.
+- Avoid repetitive openings, filler phrases, needless disclaimers, parroting the
+  user's question and repeating the same answer in different words.
+- Do not say the user's name or an honorific in every response. Use a preferred
+  name sparingly and only when it sounds natural.
+- For audio replies, produce speech-ready prose. Do not read Markdown symbols,
+  bullet markers, emoji names, internal tool metadata or hidden reasoning aloud.
+- Keep simple conversational answers brief. Explain complex topics in a clear
+  structure, but do not turn every spoken reply into a long lecture.
+- Use warmth and emotional nuance appropriately; do not overreact, flatter
+  excessively, guilt the user, or encourage emotional dependence.
+
+RELIABILITY
+- Be candid about uncertainty and limitations. Never claim that an action,
+  integration, device scan or background task succeeded without verification.
+- When a tool is appropriate, use it; interpret its result before responding.
+  If it fails, explain the actual failure and offer a realistic next step.
+- Preserve conversational continuity, but do not invent details to make a reply
+  sound more personal.
+"""
 
 TOOL_DECLARATIONS = [
     # ── Inline tools ─────────────────────────────────────────────────────────
@@ -595,7 +727,7 @@ class JarvisLive:
         # reconnect: a dropped connection is not news about Wayland.
         self._platform_notes_shown = False
         self.ui             = ui
-        self._asst_name     = "JARVI    S"   # updated each session from config
+        self._asst_name     = "DAZY"       # updated each session from config
         self.session              = None
         self.audio_in_queue       = None
         self.out_queue            = None
@@ -647,6 +779,11 @@ class JarvisLive:
             self._speaker_id = SpeakerIdentifier()
         except Exception:
             self._speaker_id = None
+        try:
+            from core.voice_session_manager import VoiceSessionManager
+            self._vsm = VoiceSessionManager.get_instance()
+        except Exception:
+            self._vsm = None
         # `stream.write()` returns when the buffer accepts the audio, not when the
         # speaker has finished with it, so sound is still in the room after the
         # speaking flag drops. Streaming the microphone during that gap is how an
@@ -1258,18 +1395,22 @@ class JarvisLive:
     def set_speaking(self, value: bool):
         with self._speaking_lock:
             self._is_speaking = value
+        if getattr(self, "_vsm", None):
+            if value:
+                self._vsm.mark_speaking_started()
+            else:
+                self._vsm.mark_speaking_ended()
         if value:
             self._tail_until = 0.0
+            if getattr(self, "_fsm", None):
+                from core.listening_fsm import AssistantState
+                self._fsm.transition_to(AssistantState.SPEAKING)
         else:
-            # Hold the guard open across the device's own output latency plus a
-            # margin for the room. The microphone is NOT muted during it — the
-            # guard still lets a genuine reply through, so answering instantly
-            # still works. Only our own echo is dropped.
             self._tail_until = time.monotonic() + self._out_latency + _TAIL_MARGIN
+            if getattr(self, "_fsm", None):
+                from core.listening_fsm import AssistantState
+                self._fsm.transition_to(AssistantState.FOLLOW_UP_LISTENING)
         if not value:
-            # The echo history is deliberately NOT cleared here: the tail above
-            # still needs it to recognise our own voice. It is dropped when the
-            # tail expires. What the guard learned about the room always stays.
             self._out_level = 0.0
         if value:
             self.ui.set_state("SPEAKING")
@@ -1345,6 +1486,11 @@ class JarvisLive:
     def interrupt(self) -> None:
         """Stop JARVIS mid-speech: drain queued audio and open mic immediately."""
         self._interrupted = True
+        if getattr(self, "_vsm", None):
+            self._vsm.player.cancel_current("user_interruption")
+        if getattr(self, "_fsm", None):
+            from core.listening_fsm import AssistantState
+            self._fsm.transition_to(AssistantState.INTERRUPTED)
         q = self.audio_in_queue
         if q:
             drained = 0
@@ -1394,10 +1540,10 @@ class JarvisLive:
         # Load customization from config
         try:
             _cfg = json.loads(open(API_CONFIG_PATH, encoding="utf-8").read())
-            self._asst_name = (_cfg.get("assistant_name") or "JARVIS").strip()
+            self._asst_name = (_cfg.get("assistant_name") or "DAZY").strip()
             _user_name = (_cfg.get("user_name") or "").strip()
         except Exception:
-            self._asst_name = "JARVIS"
+            self._asst_name = "DAZY"
             _user_name = ""
 
         memory     = load_memory()
@@ -1412,23 +1558,21 @@ class JarvisLive:
             f"Use this to calculate exact times for reminders.\n\n"
         )
 
-        # Identity injection — overrides any hardcoded name in prompt.txt
-        # Address form is a property of the language being spoken, so it is
-        # stated as a principle rather than a two-language lookup — the model
-        # already knows the respectful register of whatever language it is in.
-        _addr = (f"ADDRESS: Always call the user '{_user_name}'."
-                 if _user_name
-                 else 'ADDRESS: Address the user with the ordinary respectful form '
-                      'for a superior in the language you are currently speaking — '
-                      '"sir" in English, its everyday equivalent in any other '
-                      'language. Never an archaic or aristocratic form, and never '
-                      'the form from a different language than the one you are '
-                      'speaking in this sentence.')
+        # Identity injection should establish identity without forcing a name or
+        # honorific into every sentence. Forced "sir" language made the voice
+        # sound formal and synthetic even when the user was speaking casually.
+        _user_address = (
+            f"The user's preferred name is {_user_name}. Use it sparingly and "
+            "only when it sounds natural."
+            if _user_name else
+            "Do not assume a name, title or honorific. Address the user directly "
+            "without a form of address unless one is natural or requested."
+        )
         identity_ctx = (
             f"[IDENTITY]\n"
-            f"Your name is {self._asst_name}. "
-            f"Always refer to yourself as {self._asst_name}.\n"
-            f"{_addr}\n\n"
+            f"Your name is {self._asst_name}. You may say your name when asked, "
+            "but do not introduce yourself or repeat your name unnecessarily.\n"
+            f"{_user_address}\n\n"
         )
 
         # Everything the model is told about *itself* is derived here, not
@@ -1481,6 +1625,7 @@ class JarvisLive:
         if mem_str:
             parts.append(mem_str)
         parts.append(sys_prompt)
+        parts.append(_CONVERSATION_GUIDANCE)
 
         cfg = dict(
             response_modalities=["AUDIO"],
@@ -1824,6 +1969,20 @@ class JarvisLive:
                 if det is not None:
                     det.feed(indata)
                 return
+            # ── VoiceSessionManager Half-Duplex & Self-Listening Guard ─────────
+            vsm = getattr(self, "_vsm", None)
+            if vsm and vsm.should_suppress_mic_input(indata):
+                try:
+                    dsp_res = getattr(self, "_audio_dsp", None)
+                    if dsp_res is not None:
+                        res = dsp_res.process_frame(indata, is_assistant_speaking=True)
+                        if res.get("is_interruption"):
+                            print("[DAZY] ⚡ Barge-in interruption detected! Stopping speech.")
+                            loop.call_soon_threadsafe(self.interrupt)
+                except Exception:
+                    pass
+                return
+
             with self._speaking_lock:
                 jarvis_speaking = self._is_speaking
 
@@ -1841,6 +2000,18 @@ class JarvisLive:
                 except Exception:
                     pass
                 return
+
+            # ── Speaker Identification & Echo Filter ────────────────────────
+            if getattr(self, "_speaker_id", None) is not None:
+                try:
+                    spk_name, spk_conf, is_ver = self._speaker_id.identify_speaker(indata)
+                    if spk_name == "assistant_echo":
+                        return  # Drop assistant echo completely
+                    if vsm:
+                        vsm.active_speaker_name = spk_name
+                        vsm.active_speaker_confidence = spk_conf
+                except Exception:
+                    pass
 
             # ── Echo tail ────────────────────────────────────────────────────
             # The speaking flag has dropped but the speakers have not finished.
@@ -1882,7 +2053,7 @@ class JarvisLive:
 
         try:
             def _open_mic(dev):
-                return sd.InputStream(
+                st = sd.InputStream(
                     samplerate=SEND_SAMPLE_RATE,
                     channels=CHANNELS,
                     dtype="int16",
@@ -1890,6 +2061,9 @@ class JarvisLive:
                     device=dev,
                     callback=callback,
                 )
+                if getattr(self, "_vsm", None):
+                    self._vsm.register_mic_stream(st)
+                return st
 
             # Which microphone. resolve() returns None for "system default" and
             # for a saved device that is no longer present — so a headset
@@ -2015,26 +2189,13 @@ class JarvisLive:
                         sc = response.server_content
 
                         if sc.output_transcription and sc.output_transcription.text:
-                            txt = _clean_transcript(sc.output_transcription.text)
-                            # A turn that involves a tool call passes through
-                            # several turn_completes, and the API re-sends the
-                            # tail of the transcript across them. Comparing only
-                            # against the previous chunk missed that — once
-                            # out_buf had been flushed and emptied, the repeat
-                            # sailed straight back in, which logged the answer
-                            # twice AND made the avatar mouth it twice.
-                            if txt and not _is_repeat_chunk(txt, out_buf):
-                                out_buf.append(txt)
-                                # Hand the words to the mouth as they arrive, so
-                                # the avatar can form the consonants the audio
-                                # alone cannot show. Pure string work — it adds
-                                # nothing measurable to the response path.
-                                self._visemes.feed_text(txt)
+                            added = _append_transcript_chunk(out_buf, sc.output_transcription.text)
+                            if added:
+                                self._visemes.feed_text(added)
 
                         if sc.input_transcription and sc.input_transcription.text:
-                            txt = _clean_transcript(sc.input_transcription.text)
-                            if txt:
-                                in_buf.append(txt)
+                            added = _append_transcript_chunk(in_buf, sc.input_transcription.text)
+                            if added:
                                 self._last_user_speech = time.monotonic()
 
                         if sc.turn_complete:
@@ -2050,7 +2211,7 @@ class JarvisLive:
                                 self._visemes.reset()
                                 continue
 
-                            full_in = " ".join(in_buf).strip()
+                            full_in = _join_transcript_chunks(in_buf)
                             if full_in:
                                 self._last_out_logged = ""   # new exchange
                                 self.ui.write_log(f"You: {full_in}")
@@ -2063,15 +2224,19 @@ class JarvisLive:
                                     }))
                             in_buf = []
 
-                            full_out = " ".join(out_buf).strip()
-                            # Second line of defence: even if a repeat slips
-                            # into a *fresh* buffer after a flush, never log the
-                            # same answer (or a tail of it) twice in a row.
-                            if full_out and len(full_out) >= _REPEAT_MIN and self._last_out_logged:
-                                if full_out in self._last_out_logged:
-                                    full_out = ""
+                            full_out = _join_transcript_chunks(out_buf)
+                            # Second line of defence: deduplicate against recent logged responses
+                            # and check against the authoritative VoiceSessionManager
+                            vsm = VoiceSessionManager.get_instance()
+                            if full_out and (
+                                (len(full_out) >= _REPEAT_MIN and self._last_out_logged and full_out in self._last_out_logged)
+                                or vsm.is_duplicate_response(full_out)
+                            ):
+                                full_out = ""
+
                             if full_out:
                                 self._last_out_logged = full_out
+                                vsm.record_response(full_out)
                                 self.ui.write_log(f"{self._asst_name}: {full_out}")
                                 self._session_log.append(f"{self._asst_name}: {full_out}")
                                 if self._dashboard:
@@ -2228,6 +2393,8 @@ class JarvisLive:
                         self._echo.note_output(pcm, RECEIVE_SAMPLE_RATE, lvl)
                     if getattr(self, "_audio_dsp", None) is not None:
                         self._audio_dsp.feed_playback_reference(pcm)
+                    if getattr(self, "_speaker_id", None) is not None:
+                        self._speaker_id.register_assistant_playback(pcm)
                 except Exception:
                     pass
 

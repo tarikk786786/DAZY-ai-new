@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "description": "User-editable pronunciation dictionary for DAZY speech synthesis",
+  "entries": {
+    "Tarik": {
+      "spoken": "Tarik",
+      "phonetic": "तारीक",
+      "lang": "hinglish",
+      "note": "Owner name explicit pronunciation"
+    },
+    "tarikk786786": {
+      "spoken": "Tarik",
+      "phonetic": "तारीक",
+      "lang": "hinglish",
+      "note": "Username normalization"
+    },
+    "DAZY": {
+      "spoken": "Daisy",
+      "phonetic": "Daisy",
+      "lang": "en",
+      "note": "Assistant name"
+    },
+    "AI": {
+      "spoken": "A.I.",
+      "phonetic": "A.I.",
+      "lang": "en",
+      "note": "Artificial Intelligence acronym"
+    },
+    "API": {
+      "spoken": "A.P.I.",
+      "phonetic": "A.P.I.",
+      "lang": "en",
+      "note": "API acronym"
+    },
+    "UI": {
+      "spoken": "U.I.",
+      "phonetic": "U.I.",
+      "lang": "en",
+      "note": "User Interface"
+    },
+    "GUI": {
+      "spoken": "gooey",
+      "phonetic": "G.U.I.",
+      "lang": "en",
+      "note": "Graphical User Interface"
+    },
+    "DB": {
+      "spoken": "database",
+      "phonetic": "database",
+      "lang": "en",
+      "note": "Database abbreviation"
+    },
+    "TTS": {
+      "spoken": "T.T.S.",
+      "phonetic": "T.T.S.",
+      "lang": "en",
+      "note": "Text to Speech acronym"
+    },
+    "STT": {
+      "spoken": "S.T.T.",
+      "phonetic": "S.T.T.",
+      "lang": "en",
+      "note": "Speech to Text acronym"
+    },
+    "LLM": {
+      "spoken": "L.L.M.",
+      "phonetic": "L.L.M.",
+      "lang": "en",
+      "note": "Large Language Model acronym"
+    },
+    "PR": {
+      "spoken": "P.R.",
+      "phonetic": "P.R.",
+      "lang": "en",
+      "note": "Pull Request acronym"
+    },
+    "WiFi": {
+      "spoken": "Wi-Fi",
+      "phonetic": "Wi-Fi",
+      "lang": "en",
+      "note": "Wireless Network"
+    },
+    "kya": {
+      "spoken": "kya",
+      "phonetic": "क्या",
+      "lang": "hi",
+      "note": "Hinglish interrogative"
+    },
+    "hain": {
+      "spoken": "hain",
+      "phonetic": "हैं",
+      "lang": "hi",
+      "note": "Hinglish plural auxiliary"
+    },
+    "hoon": {
+      "spoken": "hoon",
+      "phonetic": "हूँ",
+      "lang": "hi",
+      "note": "Hinglish first person auxiliary"
+    }
+  }
+}

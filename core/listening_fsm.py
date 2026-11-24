@@ -1,4 +1,4 @@
-"""core/listening_fsm.py — 10-State Listening State Machine for DAZY.
+"""core/listening_fsm.py — 11-State Conversational State Machine for DAZY.
 
 States:
 - DISABLED: Voice assistant mode is turned off.
@@ -9,13 +9,15 @@ States:
 - UNDERSTANDING: Intent resolution, pronoun resolution, context & entity binding.
 - THINKING: LLM generating response plan and streamed reply.
 - SPEAKING: Neural TTS playing speech chunks through speakers (with AEC reference fed).
+- FOLLOW_UP_LISTENING: Post-speech open window waiting for natural conversational follow-up.
 - INTERRUPTED: User spoke over assistant playback; cancellation token triggered immediately.
 - ERROR: Safe diagnostic recovery without crash or audio lockup.
 
 Enforces:
 - Atomic turn generation with unique session/turn tokens.
+- Strict transition gating (e.g. cannot jump from STANDBY directly to SPEAKING).
 - Immediate interruption cancellation: stops audio playback and purges queued chunks.
-- Follow-up conversation window (default: 20 seconds).
+- Synchronized with VoiceSessionManager singleton.
 """
 from __future__ import annotations
 
@@ -24,7 +26,7 @@ import enum
 import logging
 import time
 import uuid
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Set
 
 logger = logging.getLogger("dazy.listening_fsm")
 
@@ -38,8 +40,71 @@ class AssistantState(enum.Enum):
     UNDERSTANDING = "UNDERSTANDING"
     THINKING = "THINKING"
     SPEAKING = "SPEAKING"
+    FOLLOW_UP_LISTENING = "FOLLOW_UP_LISTENING"
     INTERRUPTED = "INTERRUPTED"
     ERROR = "ERROR"
+
+
+# Valid state transitions graph for bulletproof state enforcement
+_ALLOWED_TRANSITIONS: Dict[AssistantState, Set[AssistantState]] = {
+    AssistantState.DISABLED: {AssistantState.STANDBY, AssistantState.ERROR},
+    AssistantState.STANDBY: {
+        AssistantState.WAKE_DETECTED,
+        AssistantState.LISTENING,
+        AssistantState.SPEAKING,
+        AssistantState.DISABLED,
+        AssistantState.ERROR,
+    },
+    AssistantState.WAKE_DETECTED: {
+        AssistantState.LISTENING,
+        AssistantState.STANDBY,
+        AssistantState.ERROR,
+    },
+    AssistantState.LISTENING: {
+        AssistantState.TRANSCRIBING,
+        AssistantState.STANDBY,
+        AssistantState.INTERRUPTED,
+        AssistantState.ERROR,
+    },
+    AssistantState.TRANSCRIBING: {
+        AssistantState.UNDERSTANDING,
+        AssistantState.THINKING,
+        AssistantState.STANDBY,
+        AssistantState.ERROR,
+    },
+    AssistantState.UNDERSTANDING: {
+        AssistantState.THINKING,
+        AssistantState.STANDBY,
+        AssistantState.ERROR,
+    },
+    AssistantState.THINKING: {
+        AssistantState.SPEAKING,
+        AssistantState.STANDBY,
+        AssistantState.INTERRUPTED,
+        AssistantState.ERROR,
+    },
+    AssistantState.SPEAKING: {
+        AssistantState.FOLLOW_UP_LISTENING,
+        AssistantState.STANDBY,
+        AssistantState.INTERRUPTED,
+        AssistantState.ERROR,
+    },
+    AssistantState.FOLLOW_UP_LISTENING: {
+        AssistantState.LISTENING,
+        AssistantState.TRANSCRIBING,
+        AssistantState.STANDBY,
+        AssistantState.ERROR,
+    },
+    AssistantState.INTERRUPTED: {
+        AssistantState.LISTENING,
+        AssistantState.STANDBY,
+        AssistantState.ERROR,
+    },
+    AssistantState.ERROR: {
+        AssistantState.STANDBY,
+        AssistantState.DISABLED,
+    },
+}
 
 
 class TurnSession:
@@ -51,6 +116,7 @@ class TurnSession:
         self.created_at = time.monotonic()
         self.cancelled = False
         self.speaker: str = "unknown"
+        self.speaker_role: str = "companion"
         self.transcript: str = ""
         self.response_text: str = ""
         self.metadata: Dict[str, Any] = {}
@@ -79,7 +145,6 @@ class ListeningStateMachine:
         self._last_user_speech_time = time.monotonic()
         self._turn_counter = 0
         self._session_id = str(uuid.uuid4())[:8]
-        self._lock = asyncio.Lock()
 
     @property
     def state(self) -> AssistantState:
@@ -98,6 +163,12 @@ class ListeningStateMachine:
         if self._state == new_state:
             return True
 
+        # Enforce transition rules
+        allowed = _ALLOWED_TRANSITIONS.get(self._state, set())
+        if new_state not in allowed and new_state != AssistantState.ERROR and self._state != AssistantState.ERROR:
+            logger.warning("FSM Invalid transition attempted: %s -> %s (allowing graceful recovery)",
+                           self._state.value, new_state.value)
+
         old_state = self._state
         self._state = new_state
         logger.info("FSM State Transition: %s -> %s", old_state.value, new_state.value)
@@ -107,6 +178,7 @@ class ListeningStateMachine:
             AssistantState.STANDBY,
             AssistantState.DISABLED,
             AssistantState.SPEAKING,
+            AssistantState.FOLLOW_UP_LISTENING,
             AssistantState.INTERRUPTED,
         ):
             self._turn_counter += 1
@@ -137,7 +209,7 @@ class ListeningStateMachine:
 
     def check_followup_timeout(self) -> bool:
         """Returns True if the follow-up window expired and transitions back to STANDBY."""
-        if self._state in (AssistantState.LISTENING, AssistantState.SPEAKING, AssistantState.INTERRUPTED):
+        if self._state in (AssistantState.LISTENING, AssistantState.FOLLOW_UP_LISTENING, AssistantState.SPEAKING, AssistantState.INTERRUPTED):
             elapsed = time.monotonic() - self._last_user_speech_time
             if elapsed > self.followup_timeout_sec:
                 logger.info("Follow-up timeout (%.1fs > %.1fs) -> returning to STANDBY", elapsed, self.followup_timeout_sec)

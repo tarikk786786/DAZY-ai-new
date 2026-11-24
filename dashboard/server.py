@@ -1046,6 +1046,76 @@ class DashboardServer:
                 self._wake_callback()
             return JSONResponse({"ok": True})
 
+        @app.get("/api/voice-diagnostics")
+        async def voice_diagnostics_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.voice_session_manager import VoiceSessionManager
+                diag = VoiceSessionManager.get_instance().get_diagnostics()
+                from core.speaker_id import SpeakerIdentifier
+                spk = SpeakerIdentifier()
+                diag["enrolled_speakers"] = spk.list_enrolled_speakers()
+                return JSONResponse({"ok": True, "diagnostics": diag})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/voice-mode")
+        async def voice_mode_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            body = await req.json()
+            mode = body.get("mode", "WAKE_ONLY")
+            try:
+                from core.voice_session_manager import VoiceSessionManager
+                VoiceSessionManager.get_instance().set_auto_speak_mode(mode)
+                return JSONResponse({"ok": True, "mode": mode})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+
+        @app.get("/api/pronunciation")
+        async def get_pronunciation_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.pronunciation_engine import PronunciationEngine
+                pe = PronunciationEngine.get_instance()
+                return JSONResponse({"ok": True, "entries": pe.get_dictionary()})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/pronunciation")
+        async def save_pronunciation_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                word = body.get("word", "").strip()
+                spoken = body.get("spoken", "").strip()
+                phonetic = body.get("phonetic", "").strip()
+                lang = body.get("lang", "hinglish")
+                note = body.get("note", "")
+                if not word:
+                    return JSONResponse({"ok": False, "error": "Word is required"}, status_code=400)
+                from core.pronunciation_engine import PronunciationEngine
+                pe = PronunciationEngine.get_instance()
+                success = pe.set_entry(word, spoken, phonetic, lang, note)
+                return JSONResponse({"ok": success, "entries": pe.get_dictionary()})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.delete("/api/pronunciation/{word}")
+        async def delete_pronunciation_ep(word: str, req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.pronunciation_engine import PronunciationEngine
+                pe = PronunciationEngine.get_instance()
+                success = pe.remove_entry(word)
+                return JSONResponse({"ok": success, "entries": pe.get_dictionary()})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         # ── Phone mic real-time audio → Gemini Live ──────────────────────────
 
         @app.websocket("/ws/phone-audio")

@@ -446,6 +446,8 @@ class PipelineEngine:
         self._gen = asyncio.create_task(self._generate())
 
     async def _generate(self) -> None:
+        from core.voice_session_manager import VoiceSessionManager
+        VoiceSessionManager.get_instance().clear_startup_guard()
         said: list[str] = []
         calls: list[FunctionCall] = []
         t0 = time.monotonic()
@@ -602,6 +604,20 @@ class PipelineEngine:
         text = _speakable(text)
         if not text.strip():
             return
+
+        from core.voice_session_manager import VoiceSessionManager, AutoSpeakMode
+        vsm = VoiceSessionManager.get_instance()
+        if vsm.auto_speak_mode == AutoSpeakMode.SILENT:
+            return
+        if vsm.startup_silence_guard and not getattr(self, "auto_turn", True):
+            return
+        if vsm.is_duplicate_response(text):
+            print(f"[DAZY] 🛡️ Duplicate response suppressed: '{text[:40]}...'")
+            return
+
+        turn_id = vsm.active_turn_id or str(time.time())
+        playback_id = vsm.player.start_playback_transaction(turn_id, getattr(self._tts, "id", "primary_tts"))
+
         from . import audio as _a
 
         t0 = time.monotonic()
@@ -625,18 +641,20 @@ class PipelineEngine:
                 pass
         try:
             async for pcm in self._tts.speak(text, **kwargs):
+                if vsm.player.is_turn_cancelled(turn_id):
+                    print(f"[DAZY] Playback cancelled for turn {turn_id}")
+                    break
                 if pcm:
                     if first is None:
                         first = time.monotonic() - t0
                     total += len(pcm)
                     await self._emit(Msg.audio(pcm))
+            vsm.player.finish_playback_transaction(playback_id)
         except asyncio.CancelledError:
+            vsm.player.cancel_current("cancelled_error")
             raise
         except Exception as e:
-            # Speech failing is NOT the model failing, and saying so was wrong
-            # in a way that cost real time: with a broken voice the assistant
-            # reported "I could not reach the model", which sent the search to
-            # the language model — the one part that was working.
+            vsm.player.cancel_current("primary_tts_error")
             self._report("the voice", self._tts, e)
             return
 
@@ -964,9 +982,13 @@ def _signature(call) -> str:
 
 def _speakable(text: str) -> str:
     """What is left of a reply once the parts a voice cannot say are gone."""
-    cleaned = _UNSPEAKABLE.sub(" ", text or "")
-    # Collapse the gaps the removal leaves, without touching line structure.
-    return re.sub(r"[ 	]{2,}", " ", cleaned).strip()
+    try:
+        from core.pronunciation_engine import normalize_text_for_speech
+        return normalize_text_for_speech(text)
+    except Exception:
+        cleaned = _UNSPEAKABLE.sub(" ", text or "")
+        # Collapse the gaps the removal leaves, without touching line structure.
+        return re.sub(r"[ \t]{2,}", " ", cleaned).strip()
 
 
 def _take_sentences(buf: str) -> tuple:
