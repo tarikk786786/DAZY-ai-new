@@ -310,4 +310,38 @@ def test_mcp_security_ssrf_and_sensitive_checks():
     assert "SSRF" in reason_ssrf
 
 
+def test_repo_radar_and_user_profile_endpoints():
+    import time
+    from starlette.testclient import TestClient
+    from dashboard.server import DashboardServer
+
+    server = DashboardServer()
+    token = "test_token_tarik_123"
+    server._tokens[token] = time.time()
+    app = server._build_app()
+
+    client = TestClient(app)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 1. Profile /api/me
+    res_me = client.get("/api/me", headers=headers)
+    assert res_me.status_code == 200
+    data_me = res_me.json()
+    assert data_me["id"] == "usr_tarik"
+    assert data_me["displayName"] == "Tarik"
+    assert data_me["timezone"] == "Asia/Kolkata"
+
+    # 2. Repo Radar /api/os/repo-radar
+    res_radar = client.get("/api/os/repo-radar", headers=headers)
+    assert res_radar.status_code == 200
+    data_radar = res_radar.json()
+    assert "repositories" in data_radar
+    repos = {r["name"]: r for r in data_radar["repositories"]}
+    assert "nanobot" in repos
+    assert repos["nanobot"]["resource_rating"] == "light"
+    assert "Silero VAD" in repos
+
+
+
+
 
