@@ -43,7 +43,7 @@ pyautogui
 pyperclip
 
 # ── Vision & media ────────────────────────────────────────────────────────────
-pillow>=10,<13
+pillow>=13.0.0
 opencv-python>=4.8,<5
 mss>=9,<11
 
@@ -55,7 +55,7 @@ python-pptx                  # file_processor — presentation reading
 # ── Remote dashboard (control from your phone) ────────────────────────────────
 fastapi>=0.110,<1
 uvicorn[standard]>=0.27,<1
-cryptography>=42,<50
+cryptography>=50.0.0
 python-multipart>=0.0.9,<1
 qrcode[pil]>=7,<9
 

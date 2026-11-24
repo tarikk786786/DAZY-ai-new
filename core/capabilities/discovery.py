@@ -10,9 +10,7 @@ and registers them into CapabilityRegistry.
 from __future__ import annotations
 
 import importlib
-import inspect
 from pathlib import Path
-from typing import Any
 
 from core.capabilities.registry import Capability, get_capability_registry
 

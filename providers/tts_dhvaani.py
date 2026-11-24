@@ -8,9 +8,8 @@ Secondary Indian voice engine for DAZY:
 """
 from __future__ import annotations
 
-import asyncio
 from importlib.util import find_spec
-from typing import Any, AsyncIterator, Optional
+from typing import Any, AsyncIterator
 
 from core.voice_style import format_for_dhvaani
 from . import audio

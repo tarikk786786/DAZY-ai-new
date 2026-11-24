@@ -42,7 +42,6 @@ IT FOLLOWS THE LANGUAGE BEING SPOKEN, WITHOUT GUESSING AT IT
 from __future__ import annotations
 
 import asyncio
-import json
 import os
 import shutil
 import threading

@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import collections
 import logging
-import os
 import queue
 import threading
 import time
@@ -96,7 +95,6 @@ class DualWakeWordDetector:
 
         # 2. Try openWakeWord as secondary/fallback
         try:
-            import openwakeword
             from openwakeword.model import Model
             # Build models dict
             self._oww_model = Model(inference_framework="onnx")

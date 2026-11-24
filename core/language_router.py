@@ -6,7 +6,6 @@ while preserving English technical terms, app names, file paths, and command tok
 from __future__ import annotations
 
 import re
-from typing import Any
 
 # Common technical and command tokens to protect from transliteration/mangling
 PROTECTED_TOKENS = {
@@ -69,7 +68,7 @@ def detect_language(text: str) -> str:
     # 2. Romanized checks
     words = [re.sub(r"[^\w]", "", w.lower()) for w in text.split()]
     hinglish_count = sum(1 for w in words if w in _HINGLISH_MARKERS)
-    
+
     if hinglish_count >= 1:
         return "hi-en"
 

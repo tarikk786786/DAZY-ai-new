@@ -65,7 +65,7 @@ def format_for_svara(
     """
     clean_text = text.strip()
     emo_tag = SVARA_EMOTION_MAP.get(emotion.lower())
-    
+
     if emo_tag:
         tagged_text = f"{clean_text} <{emo_tag}>"
     else:
@@ -94,10 +94,10 @@ def format_for_higgs(
     """
     higgs_emo = HIGGS_EMOTION_MAP.get(emotion.lower(), "contentment")
     clamped_intensity = max(0.1, min(1.0, round(intensity, 2)))
-    
+
     # Tagged text formatting for expressive rendering
     tagged_text = f"<emotion={higgs_emo} intensity={clamped_intensity}> {text.strip()} </emotion>"
-    
+
     return {
         "text": tagged_text,
         "raw_text": text,

@@ -597,7 +597,7 @@ def test_voice_folder_is_writable():
         probe.write_text("", encoding="utf-8")
         probe.unlink()
         ok = True
-    except Exception as e:
+    except Exception:
         ok = False
     check(f"the voice folder can be written to ({d})", ok)
     check("a read-only install falls back to a per-user folder",

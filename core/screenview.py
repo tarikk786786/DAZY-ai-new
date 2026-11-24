@@ -82,7 +82,6 @@ WHAT THIS FILE DOES NOT DO
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 import os
 import platform

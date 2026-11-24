@@ -1,13 +1,11 @@
 """core/mcp/manager.py — Dynamic MCP Manager and lifecycle controller."""
 from __future__ import annotations
 
-import asyncio
-from typing import Any, Optional
+from typing import Optional
 
 from core.capabilities.registry import Capability, get_capability_registry
 from core.mcp.client import MCPClient
 from core.mcp.registry import MCPServerRecord, get_mcp_registry
-from core.mcp.security import verify_mcp_call
 from core.mcp.tool_adapter import adapt_mcp_tool
 
 

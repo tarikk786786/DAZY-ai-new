@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from core.devices.models import DazyDevice, TrustLevel
+from core.devices.models import TrustLevel
 from core.devices.pairing import PairingManager, pairing_manager
 from memory.dazy_memory import DazyMemoryEngine, dazy_memory
 

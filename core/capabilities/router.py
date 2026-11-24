@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Optional
+from typing import Any
 
-from core.capabilities.registry import Capability, get_capability_registry
+from core.capabilities.registry import get_capability_registry
 
 
 def execute_capability(

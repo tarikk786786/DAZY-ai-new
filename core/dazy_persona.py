@@ -88,7 +88,7 @@ def build_dazy_system_prompt(base_prompt: str = "", user_preferences: Optional[d
     assistant = cfg.get("assistant", {})
     name = assistant.get("name", "DAZY")
     pers = assistant.get("personality", {})
-    
+
     pref_block = ""
     if user_preferences:
         nickname = user_preferences.get("nickname")

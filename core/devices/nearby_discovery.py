@@ -5,14 +5,13 @@ or Bluetooth without continuous invasive scanning or false distance claims.
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Optional
 
-from core.devices.models import DazyDevice, DeviceType, TrustLevel
+from core.devices.models import DeviceType, TrustLevel
 from core.devices.pairing import PairingManager, pairing_manager
 
 logger = logging.getLogger("dazy.nearby")

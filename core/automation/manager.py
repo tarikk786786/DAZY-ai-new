@@ -10,9 +10,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 from core.automation.approval import require_approval_for_action
-from core.automation.planner import AutomationPlanner, WorkflowSpec
-from core.automation.suggestion_engine import SuggestionEngine, get_suggestion_engine
-from core.mcp.activepieces_adapter import ActivepiecesMCPAdapter, get_activepieces_adapter
+from core.automation.planner import AutomationPlanner
+from core.automation.suggestion_engine import get_suggestion_engine
+from core.mcp.activepieces_adapter import get_activepieces_adapter
 
 
 class AutomationManager:

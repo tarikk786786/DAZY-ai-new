@@ -8,13 +8,12 @@ Specialized LLM provider for DAZY:
 """
 from __future__ import annotations
 
-import asyncio
 from importlib.util import find_spec
-from typing import Any, AsyncIterator, Optional
+from typing import AsyncIterator
 
 from core.dazy_persona import build_dazy_system_prompt
 from memory.dazy_preferences import load_dazy_preferences
-from .base import DEFAULT_CAPS, Field, FunctionCall
+from .base import Field
 from .llm_openai import OpenAILLM
 
 

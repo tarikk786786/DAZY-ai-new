@@ -5,10 +5,8 @@ with zero cost, zero downloads, and sweet romantic tone.
 """
 from __future__ import annotations
 
-import asyncio
-import io
 import logging
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator
 
 import edge_tts
 import miniaudio

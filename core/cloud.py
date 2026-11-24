@@ -85,7 +85,7 @@ from pathlib import Path
 
 # The time rules are shared with the desktop; the names this file has always
 # used stay importable from here.
-from core.routines.rules import ALL_DAYS, describe_rule, next_fire, parse_days, parse_hhmm, rule_from_args
+from core.routines.rules import ALL_DAYS, describe_rule, next_fire, parse_days, rule_from_args
 from core.routines.rules import hhmm as _hhmm
 
 BASE_DIR = Path(__file__).resolve().parent.parent

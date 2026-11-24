@@ -5,7 +5,6 @@ to manage, build, test, and run persistent 24/7 background workflows on Coolify/
 """
 from __future__ import annotations
 
-import json
 from typing import Any, Optional
 from integrations.credential_manager import get_credential_manager
 from integrations.http_client import get_shared_client

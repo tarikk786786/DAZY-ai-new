@@ -1,9 +1,6 @@
 """core/mcp/client.py — Protocol connection to an external MCP server."""
 from __future__ import annotations
 
-import asyncio
-import json
-import os
 import subprocess
 from typing import Any, Optional
 

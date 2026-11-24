@@ -33,7 +33,7 @@ import json
 import time
 import contextlib
 from importlib.util import find_spec
-from typing import Any, AsyncIterator, Optional
+from typing import Any, AsyncIterator
 
 from .base import DEFAULT_CAPS, Field, FunctionCall
 

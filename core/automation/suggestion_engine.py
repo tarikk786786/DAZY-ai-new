@@ -5,8 +5,8 @@ automations. Never activates workflows without explicit user approval.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass

@@ -6,11 +6,10 @@ a structured plan ready for synthesis.
 from __future__ import annotations
 
 import json
-import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Optional
 
-from core.emotion_controller import EmotionController, EmotionState, EMOTIONS
+from core.emotion_controller import EmotionController, EMOTIONS
 from core.language_router import detect_language, normalize_hinglish
 
 

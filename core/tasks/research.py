@@ -285,7 +285,7 @@ class ResearchRunner:
     def _on_page(self, requested: str, doc: dict) -> None:
         """A page was read in full: keep its text, and give the address it was
         asked for and the address it ended at (after redirects) one number."""
-        name = hashlib.sha1(_url_key(doc["url"]).encode("utf-8")).hexdigest()[:16] + ".txt"
+        name = hashlib.sha256(_url_key(doc["url"]).encode("utf-8")).hexdigest()[:16] + ".txt"
         (self.wd / "pages" / name).write_text(doc["text"], encoding="utf-8")
         data = self._sources()
         keys = {_url_key(requested), _url_key(doc["url"])}

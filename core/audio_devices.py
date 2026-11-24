@@ -640,13 +640,23 @@ def _fold(text: str) -> str:
         return "".join(c for c in str(text or "").lower() if c.isalnum())
 
 
-def get_output_volume(name: str = "") -> Optional[int]:
-    """Volume 0-100 of ONE output, or of the system default when unnamed.
+def _system_master_volume_endpoint():
+    """System-wide master audio volume endpoint for Windows (pycaw)."""
+    if _platform_is() != "Windows":
+        return None
+    try:
+        from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+        from comtypes import CLSCTX_ALL
+        dev = AudioUtilities.GetSpeakers()
+        if not dev:
+            return None
+        return dev.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None).QueryInterface(IAudioEndpointVolume)
+    except Exception:
+        return None
 
-    None where the platform will not report it — macOS and Linux have no
-    per-device volume through this plumbing, so a name there falls back to the
-    master level rather than silently answering about the wrong device.
-    """
+
+def get_output_volume(name: str = "") -> Optional[int]:
+    """Volume 0-100 of ONE output, or of the system default when unnamed."""
     endpoint = _endpoint_for(name)
     if endpoint is not None:
         try:
@@ -654,12 +664,13 @@ def get_output_volume(name: str = "") -> Optional[int]:
                 endpoint.GetMasterVolumeLevelScalar() * 100)))
         except Exception as e:
             print(f"[Audio] could not read '{name}' volume: {e}")
-    try:
-        from actions.computer_settings import volume_get
-        return volume_get()
-    except Exception as e:
-        print(f"[Audio] could not read the output volume: {e}")
-        return None
+    master = _system_master_volume_endpoint()
+    if master is not None:
+        try:
+            return max(0, min(100, round(master.GetMasterVolumeLevelScalar() * 100)))
+        except Exception:
+            pass
+    return None
 
 
 def set_output_volume(percent: int, name: str = "") -> bool:
@@ -680,11 +691,14 @@ def set_output_volume(percent: int, name: str = "") -> bool:
     if name:
         print(f"[Audio] '{name}' has no separate volume control here — "
               f"setting the system level instead.")
-    try:
-        from actions.computer_settings import volume_set, volume_get
-        volume_set(percent)
-        now = volume_get()
-        return now is None or abs(now - percent) <= 3
-    except Exception as e:
-        print(f"[Audio] could not set the output volume: {e}")
-        return False
+    master = _system_master_volume_endpoint()
+    if master is not None:
+        try:
+            master.SetMasterVolumeLevelScalar(percent / 100.0, None)
+            if percent > 0 and master.GetMute():
+                master.SetMute(0, None)
+            now = max(0, min(100, round(master.GetMasterVolumeLevelScalar() * 100)))
+            return abs(now - percent) <= 3
+        except Exception as e:
+            print(f"[Audio] could not set master output volume: {e}")
+    return False

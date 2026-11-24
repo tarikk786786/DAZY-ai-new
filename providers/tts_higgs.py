@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import asyncio
 from importlib.util import find_spec
-from typing import Any, AsyncIterator, Optional
+from typing import AsyncIterator
 
 from core.voice_style import format_for_higgs
 from . import audio

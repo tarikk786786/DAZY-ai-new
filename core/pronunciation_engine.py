@@ -188,10 +188,12 @@ class PronunciationEngine:
 
         raw = str(text)
 
-        # 1. Strip code blocks and keep inline code readable
-        raw = _MD_CODEBLOCK_RE.sub(" ", raw)
-        raw = _MD_INLINE_CODE_RE.sub(r"\1", raw)
+        # 1. Strip markdown links first (keeping label), then standalone URLs and code blocks
         raw = _MD_LINK_RE.sub(r"\1", raw)
+        raw = re.sub(r"https?://\S+", "link", raw)
+        raw = _MD_CODEBLOCK_RE.sub(" ", raw)
+        raw = re.sub(r"\|", " ", raw)  # Strip markdown table pipes while preserving cell text
+        raw = _MD_INLINE_CODE_RE.sub(r"\1", raw)
 
         # 2. Convert markdown headers: '# Header' -> 'Header.'
         raw = _MD_HEADER_RE.sub(r"\1.", raw)

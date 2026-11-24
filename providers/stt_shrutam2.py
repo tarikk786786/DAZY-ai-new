@@ -7,11 +7,9 @@ Primary ASR engine for DAZY:
 """
 from __future__ import annotations
 
-import asyncio
 import io
 import wave
 from importlib.util import find_spec
-from typing import Optional
 
 from . import audio
 from .base import DEFAULT_CAPS, Field

@@ -1,8 +1,6 @@
 """core/capabilities/evaluator.py — Evaluates capabilities and safety constraints."""
 from __future__ import annotations
 
-import inspect
-from typing import Any
 from core.capabilities.registry import Capability
 
 

@@ -5,7 +5,6 @@ producing validated emotional states and intensities for expressive voice synthe
 """
 from __future__ import annotations
 
-import math
 import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -180,7 +179,7 @@ class EmotionController:
     def step(self, user_text: str, audio_features: Optional[dict] = None) -> EmotionState:
         """Fuses text, acoustic features, and previous emotional momentum into the active state."""
         new_text_state = self.analyze_text(user_text)
-        
+
         # Apply acoustic adjustments
         if audio_features:
             for emo, boost in audio_features.items():
@@ -201,6 +200,6 @@ class EmotionController:
         self.history.append(self.current_state)
         if len(self.history) > 20:
             self.history.pop(0)
-            
+
         self.current_state = new_text_state
         return self.current_state

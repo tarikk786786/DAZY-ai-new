@@ -1,7 +1,7 @@
 """core/mcp/security.py — MCP Tool Security and Permission Gates."""
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 # Sensitive patterns that require explicit user confirmation
 SENSITIVE_TOOL_PATTERNS = (
