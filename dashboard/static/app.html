@@ -372,7 +372,7 @@
   <aside class="sidebar" id="sidebar" aria-label="Main navigation">
     <div class="brand"><div class="brand-mark">D</div><div><div class="brand-name">DAZY</div><div class="brand-sub">Personal intelligence</div></div></div>
     <div class="nav-label">Workspace</div>
-    <nav class="nav">
+    <nav class="nav" aria-label="Workspace areas">
       <button class="nav-btn" data-page="overview"><span class="nav-ico">◈</span><span class="nav-text">Overview</span></button>
       <button class="nav-btn active" data-page="chat"><span class="nav-ico">✧</span><span class="nav-text">Conversation</span></button>
       <button class="nav-btn" data-page="files"><span class="nav-ico">▧</span><span class="nav-text">Files</span><span class="nav-count" id="fileCount">—</span></button>
@@ -380,7 +380,7 @@
       <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice & Diarization</span></button>
     </nav>
     <div class="nav-label" style="margin-top:18px">Preferences</div>
-    <nav class="nav"><button class="nav-btn" data-page="settings"><span class="nav-ico">⚙</span><span class="nav-text">Settings</span></button></nav>
+    <nav class="nav" aria-label="User preferences"><button class="nav-btn" data-page="settings"><span class="nav-ico">⚙</span><span class="nav-text">Settings</span></button></nav>
     <div class="sidebar-spacer"></div>
     <div class="side-card"><div class="side-card-top"><span class="tiny-orb"></span><span id="sideStatus">Starting secure link</span></div><p>DAZY is connected through your local assistant session. Your desktop remains the primary voice engine.</p></div>
     <div class="profile"><div class="avatar">D</div><div><div class="profile-name">DAZY Companion</div><div class="profile-caption">Private workspace</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
@@ -389,15 +389,15 @@
   <div class="main-shell">
     <header class="topbar">
       <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
-      <div class="crumb"><div class="crumb-title" id="topTitle">Conversation</div><div class="crumb-sub" id="topSubtitle">Your personal AI workspace</div></div>
+      <div class="crumb"><h1 class="crumb-title" id="topTitle" style="font-size:13px;font-weight:750;letter-spacing:.01em;margin:0;">Conversation</h1><div class="crumb-sub" id="topSubtitle">Your personal AI workspace</div></div>
       <div class="top-spacer"></div>
       <div class="connection" id="connection"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div>
       <div class="secure-badge" id="secureBadge">SECURE SESSION</div>
       <div class="clock" id="clock">--:--</div>
     </header>
     <div class="workspace">
-      <main class="main-column">
-        <section class="page" id="page-overview">
+      <main class="main-column" role="main">
+        <section class="page" id="page-overview" role="region" aria-label="Overview dashboard">
           <div class="overview-scroll">
             <div class="hero card" id="heroCard" data-state="offline">
               <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> YOUR AI COMPANION</div><h2>A calmer way to get<br><span>everything done.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button></div></div>
@@ -434,9 +434,9 @@
             </div>
           </div>
         </section>
-        <section class="page active chat-page" id="page-chat">
+        <section class="page active chat-page" id="page-chat" role="region" aria-label="Live conversation area">
           <div class="chat-toolbar"><div class="chat-avatar">D</div><div><div class="chat-agent-name">DAZY <span style="color:var(--violet);font-size:8px;letter-spacing:.12em">AI COMPANION</span></div><div class="chat-agent-state" id="chatAgentState">Waiting for desktop session</div></div><div class="top-spacer"></div><button class="action-btn" data-action="wake">Wake</button><button class="icon-btn" id="clearChat" title="Clear this browser view">↺</button></div>
-          <div class="chat-feed" id="chatFeed" aria-live="polite"><div class="chat-empty" id="chatEmpty"><div class="empty-orb"></div><h3>Hey, I'm DAZY.</h3><p>Your conversation is routed to the assistant running on your computer. Send a message or tap the microphone to speak.</p><div class="suggestions"><button data-prompt="Hey DAZY, are you connected?">Check connection</button><button data-prompt="Let's continue where we left off.">Continue conversation</button><button data-prompt="Give me a quick system status update.">System status</button></div></div></div>
+          <div class="chat-feed" id="chatFeed" aria-live="polite" tabindex="0" aria-label="Conversation message history"><div class="chat-empty" id="chatEmpty"><div class="empty-orb"></div><h3>Hey, I'm DAZY.</h3><p>Your conversation is routed to the assistant running on your computer. Send a message or tap the microphone to speak.</p><div class="suggestions"><button data-prompt="Hey DAZY, are you connected?">Check connection</button><button data-prompt="Let's continue where we left off.">Continue conversation</button><button data-prompt="Give me a quick system status update.">System status</button></div></div></div>
           <div class="chat-composer"><form id="chatForm"><div id="liveTranscriptBanner" class="live-transcript-banner" style="display:none">
               <div class="transcribe-pulse-indicator"></div>
               <span class="transcribe-speaker">USER:</span>

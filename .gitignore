@@ -54,3 +54,7 @@ desktop.ini
 logs/
 downloads/
 screenshots/
+
+# Scratch directories
+scratch/
+*.backup
