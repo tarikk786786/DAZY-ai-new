@@ -90,19 +90,20 @@ def build_dazy_system_prompt(base_prompt: str = "", user_preferences: Optional[d
     pers = assistant.get("personality", {})
 
     pref_block = ""
+    from memory.config_manager import get_user_name
+    canonical_user = get_user_name() or "Tarik"
+    lines = [f"- The user's name is {canonical_user}. Always address them respectfully and warmly as {canonical_user}."]
     if user_preferences:
-        nickname = user_preferences.get("nickname")
+        nickname = user_preferences.get("nickname") or canonical_user
         fav_lang = user_preferences.get("preferred_language")
         notes = user_preferences.get("notes")
-        lines = []
-        if nickname:
+        if nickname and nickname != canonical_user:
             lines.append(f"- User prefers to be addressed as: {nickname}")
         if fav_lang:
             lines.append(f"- Preferred language mode: {fav_lang}")
         if notes:
             lines.append(f"- Personal context: {notes}")
-        if lines:
-            pref_block = "\n[USER PREFERENCES & RAPPORT]\n" + "\n".join(lines) + "\n"
+    pref_block = "\n[USER IDENTITY & RAPPORT]\n" + "\n".join(lines) + "\n"
 
     dazy_instructions = f"""
 [IDENTITY: {name} — INDIAN FEMALE AI COMPANION]

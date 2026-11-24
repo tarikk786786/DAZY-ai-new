@@ -467,7 +467,7 @@
     <nav class="nav" aria-label="User preferences"><button class="nav-btn" data-page="settings"><span class="nav-ico">⚙</span><span class="nav-text">Settings</span></button></nav>
     <div class="sidebar-spacer"></div>
     <div class="side-card"><div class="side-card-top"><span class="tiny-orb"></span><span id="sideStatus">Starting secure link</span></div><p>DAZY is connected through your local assistant session. Your desktop remains the primary voice engine.</p></div>
-    <div class="profile"><div class="avatar">D</div><div><div class="profile-name">DAZY Companion</div><div class="profile-caption">Private workspace</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
+    <div class="profile"><div class="avatar" id="userAvatar">T</div><div><div class="profile-name" id="userProfileName">Tarik</div><div class="profile-caption" id="userProfileSub">Private workspace</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
   </aside>
   <div class="mobile-backdrop" id="mobileBackdrop"></div>
   <div class="main-shell">
@@ -484,7 +484,7 @@
         <section class="page" id="page-overview" role="region" aria-label="Overview dashboard">
           <div class="overview-scroll">
             <div class="hero card" id="heroCard" data-state="offline">
-              <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> YOUR AI COMPANION</div><h2>A calmer way to get<br><span>everything done.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button></div></div>
+              <div class="hero-copy"><div class="hero-tag"><span class="tiny-orb"></span> <span id="heroGreetingTag">WELCOME, TARIK</span></div><h2 id="heroGreetingHeading">Good day, Tarik.<br><span>Everything is online.</span></h2><p>Talk naturally, send a task, or pick up where you left off. DAZY's active session and tools are reflected here in real time.</p><div class="hero-actions"><button class="action-btn primary" data-goto="chat">Open conversation ↗</button><button class="action-btn" data-action="wake">Wake DAZY</button></div></div>
               <div class="orb-stage">
                 <div class="orb" id="dazyOrb" data-state="idle">
                   <div class="orb-rings">
@@ -730,6 +730,7 @@
               <button class="cmd-tab-btn" data-cmdtab="registries">Integrations & MCP Tools</button>
               <button class="cmd-tab-btn" data-cmdtab="repair">Self-Repair & Incidents</button>
               <button class="cmd-tab-btn" data-cmdtab="telemetry">Live Traces & Spans</button>
+              <button class="cmd-tab-btn" data-cmdtab="radar">Repo Radar</button>
             </div>
 
             <div class="cmd-tab-content active" id="cmdtab-tasks">
@@ -796,6 +797,24 @@
                     <tr><th>Span ID</th><th>Trace ID</th><th>Operation</th><th>Duration</th><th>Status</th><th>Timestamp</th></tr>
                   </thead>
                   <tbody id="cmdSpansTableBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">No recent spans captured.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="cmd-tab-content" id="cmdtab-radar">
+              <div style="font-size:11px;font-weight:750;margin:10px 0 8px;color:#c8d4ea;">Repo Radar — External Framework & Project Intelligence</div>
+              <div class="card" style="padding:14px 16px;margin-bottom:14px;background:rgba(100,216,255,.06);border-color:rgba(100,216,255,.2);">
+                <div style="font-size:10px;font-weight:700;color:var(--cyan);margin-bottom:4px;">Read-Only Architecture & Dependency Analysis</div>
+                <div style="font-size:9px;color:var(--muted);line-height:1.5;">
+                  Evaluate OSS agent frameworks, tools, and libraries without executing arbitrary code or bloating 8 GB host memory.
+                </div>
+              </div>
+              <div class="data-table-wrap">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Repository</th><th>License</th><th>Resource Footprint</th><th>Maintenance</th><th>Capabilities Matched</th><th>Inspect</th></tr>
+                  </thead>
+                  <tbody id="cmdRadarTableBody"></tbody>
                 </table>
               </div>
             </div>
@@ -1761,6 +1780,7 @@
       renderRegistries(providers, rgRes.models || [], mcpServers);
       renderIncidentsAndRepairs(incidents, repairPlans);
       renderTraceSpans(tmRes.recent_spans || []);
+      loadRepoRadar();
     } catch (err) {
       toast(err.message || 'Command center refresh failed', 'error');
     }
@@ -1899,6 +1919,47 @@
       `;
       tbody.appendChild(tr);
     });
+  }
+
+  async function loadRepoRadar() {
+    try {
+      const res = await authFetch('/api/os/repo-radar');
+      const data = await res.json();
+      const tbody = $('cmdRadarTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      (data.repositories || []).forEach(r => {
+        const tr = document.createElement('tr');
+        const resClass = r.resource_rating === 'light' ? 'completed' : 'running';
+        tr.innerHTML = `
+          <td><b>${escapeHTML(r.name)}</b><br><small style="color:var(--muted);">${escapeHTML(r.description)}</small></td>
+          <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(r.license)}</td>
+          <td><span class="status-badge ${resClass}">${escapeHTML(r.resource_rating.toUpperCase())}</span></td>
+          <td><span class="status-badge completed">${escapeHTML(r.maintenance_status.toUpperCase())}</span></td>
+          <td style="font-size:9px;color:#a8c7fa;">${(r.matched_capabilities || []).join(', ')}</td>
+          <td><a href="${escapeHTML(r.url)}" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:10px;">Inspect ↗</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (e) {
+      console.warn('Failed to load repo radar', e);
+    }
+  }
+
+  async function loadUserProfile() {
+    try {
+      const res = await authFetch('/api/me');
+      const data = await res.json();
+      const name = data.displayName || 'Tarik';
+      if ($('userProfileName')) $('userProfileName').textContent = name;
+      if ($('userAvatar')) $('userAvatar').textContent = name.charAt(0).toUpperCase();
+      const hour = new Date().getHours();
+      const salutation = hour < 12 ? 'Good morning' : (hour < 17 ? 'Good afternoon' : 'Good evening');
+      if ($('heroGreetingHeading')) $('heroGreetingHeading').innerHTML = `${salutation}, ${escapeHTML(name)}.<br><span>Everything is online.</span>`;
+      if ($('heroGreetingTag')) $('heroGreetingTag').textContent = `WELCOME, ${escapeHTML(name).toUpperCase()}`;
+    } catch (e) {
+      console.warn('Could not load user profile', e);
+    }
   }
 
   window.__executeRepair = async (planId, requiresApproval) => {
@@ -2082,7 +2143,7 @@
     if(location.protocol!=='https:')toast('This dashboard is using HTTP. Use HTTPS for encrypted transport on an untrusted network.','error');
     initEvents();updateClock();setInterval(updateClock,15000);await initCrypto();
     $('secureBadge').textContent=location.protocol==='https:'?(state.encReady?'HTTPS · AES-GCM':'HTTPS'):(state.encReady?'HTTP · PAYLOAD AES':'HTTP · NO ENC');
-    connectSocket();loadFiles(false);setupOrbWaveforms();loadDiagnostics();
+    connectSocket();loadFiles(false);setupOrbWaveforms();loadDiagnostics();loadUserProfile();
   }
   init();
 })();

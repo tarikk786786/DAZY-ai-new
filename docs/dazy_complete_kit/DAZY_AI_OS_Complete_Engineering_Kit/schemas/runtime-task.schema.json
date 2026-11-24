@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DAZY Runtime Task",
+  "type": "object",
+  "required": [
+    "requestId",
+    "taskId",
+    "correlationId",
+    "userId",
+    "displayName",
+    "instruction",
+    "permissionScope",
+    "resourceProfile"
+  ],
+  "properties": {
+    "requestId": {
+      "type": "string"
+    },
+    "taskId": {
+      "type": "string"
+    },
+    "correlationId": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "profileVersion": {
+      "type": "integer"
+    },
+    "instruction": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "object"
+    },
+    "capabilityRequirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "permissionScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "maxDurationSeconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3600
+    },
+    "maxConcurrentJobs": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "resourceProfile": {
+      "enum": [
+        "low",
+        "balanced",
+        "high"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

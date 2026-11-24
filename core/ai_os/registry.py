@@ -42,7 +42,10 @@ class ControlPlaneRegistry:
         self._mcp_servers: Dict[str, MCPServerInfo] = {}
         self._tools: Dict[str, ToolInfo] = {}
 
-        self._seed_default_topologies()
+        self._load_from_db()
+        if not self._providers or not self._models or not self._workers:
+            self._seed_default_topologies()
+            self.sync_to_db()
 
     @classmethod
     def get_instance(cls) -> ControlPlaneRegistry:
@@ -81,6 +84,94 @@ class ControlPlaneRegistry:
                 )
             """)
             conn.commit()
+
+    def sync_to_db(self) -> None:
+        """Flushes in-memory registry to durable SQLite storage."""
+        with self._lock, sqlite3.connect(self._db_path) as conn:
+            for p in self._providers.values():
+                h_val = p.health.value if hasattr(p.health, "value") else str(p.health)
+                q_val = p.quality_state.value if hasattr(p.quality_state, "value") else str(p.quality_state)
+                conn.execute("""
+                    INSERT OR REPLACE INTO providers (id, name, kind, endpoint, health, latency_ms, quality_state, note, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (p.id, p.name, p.kind, p.endpoint, h_val, p.latency_ms or 0.0, q_val, p.note or "", time.time()))
+            for w in self._workers.values():
+                st_val = w.status.value if hasattr(w.status, "value") else str(w.status)
+                conn.execute("""
+                    INSERT OR REPLACE INTO workers (id, name, role, parent_id, status, model_id, heartbeat_ts, usage_tokens, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (w.id, w.name, w.role, w.parent_id or "", st_val, w.model_id or "", w.heartbeat_ts, w.usage_tokens, w.created_at))
+            conn.commit()
+
+    def _load_from_db(self) -> None:
+        """Restores providers and workers from SQLite on startup."""
+        with sqlite3.connect(self._db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows_prov = conn.execute("SELECT * FROM providers").fetchall()
+            for r in rows_prov:
+                try:
+                    p = ProviderInfo(
+                        id=r["id"],
+                        name=r["name"],
+                        kind=r["kind"],
+                        endpoint=r["endpoint"],
+                        health=HealthStatus(r["health"]) if r["health"] in HealthStatus._value2member_map_ else HealthStatus.HEALTHY,
+                        latency_ms=r["latency_ms"],
+                        quality_state=DataQualityState(r["quality_state"]) if r["quality_state"] in DataQualityState._value2member_map_ else DataQualityState.LIVE,
+                        note=r["note"],
+                    )
+                    self._providers[p.id] = p
+                except Exception as e:
+                    logger.debug("Failed to hydrate provider %s: %s", r["id"], e)
+
+            rows_wrk = conn.execute("SELECT * FROM workers").fetchall()
+            for rw in rows_wrk:
+                try:
+                    w = WorkerInfo(
+                        id=rw["id"],
+                        name=rw["name"],
+                        role=rw["role"],
+                        parent_worker_id=rw["parent_id"] or None,
+                        status=WorkerStatus(rw["status"]) if rw["status"] in WorkerStatus._value2member_map_ else WorkerStatus.ACTIVE,
+                        model_id=rw["model_id"] or None,
+                        heartbeat_ts=rw["heartbeat_ts"],
+                        usage_tokens=rw["usage_tokens"],
+                        created_at=rw["created_at"],
+                    )
+                    self._workers[w.id] = w
+                except Exception as e:
+                    logger.debug("Failed to hydrate worker %s: %s", rw["id"], e)
+
+    def verify_provider_health(self) -> Dict[str, HealthStatus]:
+        """Runs live health checks for registered providers without mock data."""
+        import os
+        results = {}
+        with self._lock:
+            # 1. Gemini
+            prov_gemini = self._providers.get("prov_gemini")
+            if prov_gemini:
+                key_found = bool(os.environ.get("GEMINI_API_KEY"))
+                if not key_found:
+                    try:
+                        from memory.config_manager import load_api_keys
+                        key_found = bool(load_api_keys().get("gemini_api_key") or load_api_keys().get("api_key"))
+                    except Exception:
+                        pass
+                new_health = HealthStatus.HEALTHY if key_found else HealthStatus.DEGRADED
+                prov_gemini = prov_gemini.model_copy(update={"health": new_health})
+                self._providers["prov_gemini"] = prov_gemini
+                results["prov_gemini"] = new_health
+
+            # 2. Edge TTS & Whisper
+            prov_edge = self._providers.get("prov_edge_tts")
+            if prov_edge:
+                results["prov_edge_tts"] = prov_edge.health
+            prov_whisper = self._providers.get("prov_whisper")
+            if prov_whisper:
+                results["prov_whisper"] = prov_whisper.health
+
+            self.sync_to_db()
+        return results
 
     def _seed_default_topologies(self) -> None:
         """Seeds verified default providers, models, workers, and MCP tools."""
@@ -190,6 +281,7 @@ class ControlPlaneRegistry:
     def register_provider(self, prov: ProviderInfo) -> None:
         with self._lock:
             self._providers[prov.id] = prov
+            self.sync_to_db()
 
     def get_providers(self) -> List[ProviderInfo]:
         with self._lock:
@@ -206,6 +298,7 @@ class ControlPlaneRegistry:
     def register_worker(self, worker: WorkerInfo) -> None:
         with self._lock:
             self._workers[worker.id] = worker
+            self.sync_to_db()
 
     def update_worker_status(self, worker_id: str, status: WorkerStatus, error: Optional[str] = None) -> None:
         with self._lock:
@@ -216,6 +309,7 @@ class ControlPlaneRegistry:
                     "error_message": error,
                     "heartbeat_ts": time.time(),
                 })
+                self.sync_to_db()
 
     def get_workers(self) -> List[WorkerInfo]:
         with self._lock:

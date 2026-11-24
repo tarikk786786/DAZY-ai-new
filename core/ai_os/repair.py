@@ -33,6 +33,7 @@ class ControlledRepairEngine:
         self._repair_plans: Dict[str, RepairPlan] = {}
         self._action_handlers: Dict[str, Callable[[RepairPlan], bool]] = {}
         self._event_listeners: List[Callable[[EventEnvelope], None]] = []
+        self._attempt_counts: Dict[str, int] = {}
 
         self._register_default_handlers()
 
@@ -126,6 +127,17 @@ class ControlledRepairEngine:
             if plan_id not in self._repair_plans:
                 return False
             plan = self._repair_plans[plan_id]
+            inc_id = plan.incident_id
+            attempts = self._attempt_counts.get(inc_id, 0) + 1
+            self._attempt_counts[inc_id] = attempts
+
+            # Runaway prevention: maximum 3 autonomous attempts per incident
+            if attempts > 3 and not force_approved:
+                logger.error("Runaway repair loop detected for incident %s (%d attempts). Human approval required.", inc_id, attempts)
+                plan = plan.model_copy(update={"requires_approval": True, "risk_level": RepairRiskLevel.APPROVAL_REQUIRED_RISKY})
+                self._repair_plans[plan_id] = plan
+                return False
+
             if plan.requires_approval and not force_approved:
                 logger.warning("Repair plan %s requires explicit human authorization.", plan_id)
                 return False
@@ -174,7 +186,7 @@ class ControlledRepairEngine:
         from core.voice_session_manager import VoiceSessionManager
         vsm = VoiceSessionManager.get_instance()
         vsm.clear_startup_guard()
-        vsm.player.emergency_stop()
+        vsm.player.cancel_current("clear_buffers")
         logger.info("Executing allowlisted safe action: Cleared transient audio buffers")
         return True
 

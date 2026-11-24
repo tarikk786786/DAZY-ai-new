@@ -1484,6 +1484,104 @@ class DashboardServer:
             except Exception as e:
                 return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
+        @app.get("/api/me")
+        async def get_me_profile_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from memory.config_manager import get_user_name
+                name = get_user_name() or "Tarik"
+                return JSONResponse({
+                    "id": "usr_tarik",
+                    "displayName": name,
+                    "legalName": None,
+                    "email": None,
+                    "avatarUrl": None,
+                    "timezone": "Asia/Kolkata",
+                    "locale": "en-IN",
+                    "profileVersion": 1,
+                    "updatedAt": "2026-11-24T00:00:00Z",
+                })
+            except Exception as e:
+                return JSONResponse({"error": str(e)}, status_code=500)
+
+        @app.post("/api/me")
+        async def update_me_profile_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                new_name = str(body.get("displayName") or "").strip()
+                if new_name:
+                    from memory.config_manager import save_assistant_config, get_assistant_name
+                    save_assistant_config(get_assistant_name(), new_name)
+                    try:
+                        from memory.memory_manager import store_memory
+                        store_memory("identity", "name", new_name)
+                    except Exception:
+                        pass
+                return JSONResponse({
+                    "id": "usr_tarik",
+                    "displayName": new_name or "Tarik",
+                    "timezone": body.get("timezone", "Asia/Kolkata"),
+                    "locale": body.get("locale", "en-IN"),
+                    "profileVersion": 2,
+                    "updatedAt": "2026-11-24T00:00:00Z",
+                })
+            except Exception as e:
+                return JSONResponse({"error": str(e)}, status_code=500)
+
+        @app.get("/api/os/repo-radar")
+        async def get_repo_radar_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                catalog = [
+                    {
+                        "name": "nanobot",
+                        "owner": "nanobot-ai",
+                        "description": "Ultra-lightweight fast local agent runtime with minimal memory footprint.",
+                        "license": "Apache-2.0",
+                        "resource_rating": "light",
+                        "maintenance_status": "active",
+                        "matched_capabilities": ["Fast task runner", "Subagent delegation"],
+                        "url": "https://github.com/nanobot-ai/nanobot",
+                    },
+                    {
+                        "name": "OpenManus",
+                        "owner": "mannaandpoem",
+                        "description": "Autonomous general-purpose agent framework for complex web & software automation.",
+                        "license": "MIT",
+                        "resource_rating": "moderate",
+                        "maintenance_status": "active",
+                        "matched_capabilities": ["Browser execution", "Complex workflow automation"],
+                        "url": "https://github.com/mannaandpoem/OpenManus",
+                    },
+                    {
+                        "name": "Context7",
+                        "owner": "context7",
+                        "description": "Official documentation resolution and up-to-date SDK knowledge MCP.",
+                        "license": "MIT",
+                        "resource_rating": "light",
+                        "maintenance_status": "verified",
+                        "matched_capabilities": ["Live docs retrieval", "Zero-hallucination verification"],
+                        "url": "https://mcp.context7.com",
+                    },
+                    {
+                        "name": "Silero VAD",
+                        "owner": "snakers4",
+                        "description": "Pre-trained enterprise-grade Voice Activity Detector with half-duplex echo gate.",
+                        "license": "MIT",
+                        "resource_rating": "light",
+                        "maintenance_status": "active",
+                        "matched_capabilities": ["Speech boundary detection", "Fan noise rejection"],
+                        "url": "https://github.com/snakers4/silero-vad",
+                    },
+                ]
+                return JSONResponse({"ok": True, "repositories": catalog})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         # ── Phone mic real-time audio → Gemini Live ──────────────────────────
 
         @app.websocket("/ws/phone-audio")

@@ -205,3 +205,109 @@ def test_desktop_companion_ai_os_integration():
     assert any("EMERGENCY STOP" in l["message"] for l in summary["recent_logs"])
 
 
+def test_canonical_tarik_identity_and_persona():
+    from core.dazy_persona import build_dazy_system_prompt
+    from memory.config_manager import get_user_name
+
+    # 1. Configured name must be Tarik
+    assert get_user_name() == "Tarik", "Canonical user name must resolve to Tarik"
+
+    # 2. Persona prompt must include Tarik and forbid John/Alex
+    prompt = build_dazy_system_prompt()
+    assert "Tarik" in prompt, "System prompt must address user as Tarik"
+    assert "John" not in prompt, "System prompt must never contain John"
+    assert "Alex" not in prompt, "System prompt must never contain Alex"
+
+
+def test_durable_task_idempotency_and_concurrency():
+    from core.ai_os import DurableTaskEngine
+    engine = DurableTaskEngine.get_instance()
+
+    # Submit task with idempotency key
+    key = "idem_task_concurrent_001"
+    t1 = engine.submit_task(
+        title="Concurrent Job A",
+        input_payload={"batch": 1},
+        idempotency_key=key,
+    )
+    # Duplicate submission with same key must return identical task record!
+    t2 = engine.submit_task(
+        title="Concurrent Job A Duplicate",
+        input_payload={"batch": 2},
+        idempotency_key=key,
+    )
+    assert t1.id == t2.id, "Idempotent submission must deduplicate task"
+    assert t1.title == t2.title
+
+
+def test_memory_scopes_isolation_and_reasoning_synthesis():
+    from core.ai_os.memory import MemoryAuditService, MemoryScope
+    mem = MemoryAuditService.get_instance()
+
+    # Store memory for Tarik in project A
+    m1 = mem.store_memory(
+        content="User preferred audio output is Virtual Cable B",
+        scope=MemoryScope.LONG_TERM,
+        owner="Tarik",
+        project_id="proj_audio",
+    )
+    assert m1.owner == "Tarik"
+
+    # Search by different owner -> Must return 0 results! (Strict user isolation)
+    leak_check = mem.search_memory("Virtual Cable", owner="AnonymousUser")
+    assert len(leak_check) == 0, "Cross-user memory access must be blocked"
+
+    # Search with correct owner and project -> Must return result
+    hits = mem.search_memory("Virtual Cable", owner="Tarik", project_id="proj_audio")
+    assert len(hits) >= 1
+    assert hits[0].retrieval_count >= 1
+
+    # Verify reasoning prompt context synthesis
+    reasoning_ctx = mem.build_reasoning_context("Virtual Cable", owner="Tarik", project_id="proj_audio")
+    assert "Virtual Cable B" in reasoning_ctx
+    assert "[LONG_TERM]" in reasoning_ctx
+
+
+def test_controlled_repair_runaway_loop_prevention():
+    from core.ai_os import ControlledRepairEngine, RepairRiskLevel
+    repair = ControlledRepairEngine.get_instance()
+
+    inc = repair.record_incident(
+        title="Recurring Flapping Service",
+        severity="WARNING",
+        component="worker_flapper",
+        root_cause="OOM kill loop",
+    )
+    plan = repair.propose_repair(
+        incident_id=inc.id,
+        action="bounded_retry",
+        description="Retry flapping service",
+    )
+    # 3 attempts should succeed
+    for _ in range(3):
+        assert repair.execute_repair(plan.id) is True
+
+    # 4th attempt must be flagged as runaway and blocked without explicit operator approval!
+    blocked = repair.execute_repair(plan.id, force_approved=False)
+    assert blocked is False, "Runaway repair loop must be blocked from autonomous execution"
+
+
+def test_mcp_security_ssrf_and_sensitive_checks():
+    from core.mcp.security import verify_mcp_call
+
+    # Allowed safe call
+    ok, _ = verify_mcp_call("read_docs", {"topic": "python"})
+    assert ok is True
+
+    # Destructive blocked
+    blocked_del, reason_del = verify_mcp_call("delete_database", {})
+    assert blocked_del is False
+    assert "Sensitive" in reason_del
+
+    # SSRF blocked
+    blocked_ssrf, reason_ssrf = verify_mcp_call("fetch_url", {"url": "http://169.254.169.254/latest/meta-data"})
+    assert blocked_ssrf is False
+    assert "SSRF" in reason_ssrf
+
+
+
