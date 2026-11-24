@@ -67,6 +67,7 @@ PRESETS: dict[str, str] = {
     "Cerebras":             "https://api.cerebras.ai/v1",
     "MiniMax":              "https://api.minimax.io/v1",
     "Google Gemini":        "https://generativelanguage.googleapis.com/v1beta/openai",
+    "AI/ML API":            "https://api.aimlapi.com/v1",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────

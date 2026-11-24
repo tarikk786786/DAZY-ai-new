@@ -1743,6 +1743,14 @@ class DashboardServer:
                         "tier": "Economy"
                     },
                     {
+                        "id": "aimlapi",
+                        "name": "AI/ML API (Llama 3 / Multi-Model)",
+                        "model": "meta-llama/Llama-3-70b-chat-hf",
+                        "configured": bool(keys_data.get("aimlapi_api_key") or os.environ.get("AIMLAPI_API_KEY")),
+                        "speed": "Fast (~1.8s)",
+                        "tier": "200+ Models"
+                    },
+                    {
                         "id": "mock",
                         "name": "Local Rule-based / Mock",
                         "model": "mock-instant",
@@ -1809,6 +1817,11 @@ class DashboardServer:
                             "url": "https://api.deepseek.com/v1/chat/completions",
                             "key": keys_data.get("deepseek_api_key") or os.environ.get("DEEPSEEK_API_KEY", ""),
                             "model": "deepseek-chat",
+                        },
+                        "aimlapi": {
+                            "url": "https://api.aimlapi.com/v1/chat/completions",
+                            "key": keys_data.get("aimlapi_api_key") or os.environ.get("AIMLAPI_API_KEY", ""),
+                            "model": "meta-llama/Llama-3-70b-chat-hf",
                         },
                     }
 

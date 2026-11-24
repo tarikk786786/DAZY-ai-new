@@ -1,0 +1,179 @@
+openapi: 3.1.0
+info:
+  title: DAZY AI OS API Gateway
+  description: Sovereign Personal AI Companion and Multi-Agent Workstation Control Plane.
+  version: 2.1.0
+  contact:
+    name: Tarik
+    url: https://github.com/tarikk786786/DAZY-ai-new
+servers:
+  - url: http://127.0.0.1:8080
+    description: Local HTTP Development & LAN Gateway
+  - url: https://127.0.0.1:8081
+    description: Encrypted TLS Local Gateway
+
+paths:
+  /api/me:
+    get:
+      summary: Get User Profile & Workspace Settings
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, example: "usr_tarik" }
+                  displayName: { type: string, example: "Tarik" }
+                  relationship: { type: string, example: "boyfriend" }
+                  timezone: { type: string, example: "Asia/Kolkata" }
+
+  /api/os/overview:
+    get:
+      summary: High-level System Status & Registered Actors
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: System overview payload
+
+  /api/os/graph:
+    get:
+      summary: 3D Brain Telemetry & Spatial Graph Projection
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Real 3D coordinate layout of orchestrator, models, workers, and MCP nodes
+
+  /api/os/tasks:
+    get:
+      summary: List Active and Durable Tasks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of task records
+    post:
+      summary: Submit a Durable Task
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+                worker_id: { type: string }
+                input_payload: { type: object }
+                priority: { type: integer }
+                idempotency_key: { type: string }
+      responses:
+        '200':
+          description: Task queued successfully
+
+  /api/os/dag/submit:
+    post:
+      summary: Submit a Directed Acyclic Graph (DAG) Plan (GodMode-Team Pattern)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plan]
+              properties:
+                plan:
+                  type: array
+                  items:
+                    type: object
+                    required: [key, title]
+                    properties:
+                      key: { type: string }
+                      title: { type: string }
+                      dependencies: { type: array, items: { type: string } }
+                      input_payload: { type: object }
+      responses:
+        '200':
+          description: DAG verified for acyclicity and queued
+        '400':
+          description: Circular dependency detected
+
+  /api/os/dag/advance:
+    post:
+      summary: Complete a DAG Task and Advance Downstream Steps
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [task_id]
+              properties:
+                task_id: { type: string }
+                output: { type: object }
+      responses:
+        '200':
+          description: Task completed and unblocked dependent tasks returned
+
+  /api/arena/providers:
+    get:
+      summary: List Comparison Providers for Multi-AI Arena
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Configured LLM providers (Groq, Gemini, OpenRouter, DeepSeek, AI/ML API, Mock)
+
+  /api/arena/compare:
+    post:
+      summary: Concurrently Query Multiple LLM Providers (smol-ai Pattern)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt, models]
+              properties:
+                prompt: { type: string }
+                models: { type: array, items: { type: string } }
+      responses:
+        '200':
+          description: Side-by-side array of responses, latencies in ms, and token counts
+
+  /api/testing/status:
+    get:
+      summary: Automated Test Center & Verification Gate Status
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Test metrics and release readiness criteria
+
+  /api/testing/run-smoke:
+    post:
+      summary: Run Safe In-Memory Regression Smoke Suite
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Smoke verification passed
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

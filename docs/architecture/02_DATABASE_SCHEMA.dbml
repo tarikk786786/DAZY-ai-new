@@ -1,0 +1,104 @@
+// DAZY AI OS — Complete Database Schema (dbdiagram.io / DBML)
+// Models all SQLite local-first and Supabase companion entities
+
+Project dazy_ai_os {
+  database_type: 'SQLite / PostgreSQL'
+  Note: 'Unified data model for local-first storage, task persistence, memories, and audit logs.'
+}
+
+Table tasks {
+  id varchar [pk, note: 'Unique task identifier, e.g. task_abc123']
+  correlation_id varchar [not null, note: 'Correlation tracing token across services']
+  idempotency_key varchar [unique, note: 'Prevents duplicate task creation']
+  title varchar [not null]
+  status varchar [not null, note: 'QUEUED, WAITING, RUNNING, COMPLETED, FAILED, CANCELLED']
+  assigned_worker_id varchar [ref: > workers.id]
+  priority integer [default: 1]
+  attempts integer [default: 0]
+  max_retries integer [default: 3]
+  dependencies text [note: 'JSON array of prerequisite task IDs in DAG']
+  input_payload text [note: 'JSON input parameters']
+  output_result text [note: 'JSON output artifacts']
+  error text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table workers {
+  id varchar [pk, note: 'Worker identifier, e.g. wrk_orchestrator']
+  name varchar [not null]
+  role varchar [not null]
+  parent_id varchar [ref: > workers.id]
+  status varchar [not null, note: 'READY, RUNNING, DEGRADED, FAILED']
+  model_id varchar [default: 'gemini-2.5-flash']
+  capabilities text [note: 'JSON list of capability tags']
+  heartbeat_ts real
+  usage_tokens integer [default: 0]
+  error_message text
+  created_at timestamp
+}
+
+Table checkpoints {
+  thread_id varchar [pk, note: 'LangGraph workflow thread identifier']
+  step_index integer [not null]
+  state_json text [not null, note: 'Serialized state snapshot']
+  updated_at real [not null]
+}
+
+Table memories {
+  id varchar [pk]
+  owner varchar [not null, default: 'Tarik']
+  scope varchar [not null, note: 'USER, PROJECT, WORKING, SYSTEM']
+  category varchar [note: 'preference, bio, fact, schedule, skill']
+  key varchar [not null]
+  value text [not null]
+  importance integer [default: 1]
+  access_count integer [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table reminders {
+  id varchar [pk]
+  title varchar [not null]
+  due_at timestamp [not null, note: 'Due date in ISO 8601 with timezone (+05:30)']
+  completed_at timestamp
+  snooze_count integer [default: 0]
+  created_at timestamp
+}
+
+Table incidents {
+  id varchar [pk]
+  title varchar [not null]
+  severity varchar [not null, note: 'CRITICAL, ERROR, WARNING, INFO']
+  component varchar [not null]
+  root_cause text
+  status varchar [not null, note: 'OPEN, INVESTIGATING, REPAIRED, CLOSED']
+  evidence text [note: 'JSON diagnostic bundle']
+  detected_at timestamp
+  resolved_at timestamp
+}
+
+Table repair_plans {
+  id varchar [pk]
+  incident_id varchar [not null, ref: > incidents.id]
+  risk_level varchar [not null, note: 'LOW_RISK_SAFE, APPROVAL_REQUIRED_RISKY']
+  description text
+  allowlisted_action varchar [not null]
+  requires_approval boolean [default: false]
+  is_executed boolean [default: false]
+  is_verified boolean [default: false]
+  result_message text
+}
+
+Table voice_profiles {
+  speaker_id varchar [pk]
+  speaker_name varchar [not null]
+  is_owner boolean [default: false]
+  voice_embedding text [note: 'Base64 encoded Resemblyzer embedding vector']
+  enrolled_at timestamp
+  sample_count integer [default: 1]
+}
+
+Ref: tasks.assigned_worker_id > workers.id
+Ref: repair_plans.incident_id > incidents.id
