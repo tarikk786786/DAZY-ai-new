@@ -364,6 +364,88 @@
       }
     }
 
+    /* ── DAZY AI OS — 3D Live Brain & Command Center Styles ── */
+    .brain-container {
+      position: relative; flex: 1; min-height: 480px; width: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(20, 28, 55, 0.4), rgba(6, 10, 20, 0.95));
+      border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .brain-canvas { width: 100%; height: 100%; flex: 1; cursor: grab; display: block; }
+    .brain-canvas:active { cursor: grabbing; }
+    .brain-hud {
+      position: absolute; top: 14px; left: 16px; pointer-events: none; z-index: 10;
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .brain-legend-item {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 700;
+      padding: 5px 9px; border-radius: 8px; background: rgba(14, 20, 36, 0.85);
+      border: 1px solid var(--line); color: var(--muted); backdrop-filter: blur(8px);
+    }
+    .brain-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .brain-inspector {
+      position: absolute; right: 14px; top: 14px; bottom: 14px; width: 310px;
+      background: rgba(13, 19, 35, 0.94); backdrop-filter: blur(24px);
+      border: 1px solid var(--line2); border-radius: 18px; padding: 18px; z-index: 20;
+      transform: translateX(340px); transition: transform .28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column; gap: 12px; overflow-y: auto; box-shadow: var(--shadow);
+    }
+    .brain-inspector.open { transform: translateX(0); }
+    .inspector-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+    .inspector-title { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; }
+    .inspector-close { background: transparent; border: 0; color: var(--muted); cursor: pointer; font-size: 16px; }
+    .inspector-row { display: flex; justify-content: space-between; font-size: 10px; padding: 6px 0; border-bottom: 1px solid rgba(159,180,226,.06); }
+    .inspector-row span:first-child { color: var(--muted); }
+    .inspector-row span:last-child { font-weight: 700; }
+
+    /* Command Center */
+    .command-metrics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 11px; margin-bottom: 16px;
+    }
+    .cmd-metric-card {
+      padding: 14px 16px; border-radius: 14px; background: var(--panel);
+      border: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px;
+    }
+    .cmd-metric-top { display: flex; align-items: center; justify-content: space-between; font-size: 9px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .cmd-metric-val { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .cmd-metric-sub { font-size: 9px; color: var(--muted); }
+
+    .command-tabs-nav {
+      display: flex; gap: 6px; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .cmd-tab-btn {
+      padding: 8px 14px; border-radius: 10px; border: 1px solid transparent; background: rgba(255,255,255,.025);
+      color: #9ba7bf; font-size: 10px; font-weight: 750; cursor: pointer; transition: .2s;
+    }
+    .cmd-tab-btn:hover { background: rgba(255,255,255,.05); color: #fff; }
+    .cmd-tab-btn.active {
+      background: linear-gradient(100deg, rgba(167,139,250,.2), rgba(100,216,255,.08));
+      border-color: rgba(167,139,250,.25); color: #fff;
+    }
+    .cmd-tab-content { display: none; }
+    .cmd-tab-content.active { display: block; }
+
+    .data-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: rgba(12,17,31,.7); }
+    .os-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+    .os-table th { padding: 11px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
+    .os-table td { padding: 12px 14px; border-bottom: 1px solid rgba(159,180,226,.06); color: #cfd9ed; }
+    .os-table tr:hover td { background: rgba(255,255,255,.02); }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+    .status-badge.queued { color: var(--cyan); background: rgba(100,216,255,.1); border: 1px solid rgba(100,216,255,.2); }
+    .status-badge.running { color: var(--violet); background: rgba(167,139,250,.15); border: 1px solid rgba(167,139,250,.3); animation: pulse 1.6s infinite; }
+    .status-badge.completed { color: var(--mint); background: rgba(114,224,180,.1); border: 1px solid rgba(114,224,180,.2); }
+    .status-badge.failed { color: var(--red); background: rgba(251,113,133,.1); border: 1px solid rgba(251,113,133,.2); }
+
+    .risk-badge-safe { display: inline-flex; align-items: center; gap: 4px; color: var(--mint); background: rgba(114,224,180,.1); border: 1px solid rgba(114,224,180,.25); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800; }
+    .risk-badge-risky { display: inline-flex; align-items: center; gap: 4px; color: var(--amber); background: rgba(246,199,121,.12); border: 1px solid rgba(246,199,121,.3); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800; }
+
+    .worker-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .worker-card { padding: 14px 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+    .worker-card-head { display: flex; align-items: center; justify-content: space-between; }
+    .worker-card-name { font-size: 11px; font-weight: 800; }
+    .worker-card-role { font-size: 9px; color: var(--muted); line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -375,6 +457,8 @@
     <nav class="nav" aria-label="Workspace areas">
       <button class="nav-btn" data-page="overview"><span class="nav-ico">◈</span><span class="nav-text">Overview</span></button>
       <button class="nav-btn active" data-page="chat"><span class="nav-ico">✧</span><span class="nav-text">Conversation</span></button>
+      <button class="nav-btn" data-page="brain"><span class="nav-ico">⚛</span><span class="nav-text">Live Brain 3D</span></button>
+      <button class="nav-btn" data-page="command"><span class="nav-ico">⌬</span><span class="nav-text">AI OS Command</span></button>
       <button class="nav-btn" data-page="files"><span class="nav-ico">▧</span><span class="nav-text">Files</span><span class="nav-count" id="fileCount">—</span></button>
       <button class="nav-btn" data-page="activity"><span class="nav-ico">◷</span><span class="nav-text">Activity</span></button>
       <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice & Diarization</span></button>
@@ -543,6 +627,180 @@
             </div>
           </div>
 </section>
+        <section class="page" id="page-brain">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">SPATIAL ARCHITECTURE</div>
+              <h1 class="page-title">Live Brain 3D Topology</h1>
+              <p class="page-description">Real-time WebGL spatial graph projecting orchestrator, models, workers, and MCP tools with live telemetry.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="action-btn" id="refreshBrainBtn">↻ Refresh</button>
+              <button class="action-btn" id="toggleBrainViewBtn">Toggle 2D / 3D</button>
+              <button class="action-btn" id="toggleBrainMotionBtn">Motion: Auto</button>
+            </div>
+          </div>
+          <div class="brain-container" id="brainStage">
+            <div class="brain-hud">
+              <div class="brain-legend-item"><span class="brain-legend-dot" style="background:#a78bfa;"></span> Orchestrator</div>
+              <div class="brain-legend-item"><span class="brain-legend-dot" style="background:#64d8ff;"></span> Models (Ring 1)</div>
+              <div class="brain-legend-item"><span class="brain-legend-dot" style="background:#f6c779;"></span> Workers (Ring 2)</div>
+              <div class="brain-legend-item"><span class="brain-legend-dot" style="background:#72e0b4;"></span> MCP Tools (Ring 3)</div>
+              <div class="brain-legend-item"><span class="brain-legend-dot" style="background:#fb83bd;"></span> Memory & Audio</div>
+              <div class="brain-legend-item" id="brainHudActiveTurn" style="color:#72e0b4;border-color:rgba(114,224,180,.3);">● Real-Time Graph</div>
+            </div>
+            <canvas id="brainCanvas" class="brain-canvas"></canvas>
+            <div class="brain-inspector" id="nodeInspector">
+              <div class="inspector-head">
+                <div class="inspector-title" id="inspName">Node Inspector</div>
+                <button class="inspector-close" id="inspCloseBtn">✕</button>
+              </div>
+              <div class="inspector-row"><span>Node ID</span><span id="inspId">—</span></div>
+              <div class="inspector-row"><span>Type / Ring</span><span id="inspType">—</span></div>
+              <div class="inspector-row"><span>Status</span><span id="inspStatus">—</span></div>
+              <div class="inspector-row"><span>Health</span><span id="inspHealth">—</span></div>
+              <div class="inspector-row"><span>Latency</span><span id="inspLatency">—</span></div>
+              <div class="inspector-row"><span>Coordinates (X,Y,Z)</span><span id="inspCoords">—</span></div>
+              <div style="margin-top:8px;">
+                <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:6px;">Capabilities & Metadata</div>
+                <pre id="inspMeta" style="background:rgba(0,0,0,.35);padding:8px;border-radius:8px;font-size:9px;color:#a8c7fa;white-space:pre-wrap;max-height:160px;overflow:auto;margin:0;">—</pre>
+              </div>
+            </div>
+          </div>
+          <div id="brain2DView" class="data-table-wrap" style="display:none;margin-top:14px;max-height:450px;overflow:auto;">
+            <table class="os-table">
+              <thead>
+                <tr>
+                  <th>Node ID</th>
+                  <th>Label</th>
+                  <th>Ring / Type</th>
+                  <th>Status</th>
+                  <th>Coordinates (X,Y,Z)</th>
+                  <th>Latency</th>
+                </tr>
+              </thead>
+              <tbody id="brain2DTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="page-command">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">AUTONOMOUS CONTROL PLANE</div>
+              <h1 class="page-title">AI OS Command Center</h1>
+              <p class="page-description">Durable task engine, specialist worker mesh, MCP tool registries, and controlled self-repair gating.</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="action-btn" id="refreshCommandBtn">↻ Refresh</button>
+              <button class="action-btn primary" id="openNewTaskBtn">+ New Task</button>
+            </div>
+          </div>
+          <div class="section-scroll">
+            <div class="command-metrics-grid">
+              <div class="cmd-metric-card">
+                <div class="cmd-metric-top"><span>Specialist Workers</span><span>⚙</span></div>
+                <div class="cmd-metric-val" id="cmdActiveWorkers">6 Active</div>
+                <div class="cmd-metric-sub">Mesh topology ready</div>
+              </div>
+              <div class="cmd-metric-card">
+                <div class="cmd-metric-top"><span>Durable Tasks</span><span>⚡</span></div>
+                <div class="cmd-metric-val" id="cmdTaskStats">0 Running</div>
+                <div class="cmd-metric-sub" id="cmdTaskSub">0 queued · 0 completed</div>
+              </div>
+              <div class="cmd-metric-card">
+                <div class="cmd-metric-top"><span>Registries</span><span>📦</span></div>
+                <div class="cmd-metric-val" id="cmdRegistryStats">5 MCP · 3 Prov</div>
+                <div class="cmd-metric-sub">All tools verified</div>
+              </div>
+              <div class="cmd-metric-card">
+                <div class="cmd-metric-top"><span>Incidents / Repair</span><span>🛡</span></div>
+                <div class="cmd-metric-val" id="cmdIncidentStats" style="color:var(--mint);">0 Open</div>
+                <div class="cmd-metric-sub">Self-repair gate active</div>
+              </div>
+              <div class="cmd-metric-card">
+                <div class="cmd-metric-top"><span>Telemetry Throughput</span><span>📊</span></div>
+                <div class="cmd-metric-val" id="cmdTokensTotal">0 Tok</div>
+                <div class="cmd-metric-sub" id="cmdAvgLatency">0 ms avg latency</div>
+              </div>
+            </div>
+
+            <div class="command-tabs-nav">
+              <button class="cmd-tab-btn active" data-cmdtab="tasks">Tasks & Worker Mesh</button>
+              <button class="cmd-tab-btn" data-cmdtab="registries">Integrations & MCP Tools</button>
+              <button class="cmd-tab-btn" data-cmdtab="repair">Self-Repair & Incidents</button>
+              <button class="cmd-tab-btn" data-cmdtab="telemetry">Live Traces & Spans</button>
+            </div>
+
+            <div class="cmd-tab-content active" id="cmdtab-tasks">
+              <div style="font-size:11px;font-weight:750;margin:10px 0 8px;color:#c8d4ea;">Specialist Workers Mesh</div>
+              <div class="worker-cards-grid" id="cmdWorkerGrid"></div>
+
+              <div style="font-size:11px;font-weight:750;margin:18px 0 8px;color:#c8d4ea;">Durable Tasks Queue</div>
+              <div class="data-table-wrap">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Task ID</th><th>Title</th><th>Worker</th><th>Status</th><th>Submitted</th><th>Result</th></tr>
+                  </thead>
+                  <tbody id="cmdTaskTableBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">No durable tasks submitted yet.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="cmd-tab-content" id="cmdtab-registries">
+              <div style="font-size:11px;font-weight:750;margin:10px 0 8px;color:#c8d4ea;">Registered Model & Audio Providers</div>
+              <div class="data-table-wrap" style="margin-bottom:16px;">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Provider ID</th><th>Name</th><th>Kind</th><th>Status</th><th>Models Available</th></tr>
+                  </thead>
+                  <tbody id="cmdProvTableBody"></tbody>
+                </table>
+              </div>
+
+              <div style="font-size:11px;font-weight:750;margin:14px 0 8px;color:#c8d4ea;">Model Context Protocol (MCP) Servers</div>
+              <div class="data-table-wrap">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Server Name</th><th>Transport</th><th>Status</th><th>Tools Exposed</th><th>Capabilities</th></tr>
+                  </thead>
+                  <tbody id="cmdMcpTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="cmd-tab-content" id="cmdtab-repair">
+              <div style="font-size:11px;font-weight:750;margin:10px 0 8px;color:#c8d4ea;">Controlled Self-Repair Gating</div>
+              <div class="card" style="padding:14px 16px;margin-bottom:14px;background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.2);">
+                <div style="font-size:10px;font-weight:700;color:var(--violet);margin-bottom:4px;">Autonomous Policy Boundaries</div>
+                <div style="font-size:9px;color:var(--muted);line-height:1.5;">
+                  Low-risk actions (bounded retry, worker restart, provider failover, buffer clear) execute autonomously.<br>
+                  High-risk actions (destructive migrations, session revoking, privilege changes) require explicit operator authorization.
+                </div>
+              </div>
+              <div class="data-table-wrap" style="margin-bottom:16px;">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Incident ID</th><th>Severity</th><th>Component</th><th>Title & Root Cause</th><th>Plan Action</th><th>Risk Level</th><th>Execution</th></tr>
+                  </thead>
+                  <tbody id="cmdIncidentTableBody"><tr><td colspan="7" style="text-align:center;color:var(--mint);padding:18px;">No active incidents detected. All subsystems operating within healthy tolerances.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="cmd-tab-content" id="cmdtab-telemetry">
+              <div style="font-size:11px;font-weight:750;margin:10px 0 8px;color:#c8d4ea;">Live Distributed Trace Spans</div>
+              <div class="data-table-wrap" style="max-height:400px;overflow:auto;">
+                <table class="os-table">
+                  <thead>
+                    <tr><th>Span ID</th><th>Trace ID</th><th>Operation</th><th>Duration</th><th>Status</th><th>Timestamp</th></tr>
+                  </thead>
+                  <tbody id="cmdSpansTableBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);">No recent spans captured.</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="page" id="page-settings">
           <div class="page-head"><div><div class="eyebrow">YOUR WORKSPACE</div><h1 class="page-title">Preferences</h1><p class="page-description">Browser-side controls for this remote dashboard.</p></div></div>
           <div class="section-scroll"><div class="card" style="padding:17px 18px"><div class="card-title" style="margin-bottom:12px">Voice input</div><div class="setting-row"><div><label for="speechLang">Recognition language</label><small>Used only when your browser supports speech recognition.</small></div><select id="speechLang"><option value="hi-IN">Hindi · India</option><option value="en-IN">English · India</option><option value="en-US">English · US</option><option value="bn-IN">Bengali · India</option></select></div><div class="setting-row"><div><label>Voice replies</label><small>Browser auto-speech is disabled to avoid a second voice. DAZY speaks through the desktop engine.</small></div><span class="status-chip">DESKTOP AUDIO</span></div><div class="setting-row"><div><label>Reduced motion</label><small>Respect your device's accessibility setting.</small></div><span class="status-chip">AUTO</span></div></div><div class="card" style="padding:17px 18px;margin-top:13px"><div class="card-title">Connection details</div><div class="system-row" style="margin-top:12px"><div class="system-icon">⌁</div><div><div class="system-label">WebSocket</div><div class="system-value" id="settingsSocket">Connecting</div></div></div><div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport</div><div class="system-value" id="settingsTransport">Detecting browser context</div></div></div><div class="system-row"><div class="system-icon">◷</div><div><div class="system-label">Session token</div><div class="system-value">Stored in this tab session</div></div></div><p class="rail-note" style="margin:12px 0 0">This interface does not store API keys or assistant memories. Provider settings remain in the desktop application.</p></div></div>
@@ -564,6 +822,37 @@
 </div>
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 <div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><div class="dialog"><h3 id="confirmTitle">Confirm action</h3><p id="confirmText">Are you sure?</p><div class="dialog-actions"><button class="action-btn" id="confirmCancel">Cancel</button><button class="action-btn primary" id="confirmOK">Continue</button></div></div></div>
+<div class="overlay" id="newTaskModal" role="dialog" aria-modal="true" aria-labelledby="newTaskTitle">
+  <div class="dialog" style="width:min(520px,100%);">
+    <h3 id="newTaskTitle">Submit Durable AI OS Task</h3>
+    <p>Enqueue an idempotent task to the durable background task engine.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <div>
+        <label style="font-size:10px;font-weight:700;display:block;margin-bottom:4px;">Task Title</label>
+        <input type="text" id="taskTitleInput" placeholder="e.g. Code Review &amp; Verification" style="width:100%;padding:8px 10px;background:#0c1323;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:11px;">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;display:block;margin-bottom:4px;">Target Specialist Worker</label>
+        <select id="taskWorkerSelect" style="width:100%;padding:8px 10px;background:#0c1323;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:11px;">
+          <option value="wrk_orchestrator">Principal Orchestrator &amp; Task Router</option>
+          <option value="wrk_code_reviewer">Code Reviewer (Graph-Aware &amp; AST)</option>
+          <option value="wrk_qa_test">QA &amp; Verification Engineer</option>
+          <option value="wrk_sec_auditor">Security &amp; Vulnerability Auditor</option>
+          <option value="wrk_audio_eng">Neural Audio &amp; VAD Engineer</option>
+          <option value="wrk_memory_curator">Memory &amp; Knowledge Curator</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;display:block;margin-bottom:4px;">Input Payload (JSON)</label>
+        <textarea id="taskPayloadInput" rows="3" style="width:100%;padding:8px 10px;background:#0c1323;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:10px;font-family:ui-monospace,monospace;">{"action": "audit", "target": "system"}</textarea>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button class="action-btn" id="newTaskCancelBtn">Cancel</button>
+      <button class="action-btn primary" id="newTaskSubmitBtn">Enqueue Task</button>
+    </div>
+  </div>
+</div>
 <script>
 (() => {
   'use strict';
@@ -579,9 +868,14 @@
     micMode:'idle', currentStatus:'unknown', aesKey:null, encReady:false, sendBusy:false
   };
   const titles = {
-    overview:['Overview','Your personal AI workspace'], chat:['Conversation','A private conversation with DAZY'],
-    files:['Files','Transfer files to your computer'], activity:['Activity','Live events from your assistant'],
-    settings:['Settings','Manage this browser session'], diagnostics:['Voice & Diarization','Neural audio pipeline & speaker telemetry']
+    overview:['Overview','Your personal AI workspace'],
+    chat:['Conversation','A private conversation with DAZY'],
+    brain:['Live Brain 3D','Spatial neural topology and telemetry projection'],
+    command:['AI OS Command Center','Registries, durable tasks, incident triage & repair'],
+    files:['Files','Transfer files to your computer'],
+    activity:['Activity','Live events from your assistant'],
+    settings:['Settings','Manage this browser session'],
+    diagnostics:['Voice & Diarization','Neural audio pipeline & speaker telemetry']
   };
   const encoder = new TextEncoder();
   const AES_SALT = 'JARVIS-DASHBOARD-v1';
@@ -949,6 +1243,36 @@
       toast(message.text||message.error||'Assistant reported an error','error');
       updateVoiceState('error');
     }
+    else if(type==='trace_span') {
+      if (message.span && state.page === 'command') {
+        const tbody = $('cmdSpansTableBody');
+        if (tbody) {
+          const sp = message.span;
+          const tr = document.createElement('tr');
+          const stColor = sp.status === 'OK' ? 'var(--mint)' : 'var(--red)';
+          tr.innerHTML = `
+            <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(sp.span_id)}</td>
+            <td style="font-family:ui-monospace,monospace;color:var(--muted);">${escapeHTML(sp.trace_id)}</td>
+            <td style="font-weight:700;">${escapeHTML(sp.name)}</td>
+            <td style="color:var(--violet);font-weight:700;">${sp.duration_ms} ms</td>
+            <td style="color:${stColor};font-weight:800;">${escapeHTML(sp.status)}</td>
+            <td style="font-size:9px;color:var(--muted);">${new Date().toLocaleTimeString()}</td>
+          `;
+          tbody.prepend(tr);
+        }
+      }
+    }
+    else if(type==='metric_update') {
+      if (message.values && message.values.total !== undefined && $('cmdTokensTotal')) {
+        $('cmdTokensTotal').textContent = `${Math.round(message.values.total).toLocaleString()} Tok`;
+      }
+    }
+    else if(type==='task_created' || type==='task_started' || type==='task_completed' || type==='task_failed') {
+      if (state.page === 'command') loadCommandCenter();
+    }
+    else if(type==='incident_detected' || type==='repair_executed') {
+      if (state.page === 'command') loadCommandCenter();
+    }
   }
   function connectSocket(){
     if(state.manuallyClosed)return;
@@ -983,7 +1307,7 @@
   }
   function autoGrow(){const el=$('chatInput');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
   async function wakeAssistant(){try{const res=await authFetch('/api/wake',{method:'POST'});if(!res.ok)throw new Error('Wake request failed');toast('Wake signal sent','success');}catch(err){toast(err.message||'Could not wake DAZY','error');}}
-  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
+  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='brain')loadBrainGraph();if(page==='command')loadCommandCenter();if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
   function fileSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';if(bytes<1073741824)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1073741824).toFixed(2)+' GB';}
   function fileGlyph(name){const ext=(name.split('.').pop()||'').toLowerCase();if(['png','jpg','jpeg','webp','gif','svg'].includes(ext))return'▧';if(['mp3','wav','m4a','ogg','flac'].includes(ext))return'♫';if(['mp4','mov','mkv','webm'].includes(ext))return'▶';if(ext==='pdf')return'▤';if(['doc','docx','txt','md'].includes(ext))return'≡';if(['zip','rar','7z'].includes(ext))return'▣';return'◈';}
   async function loadFiles(showToast=true){$('fileListState').textContent='Loading…';try{const res=await authFetch('/api/files');const data=await res.json();if(!res.ok)throw new Error(data.error||'Could not load files');state.files=Array.isArray(data.files)?data.files:[];$('statFiles').textContent=String(state.files.length);$('fileCount').textContent=String(state.files.length);$('fileListState').textContent=state.files.length+' item(s)';const box=$('fileList');box.innerHTML='';if(!state.files.length){box.innerHTML='<div class="rail-note">No uploaded files yet. Send a file from this device to get started.</div>';return;}for(const file of state.files){const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name||'');const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name||'Unnamed file';const size=document.createElement('div');size.className='file-size';size.textContent=fileSize(Number(file.size)||0);info.append(name,size);const link=document.createElement('a');link.className='file-open';link.textContent='Download';link.href='/uploads/'+encodeURIComponent(file.name||'')+'?token='+encodeURIComponent(authToken);link.setAttribute('download',file.name||'file');row.append(glyph,info,link);box.appendChild(row);}}catch(err){$('fileListState').textContent='Unavailable';$('fileList').innerHTML='<div class="rail-note">'+escapeHTML(err.message||'File list unavailable')+'</div>';if(showToast)toast(err.message||'Could not load files','error');}}
@@ -1160,6 +1484,484 @@
     }
   }
 
+  /* ==========================================================================
+     DAZY AI OS — 3D LIVE BRAIN & COMMAND CENTER SUBSYSTEM
+     ========================================================================== */
+
+  const brainState = {
+    nodes: [],
+    edges: [],
+    angleX: 0.22,
+    angleY: 0.38,
+    zoom: 1.0,
+    dragging: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
+    hoveredNode: null,
+    selectedNode: null,
+    reducedMotion: false,
+    animFrame: null,
+    particles: [],
+    view2D: false,
+    projected: {}
+  };
+
+  async function loadBrainGraph() {
+    try {
+      const res = await authFetch('/api/os/graph');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch graph snapshot');
+      brainState.nodes = data.nodes || [];
+      brainState.edges = data.edges || [];
+      initBrainParticles();
+      renderBrain2DTable();
+      startBrainAnimation();
+    } catch (err) {
+      toast(err.message || 'Brain topology load failed', 'error');
+    }
+  }
+
+  function initBrainParticles() {
+    brainState.particles = [];
+    if (brainState.edges.length === 0) return;
+    for (let i = 0; i < 28; i++) {
+      const edge = brainState.edges[Math.floor(Math.random() * brainState.edges.length)];
+      brainState.particles.push({
+        sourceId: edge.source,
+        targetId: edge.target,
+        progress: Math.random(),
+        speed: 0.006 + Math.random() * 0.012,
+        color: edge.edge_type === 'TELEMETRY' ? '#72e0b4' : '#a78bfa'
+      });
+    }
+  }
+
+  function renderBrain2DTable() {
+    const tbody = $('brain2DTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    brainState.nodes.forEach(n => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(n.id)}</td>
+        <td style="font-weight:700;">${escapeHTML(n.label)}</td>
+        <td><span class="status-badge queued">${escapeHTML(n.type)}</span></td>
+        <td><span class="status-badge completed">${escapeHTML(n.status)}</span></td>
+        <td style="font-family:ui-monospace,monospace;color:var(--muted);">${n.x.toFixed(1)}, ${n.y.toFixed(1)}, ${n.z.toFixed(1)}</td>
+        <td>${n.latency_ms ? n.latency_ms + ' ms' : '—'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function selectBrainNode(node) {
+    brainState.selectedNode = node;
+    const insp = $('nodeInspector');
+    if (!node) {
+      if (insp) insp.classList.remove('open');
+      return;
+    }
+    $('inspName').textContent = node.label || node.id;
+    $('inspId').textContent = node.id;
+    $('inspType').textContent = `${node.type} · Ring ${node.ring_index}`;
+    $('inspStatus').textContent = node.status;
+    $('inspHealth').textContent = node.health || 'HEALTHY';
+    $('inspLatency').textContent = node.latency_ms ? `${node.latency_ms} ms` : 'Nominal';
+    $('inspCoords').textContent = `(${node.x.toFixed(1)}, ${node.y.toFixed(1)}, ${node.z.toFixed(1)})`;
+    $('inspMeta').textContent = JSON.stringify(node.metadata || {}, null, 2);
+    if (insp) insp.classList.add('open');
+  }
+
+  function startBrainAnimation() {
+    if (brainState.animFrame) cancelAnimationFrame(brainState.animFrame);
+    const canvas = $('brainCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(rect.height * dpr);
+      }
+    }
+    resize();
+
+    function frame() {
+      if (state.page !== 'brain') return;
+      resize();
+      const w = canvas.width;
+      const h = canvas.height;
+      if (w === 0 || h === 0) {
+        brainState.animFrame = requestAnimationFrame(frame);
+        return;
+      }
+      const dpr = window.devicePixelRatio || 1;
+      ctx.clearRect(0, 0, w, h);
+
+      if (!brainState.reducedMotion) {
+        brainState.angleY += 0.0035;
+      }
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const fov = 390 * dpr * brainState.zoom;
+      const cameraDist = 480;
+
+      const cosY = Math.cos(brainState.angleY);
+      const sinY = Math.sin(brainState.angleY);
+      const cosX = Math.cos(brainState.angleX);
+      const sinX = Math.sin(brainState.angleX);
+
+      const proj = {};
+
+      brainState.nodes.forEach(n => {
+        // Rotate around Y axis
+        const rx = n.x * cosY - n.z * sinY;
+        const rz = n.x * sinY + n.z * cosY;
+        // Rotate around X axis
+        const ry = n.y * cosX - rz * sinX;
+        const rz2 = n.y * sinX + rz * cosX;
+
+        const depth = cameraDist + rz2;
+        const scale = fov / Math.max(15, depth);
+        const sx = cx + rx * scale;
+        const sy = cy + ry * scale;
+
+        proj[n.id] = {
+          node: n,
+          sx, sy, scale, depth,
+          screenRadius: Math.max(4.5 * dpr, (n.type === 'ORCHESTRATOR' ? 14 : 7.5) * scale)
+        };
+      });
+      brainState.projected = proj;
+
+      // Draw Edges
+      brainState.edges.forEach(e => {
+        const p1 = proj[e.source];
+        const p2 = proj[e.target];
+        if (!p1 || !p2) return;
+
+        ctx.beginPath();
+        ctx.moveTo(p1.sx, p1.sy);
+        ctx.lineTo(p2.sx, p2.sy);
+        const alpha = Math.max(0.12, Math.min(0.55, (p1.scale + p2.scale) * 0.28));
+        ctx.strokeStyle = e.edge_type === 'TELEMETRY'
+          ? `rgba(114, 224, 180, ${alpha})`
+          : `rgba(167, 139, 250, ${alpha})`;
+        ctx.lineWidth = Math.max(0.8, 1.2 * dpr * ((p1.scale + p2.scale) / 2));
+        ctx.stroke();
+      });
+
+      // Draw Animated Particles
+      if (!brainState.reducedMotion) {
+        brainState.particles.forEach(pt => {
+          pt.progress += pt.speed;
+          if (pt.progress >= 1.0) pt.progress = 0;
+          const p1 = proj[pt.sourceId];
+          const p2 = proj[pt.targetId];
+          if (!p1 || !p2) return;
+
+          const px = p1.sx + (p2.sx - p1.sx) * pt.progress;
+          const py = p1.sy + (p2.sy - p1.sy) * pt.progress;
+
+          ctx.beginPath();
+          ctx.arc(px, py, 2.5 * dpr, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.fill();
+        });
+      }
+
+      // Sort nodes by depth descending (Painter's algorithm)
+      const sorted = Object.values(proj).sort((a, b) => b.depth - a.depth);
+
+      // Draw Nodes
+      sorted.forEach(p => {
+        const n = p.node;
+        const isHover = brainState.hoveredNode === n.id;
+        const isSel = brainState.selectedNode?.id === n.id;
+
+        let fill = '#a78bfa';
+        if (n.type === 'MODEL') fill = '#64d8ff';
+        else if (n.type === 'WORKER') fill = '#f6c779';
+        else if (n.type === 'MCP_SERVER' || n.type === 'TOOL') fill = '#72e0b4';
+        else if (n.type === 'MEMORY' || n.type === 'AUDIO') fill = '#fb83bd';
+
+        const r = p.screenRadius * (isHover || isSel ? 1.35 : 1.0);
+
+        // Ambient glow
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, r * 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = fill + '24'; // 14% alpha
+        ctx.fill();
+
+        // Node core
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+        ctx.fillStyle = fill;
+        ctx.fill();
+
+        if (isSel || isHover) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2 * dpr;
+          ctx.stroke();
+        }
+
+        if (n.type === 'ORCHESTRATOR' || isHover || isSel || p.scale > 1.05) {
+          ctx.font = `600 ${Math.round(9.5 * dpr)}px Inter, system-ui, sans-serif`;
+          ctx.fillStyle = '#eef3ff';
+          ctx.textAlign = 'center';
+          ctx.fillText(n.label, p.sx, p.sy - r - 6 * dpr);
+        }
+      });
+
+      brainState.animFrame = requestAnimationFrame(frame);
+    }
+    brainState.animFrame = requestAnimationFrame(frame);
+  }
+
+  /* ── Command Center Methods ── */
+
+  async function loadCommandCenter() {
+    try {
+      const [ovRes, wkRes, tkRes, rgRes, icRes, tmRes] = await Promise.all([
+        authFetch('/api/os/overview').then(r => r.json()).catch(() => ({})),
+        authFetch('/api/os/workers').then(r => r.json()).catch(() => ({})),
+        authFetch('/api/os/tasks').then(r => r.json()).catch(() => ({})),
+        authFetch('/api/os/registries').then(r => r.json()).catch(() => ({})),
+        authFetch('/api/os/incidents').then(r => r.json()).catch(() => ({})),
+        authFetch('/api/os/telemetry').then(r => r.json()).catch(() => ({}))
+      ]);
+
+      const workers = wkRes.workers || [];
+      const tasks = tkRes.tasks || [];
+      const incidents = icRes.incidents || [];
+      const repairPlans = icRes.repair_plans || [];
+      const mcpServers = rgRes.mcp_servers || [];
+      const providers = rgRes.providers || [];
+      const metrics = tmRes.metrics || {};
+
+      $('cmdActiveWorkers').textContent = `${workers.length} Active`;
+      const runningCount = tasks.filter(t => t.status === 'RUNNING').length;
+      const queuedCount = tasks.filter(t => t.status === 'QUEUED').length;
+      const doneCount = tasks.filter(t => t.status === 'COMPLETED').length;
+      $('cmdTaskStats').textContent = `${runningCount} Running`;
+      $('cmdTaskSub').textContent = `${queuedCount} queued · ${doneCount} completed`;
+
+      $('cmdRegistryStats').textContent = `${mcpServers.length} MCP · ${providers.length} Prov`;
+      $('cmdIncidentStats').textContent = `${incidents.length} Open`;
+      $('cmdIncidentStats').style.color = incidents.length > 0 ? 'var(--amber)' : 'var(--mint)';
+
+      $('cmdTokensTotal').textContent = `${Math.round(metrics.tokens_total || 0).toLocaleString()} Tok`;
+      $('cmdAvgLatency').textContent = `${metrics.avg_latency_ms || 0} ms avg latency`;
+
+      renderWorkerGrid(workers);
+      renderTaskTable(tasks);
+      renderRegistries(providers, rgRes.models || [], mcpServers);
+      renderIncidentsAndRepairs(incidents, repairPlans);
+      renderTraceSpans(tmRes.recent_spans || []);
+    } catch (err) {
+      toast(err.message || 'Command center refresh failed', 'error');
+    }
+  }
+
+  function renderWorkerGrid(workers) {
+    const grid = $('cmdWorkerGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    workers.forEach(w => {
+      const card = document.createElement('div');
+      card.className = 'worker-card';
+      card.innerHTML = `
+        <div class="worker-card-head">
+          <div class="worker-card-name">${escapeHTML(w.name)}</div>
+          <span class="status-badge ${w.status.toLowerCase()}">${escapeHTML(w.status)}</span>
+        </div>
+        <div class="worker-card-role">${escapeHTML(w.role)}</div>
+        <div style="font-size:9px;color:var(--muted);display:flex;justify-content:space-between;margin-top:4px;">
+          <span>ID: <code style="color:var(--cyan);">${escapeHTML(w.id)}</code></span>
+          <span>Load: ${(w.current_load * 100).toFixed(0)}%</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderTaskTable(tasks) {
+    const tbody = $('cmdTaskTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (tasks.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px;">No durable tasks submitted yet.</td></tr>';
+      return;
+    }
+    tasks.forEach(t => {
+      const tr = document.createElement('tr');
+      const stClass = t.status.toLowerCase();
+      tr.innerHTML = `
+        <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(t.id)}</td>
+        <td style="font-weight:700;">${escapeHTML(t.title)}</td>
+        <td style="font-size:10px;color:var(--muted);">${escapeHTML(t.assigned_worker_id || 'unassigned')}</td>
+        <td><span class="status-badge ${stClass}">${escapeHTML(t.status)}</span></td>
+        <td style="font-size:9px;color:var(--muted);">${new Date(t.created_at).toLocaleTimeString()}</td>
+        <td style="font-size:9px;font-family:ui-monospace,monospace;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          ${t.output_result ? JSON.stringify(t.output_result) : '—'}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderRegistries(providers, models, mcpServers) {
+    const provBody = $('cmdProvTableBody');
+    if (provBody) {
+      provBody.innerHTML = '';
+      providers.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(p.id)}</td>
+          <td style="font-weight:700;">${escapeHTML(p.name)}</td>
+          <td><span class="status-badge queued">${escapeHTML(p.kind)}</span></td>
+          <td><span class="status-badge completed">${escapeHTML(p.health_status)}</span></td>
+          <td style="font-size:10px;">${(p.models_supported || []).join(', ') || '—'}</td>
+        `;
+        provBody.appendChild(tr);
+      });
+    }
+
+    const mcpBody = $('cmdMcpTableBody');
+    if (mcpBody) {
+      mcpBody.innerHTML = '';
+      mcpServers.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;color:var(--text);">${escapeHTML(s.name)}</td>
+          <td style="font-size:10px;color:var(--muted);">${escapeHTML(s.transport)}</td>
+          <td><span class="status-badge completed">${escapeHTML(s.health_status)}</span></td>
+          <td style="font-weight:700;color:var(--mint);">${(s.tools_exposed || []).length} tools</td>
+          <td style="font-size:9px;color:var(--muted);">${(s.tools_exposed || []).slice(0, 4).join(', ')}</td>
+        `;
+        mcpBody.appendChild(tr);
+      });
+    }
+  }
+
+  function renderIncidentsAndRepairs(incidents, repairPlans) {
+    const tbody = $('cmdIncidentTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (incidents.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--mint);padding:18px;">No active incidents detected. All subsystems operating within healthy tolerances.</td></tr>';
+      return;
+    }
+    incidents.forEach(inc => {
+      const plan = repairPlans.find(p => p.incident_id === inc.id);
+      const tr = document.createElement('tr');
+      const isRisky = plan?.requires_approval;
+      const riskBadge = isRisky
+        ? '<span class="risk-badge-risky">⚠ APPROVAL REQUIRED</span>'
+        : '<span class="risk-badge-safe">✓ SAFE (AUTONOMOUS)</span>';
+
+      tr.innerHTML = `
+        <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(inc.id)}</td>
+        <td><span class="status-badge failed">${escapeHTML(inc.severity)}</span></td>
+        <td style="font-size:10px;color:var(--muted);">${escapeHTML(inc.component)}</td>
+        <td><b>${escapeHTML(inc.title)}</b><br><small style="color:var(--muted);">${escapeHTML(inc.root_cause || '')}</small></td>
+        <td style="font-size:10px;">${escapeHTML(plan?.action || 'Diagnostic evaluation')}</td>
+        <td>${plan ? riskBadge : '—'}</td>
+        <td>
+          ${plan ? `<button class="action-btn ${isRisky ? '' : 'primary'}" onclick="window.__executeRepair('${plan.id}', ${isRisky})" style="padding:4px 9px;font-size:9px;">Execute</button>` : '—'}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderTraceSpans(spans) {
+    const tbody = $('cmdSpansTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (spans.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:14px;">No recent spans captured.</td></tr>';
+      return;
+    }
+    spans.slice(0, 30).forEach(sp => {
+      const tr = document.createElement('tr');
+      const stColor = sp.status === 'OK' ? 'var(--mint)' : 'var(--red)';
+      tr.innerHTML = `
+        <td style="font-family:ui-monospace,monospace;color:var(--cyan);">${escapeHTML(sp.span_id)}</td>
+        <td style="font-family:ui-monospace,monospace;color:var(--muted);">${escapeHTML(sp.trace_id)}</td>
+        <td style="font-weight:700;">${escapeHTML(sp.name)}</td>
+        <td style="color:var(--violet);font-weight:700;">${sp.duration_ms} ms</td>
+        <td style="color:${stColor};font-weight:800;">${escapeHTML(sp.status)}</td>
+        <td style="font-size:9px;color:var(--muted);">${new Date(sp.start_time_iso).toLocaleTimeString()}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  window.__executeRepair = async (planId, requiresApproval) => {
+    if (requiresApproval) {
+      $('confirmTitle').textContent = 'Authorize Risky Autonomous Action';
+      $('confirmText').textContent = 'This repair action carries high operational risk. Do you explicitly authorize execution?';
+      $('confirmOverlay').classList.add('show');
+      $('confirmOK').onclick = async () => {
+        $('confirmOverlay').classList.remove('show');
+        await doExecuteRepair(planId, true);
+      };
+      $('confirmCancel').onclick = () => {
+        $('confirmOverlay').classList.remove('show');
+      };
+    } else {
+      await doExecuteRepair(planId, false);
+    }
+  };
+
+  async function doExecuteRepair(planId, forceApproved) {
+    try {
+      const res = await authFetch('/api/os/repair/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan_id: planId, force_approved: forceApproved })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Repair execution failed');
+      toast(`Repair ${planId} executed successfully`, 'success');
+      loadCommandCenter();
+    } catch (err) {
+      toast(err.message || 'Repair execution failed', 'error');
+    }
+  }
+
+  async function submitNewTask() {
+    const title = $('taskTitleInput').value.trim();
+    if (!title) { toast('Task title is required', 'error'); return; }
+    const workerId = $('taskWorkerSelect').value;
+    let payload = {};
+    try {
+      payload = JSON.parse($('taskPayloadInput').value.trim());
+    } catch (e) {
+      toast('Invalid JSON payload', 'error');
+      return;
+    }
+    try {
+      const res = await authFetch('/api/os/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, worker_id: workerId, input_payload: payload })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Task submission failed');
+      toast(`Task queued: ${data.task_id}`, 'success');
+      $('newTaskModal').classList.remove('show');
+      $('taskTitleInput').value = '';
+      loadCommandCenter();
+    } catch (err) {
+      toast(err.message || 'Task creation failed', 'error');
+    }
+  }
+
   function initEvents(){
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.page)));
     document.querySelectorAll('[data-goto]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.goto)));
@@ -1181,7 +1983,94 @@
     $('clearActivity').addEventListener('click',()=>{$('activityList').innerHTML='<div class="rail-note">Activity view cleared. New events will appear here.</div>';state.activity=[];});
     document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{goTo('chat');$('chatInput').value=btn.dataset.prompt;$('chatForm').requestSubmit();}));
     $('speechLang').value=localStorage.getItem('dazy_speech_language')||'hi-IN';$('speechLang').addEventListener('change',()=>localStorage.setItem('dazy_speech_language',$('speechLang').value));
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'){ $('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');}});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'){ $('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');$('newTaskModal')?.classList.remove('show');selectBrainNode(null);}});
+
+    // ── Brain 3D Stage Controls ──
+    $('refreshBrainBtn')?.addEventListener('click', () => loadBrainGraph());
+    $('toggleBrainViewBtn')?.addEventListener('click', () => {
+      brainState.view2D = !brainState.view2D;
+      $('brainStage').style.display = brainState.view2D ? 'none' : 'flex';
+      $('brain2DView').style.display = brainState.view2D ? 'block' : 'none';
+      if (!brainState.view2D) startBrainAnimation();
+    });
+    $('toggleBrainMotionBtn')?.addEventListener('click', () => {
+      brainState.reducedMotion = !brainState.reducedMotion;
+      $('toggleBrainMotionBtn').textContent = brainState.reducedMotion ? 'Motion: Reduced' : 'Motion: Normal';
+    });
+    $('inspCloseBtn')?.addEventListener('click', () => selectBrainNode(null));
+
+    // ── Brain Canvas Interaction ──
+    const bCanvas = $('brainCanvas');
+    if (bCanvas) {
+      bCanvas.addEventListener('mousedown', (e) => {
+        brainState.dragging = true;
+        brainState.lastMouseX = e.clientX;
+        brainState.lastMouseY = e.clientY;
+      });
+      window.addEventListener('mouseup', () => { brainState.dragging = false; });
+      bCanvas.addEventListener('mouseleave', () => { brainState.dragging = false; });
+      bCanvas.addEventListener('mousemove', (e) => {
+        if (brainState.dragging) {
+          const dx = e.clientX - brainState.lastMouseX;
+          const dy = e.clientY - brainState.lastMouseY;
+          brainState.angleY += dx * 0.007;
+          brainState.angleX = Math.max(-1.4, Math.min(1.4, brainState.angleX + dy * 0.007));
+          brainState.lastMouseX = e.clientX;
+          brainState.lastMouseY = e.clientY;
+        } else {
+          const rect = bCanvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          const mx = (e.clientX - rect.left) * dpr;
+          const my = (e.clientY - rect.top) * dpr;
+          let found = null;
+          for (const pid in brainState.projected) {
+            const p = brainState.projected[pid];
+            const dist = Math.hypot(p.sx - mx, p.sy - my);
+            if (dist <= p.screenRadius + 8 * dpr) {
+              found = p.node.id;
+              break;
+            }
+          }
+          brainState.hoveredNode = found;
+          bCanvas.style.cursor = found ? 'pointer' : (brainState.dragging ? 'grabbing' : 'grab');
+        }
+      });
+      bCanvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        brainState.zoom = Math.max(0.4, Math.min(2.5, brainState.zoom - e.deltaY * 0.0012));
+      }, { passive: false });
+      bCanvas.addEventListener('click', (e) => {
+        const rect = bCanvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const mx = (e.clientX - rect.left) * dpr;
+        const my = (e.clientY - rect.top) * dpr;
+        let clicked = null;
+        for (const pid in brainState.projected) {
+          const p = brainState.projected[pid];
+          const dist = Math.hypot(p.sx - mx, p.sy - my);
+          if (dist <= p.screenRadius + 8 * dpr) {
+            clicked = p.node;
+            break;
+          }
+        }
+        selectBrainNode(clicked);
+      });
+    }
+
+    // ── Command Center Controls ──
+    $('refreshCommandBtn')?.addEventListener('click', () => loadCommandCenter());
+    $('openNewTaskBtn')?.addEventListener('click', () => $('newTaskModal').classList.add('show'));
+    $('newTaskCancelBtn')?.addEventListener('click', () => $('newTaskModal').classList.remove('show'));
+    $('newTaskSubmitBtn')?.addEventListener('click', submitNewTask);
+
+    // ── Command Tabs ──
+    document.querySelectorAll('[data-cmdtab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.cmdtab;
+        document.querySelectorAll('[data-cmdtab]').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.cmd-tab-content').forEach(p => p.classList.toggle('active', p.id === 'cmdtab-' + tab));
+      });
+    });
   }
   function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
   async function init(){

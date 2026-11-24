@@ -42,7 +42,24 @@ async def test_dashboard_login_and_ui_rendering():
         assert any(k in body_text.lower() for k in ["dazy", "system", "status", "voice", "audio", "mic"]), \
             "Dashboard should contain core system status and control elements"
 
-        # Step 4: Capture artifact screenshot
+        # Step 4: Verify navigation to Live Brain 3D
+        brain_nav = page.locator("button[data-page='brain']")
+        if await brain_nav.count() > 0:
+            await brain_nav.first.click()
+            await page.wait_for_timeout(1000)
+            brain_canvas = page.locator("#brainCanvas")
+            assert await brain_canvas.count() > 0, "Brain 3D Canvas should exist"
+            assert await brain_canvas.is_visible(), "Brain 3D Canvas should be visible"
+
+        # Step 5: Verify navigation to AI OS Command Center
+        cmd_nav = page.locator("button[data-page='command']")
+        if await cmd_nav.count() > 0:
+            await cmd_nav.first.click()
+            await page.wait_for_timeout(1000)
+            metric_card = page.locator("#cmdActiveWorkers")
+            assert await metric_card.count() > 0, "Active workers metric should exist"
+
+        # Step 6: Capture artifact screenshot
         screenshot_path = os.path.join(os.path.dirname(__file__), "dashboard_verified.png")
         await page.screenshot(path=screenshot_path)
         assert os.path.exists(screenshot_path), "Screenshot artifact should be saved"

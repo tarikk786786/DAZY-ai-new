@@ -741,6 +741,7 @@ class DashboardServer:
         self._throttle                    = _Throttle()
         self._device_sessions: dict[str, dict] = {}  # device_token → {session_key}
         self._phone_audio_queue: asyncio.Queue    = asyncio.Queue(maxsize=200)
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._uploads_dir                 = UPLOADS_DIR
         # Set by serve() when the port could not be taken, so the UI can say
         # why the QR code leads nowhere instead of showing it regardless.
@@ -1340,6 +1341,149 @@ class DashboardServer:
             except Exception as e:
                 return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
+        # ── DAZY AI OS REST & Telemetry Endpoints ────────────────────────────
+
+        @app.get("/api/os/overview")
+        async def os_overview_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import ControlPlaneRegistry, DurableTaskEngine, ControlledRepairEngine
+                reg = ControlPlaneRegistry.get_instance()
+                task_eng = DurableTaskEngine.get_instance()
+                repair_eng = ControlledRepairEngine.get_instance()
+                
+                workers = reg.get_workers()
+                tasks = task_eng.get_tasks(limit=10)
+                incidents = repair_eng.get_incidents()
+                
+                return JSONResponse({
+                    "ok": True,
+                    "status": "HEALTHY",
+                    "counts": {
+                        "workers_total": len(workers),
+                        "workers_running": sum(1 for w in workers if w.status.value == "RUNNING"),
+                        "tasks_total": len(tasks),
+                        "tasks_queued": sum(1 for t in tasks if t.status.value in ("QUEUED", "RUNNING")),
+                        "incidents_open": sum(1 for i in incidents if i.status == "OPEN"),
+                        "models_active": len(reg.get_models()),
+                        "mcp_connected": len(reg.get_mcp_servers()),
+                        "tools_total": len(reg.get_tools()),
+                    },
+                    "recent_tasks": [t.model_dump() for t in tasks[:5]],
+                    "open_incidents": [i.model_dump() for i in incidents if i.status == "OPEN"][:5],
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/graph")
+        async def os_graph_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import GraphProjectionService
+                snapshot = GraphProjectionService.get_instance().build_snapshot()
+                return JSONResponse({"ok": True, "graph": snapshot.model_dump()})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/workers")
+        async def os_workers_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import ControlPlaneRegistry
+                workers = ControlPlaneRegistry.get_instance().get_workers()
+                return JSONResponse({"ok": True, "workers": [w.model_dump() for w in workers]})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/tasks")
+        async def os_tasks_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import DurableTaskEngine
+                tasks = DurableTaskEngine.get_instance().get_tasks(limit=100)
+                return JSONResponse({"ok": True, "tasks": [t.model_dump() for t in tasks]})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/os/tasks")
+        async def os_submit_task_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                title = body.get("title", "Ad-hoc System Task")
+                payload = body.get("payload", {})
+                worker_id = body.get("worker_id", "wrk_orchestrator")
+                priority = int(body.get("priority", 1))
+                from core.ai_os import DurableTaskEngine
+                task = DurableTaskEngine.get_instance().submit_task(
+                    title=title, input_payload=payload, worker_id=worker_id, priority=priority
+                )
+                return JSONResponse({"ok": True, "task": task.model_dump()})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/registries")
+        async def os_registries_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import ControlPlaneRegistry
+                reg = ControlPlaneRegistry.get_instance()
+                return JSONResponse({
+                    "ok": True,
+                    "providers": [p.model_dump() for p in reg.get_providers()],
+                    "models": [m.model_dump() for m in reg.get_models()],
+                    "mcp_servers": [s.model_dump() for s in reg.get_mcp_servers()],
+                    "tools": [t.model_dump() for t in reg.get_tools()],
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/incidents")
+        async def os_incidents_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import ControlledRepairEngine
+                rep = ControlledRepairEngine.get_instance()
+                return JSONResponse({
+                    "ok": True,
+                    "incidents": [i.model_dump() for i in rep.get_incidents()],
+                    "repair_plans": [p.model_dump() for p in rep.get_repair_plans()],
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/os/repair/execute")
+        async def os_execute_repair_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                plan_id = body.get("plan_id", "")
+                force_approved = bool(body.get("force_approved", False))
+                from core.ai_os import ControlledRepairEngine
+                success = ControlledRepairEngine.get_instance().execute_repair(plan_id, force_approved=force_approved)
+                return JSONResponse({"ok": success, "plan_id": plan_id})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/os/telemetry")
+        async def os_telemetry_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from core.ai_os import TelemetryService
+                summary = TelemetryService.get_instance().get_summary()
+                return JSONResponse({"ok": True, **summary})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         # ── Phone mic real-time audio → Gemini Live ──────────────────────────
 
         @app.websocket("/ws/phone-audio")
@@ -1563,6 +1707,16 @@ class DashboardServer:
             print("[Dashboard] fastapi/uvicorn not installed — dashboard disabled.")
             print("[Dashboard] Run:  pip install fastapi 'uvicorn[standard]' cryptography")
             return
+
+        self._loop = asyncio.get_running_loop()
+        try:
+            from core.ai_os import TelemetryService
+            def _on_telemetry(evt: dict) -> None:
+                if self._loop and self._loop.is_running():
+                    asyncio.run_coroutine_threadsafe(self.broadcast(evt), self._loop)
+            TelemetryService.get_instance().subscribe(_on_telemetry)
+        except Exception as e:
+            logger.debug("Failed to subscribe to telemetry: %s", e)
 
         # Startup only CHECKS — see report_network_access for why it never
         # asks for administrator rights here. In a thread: reading the

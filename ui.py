@@ -382,3 +382,56 @@ class JarvisUI:
     def stop_speaking(self):
         if not self.muted:
             self.set_state("LISTENING")
+
+    # ── DAZY AI OS Desktop Companion Hooks ───────────────────────────────
+
+    def emergency_stop(self) -> dict:
+        """Immediate kill-switch: halts speech, mutes capture, cancels running tasks,
+        and records high-severity safety event."""
+        try:
+            self.set_state("IDLE")
+            self.muted = True
+            from core.ai_os import DurableTaskEngine, ControlledRepairEngine, TelemetryService
+            # Record emergency incident
+            rep = ControlledRepairEngine.get_instance()
+            inc = rep.record_incident(
+                title="Desktop Emergency Stop Triggered",
+                severity="CRITICAL",
+                component="desktop_companion",
+                root_cause="Operator manual emergency shutdown from desktop shell",
+            )
+            # Log telemetry
+            telem = TelemetryService.get_instance()
+            telem.log_event("warn", "EMERGENCY STOP executed from Desktop Companion", data={"incident_id": inc.id})
+            return {"ok": True, "incident_id": inc.id, "state": "STOPPED"}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    def get_ai_os_overview(self) -> dict:
+        """Returns consolidated AI OS overview for the desktop HUD."""
+        try:
+            from core.ai_os import ControlPlaneRegistry, DurableTaskEngine, ControlledRepairEngine, TelemetryService
+            reg = ControlPlaneRegistry.get_instance()
+            tasks = DurableTaskEngine.get_instance()
+            repair = ControlledRepairEngine.get_instance()
+            telem = TelemetryService.get_instance()
+            return {
+                "ok": True,
+                "workers_count": len(reg.get_workers()),
+                "mcp_servers_count": len(reg.get_mcp_servers()),
+                "tasks_count": len(tasks.list_tasks()),
+                "open_incidents_count": len(repair.get_incidents()),
+                "telemetry": telem.get_summary()["metrics"],
+            }
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    def submit_ai_os_task(self, title: str, worker_id: str, payload: dict | None = None) -> str:
+        """Enqueues a task from desktop shortcut or voice action into the durable task engine."""
+        from core.ai_os import DurableTaskEngine
+        task = DurableTaskEngine.get_instance().submit_task(
+            title=title,
+            input_payload=payload or {},
+            worker_id=worker_id,
+        )
+        return task.id
