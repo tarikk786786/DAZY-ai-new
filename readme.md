@@ -1,9 +1,28 @@
-# ⚙️ MARK LVII (57)
-### The Ultimate Cross-Platform Personal AI Assistant — By FatihMakes
+# ⚙️ DAZY (Mark LVII) — Sovereign Master AI Operating System
+### Autonomous Multi-Agent Orchestrator, Zero-Latency Voice Loop & Multi-AI Arena — Designed for Tarik (@tarikk786786)
 
-> 📺 **[Watch the full setup video on YouTube](https://www.youtube.com/@FatihMakes)**
+> 📺 **[Watch the setup video on YouTube](https://www.youtube.com/@FatihMakes)** | 🌐 **Repository:** [DAZY-ai-new](https://github.com/tarikk786786/DAZY-ai-new.git)
 
-A real-time voice AI that can hear, see, speak, and control your computer — on any OS. Supports Windows, macOS, and Linux. Built on the Gemini Live API for native audio streaming, delivering zero subscriptions and total digital autonomy.
+DAZY is an autonomous, sovereign personal AI operating system engineered to run locally on Windows while orchestrating high-performance cloud AI models (Gemini, Groq, DeepSeek, OpenRouter, NVIDIA, AI/ML API) and local LLMs (Ollama). Featuring sub-second voice interaction, LangGraph-powered multi-agent coordination with SQLite checkpoints, durable DAG task execution, and an interactive smol-ai Multi-AI Arena.
+
+---
+
+## 📚 Complete Enterprise Architecture & Documentation Suite
+
+The complete engineering documentation and formal specifications are available in the [`docs/`](docs/) directory:
+
+| Document | Description | Format & Standard |
+|---|---|---|
+| [**Product Requirements Document (PRD)**](docs/product/PRD.md) | Personas, user stories, functional (FR) & non-functional requirements (NFR) | Enterprise PRD Specification |
+| [**26-Stage Workflow Catalog**](docs/workflows/WORKFLOW_CATALOG.md) | Complete end-to-end lifecycle workflows from Research to Self-Healing | Operational Runbook Standards |
+| [**Tool, Library & MCP Registry**](docs/tools-and-mcps/TOOL_REGISTRY.md) | Searchable catalog of LLMs, Voice tech, MCP servers & evaluation matrix | Capability Decision Matrix |
+| [**Security & Privacy Audit**](docs/security/SECURITY_AND_PRIVACY_AUDIT.md) | Zero-trust architecture, owner PIN (`786786`), STRIDE threat model & SSRF defense | Security Compliance Standard |
+| [**Deployment & Disaster Recovery Guide**](docs/infrastructure/DEPLOYMENT_AND_RECOVERY_GUIDE.md) | Bootstrap runbook, Windows daemon setup, Docker Compose & WAL snapshots | Production DevOps Guide |
+| [**C4 System Architecture Model**](docs/architecture/01_C4_SYSTEM_ARCHITECTURE.dsl) | System Context, Container & Component boundaries | Structurizr C4 DSL |
+| [**Database Schema Specification**](docs/architecture/02_DATABASE_SCHEMA.dbml) | Relational entity models, foreign keys, checkpoints & memory indices | dbdiagram.io DBML |
+| [**OpenAPI 3.1.0 Gateway Contract**](docs/architecture/03_OPENAPI_SPEC.yaml) | REST endpoints, WebSocket channels, Problem Details schemas | OpenAPI 3.1.0 Specification |
+| [**Architecture Decision Records (ADRs)**](docs/architecture/04_ARCHITECTURE_DECISION_RECORDS.md) | ADR-001 through ADR-007 (LangGraph, SQLite, Starlette, VAD, etc.) | MADR Standard Format |
+| [**System Data Flows & Sequences**](docs/architecture/05_SYSTEM_DATA_FLOWS_AND_SEQUENCES.md) | Mermaid sequence diagrams for Voice loop, GodMode DAG & Arena | Mermaid UML Standard |
 
 ---
 
