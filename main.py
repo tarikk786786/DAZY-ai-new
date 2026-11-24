@@ -2544,11 +2544,17 @@ class JarvisLive:
         if self._turn_done_event:
             self._turn_done_event.clear()
 
-        await self.session.send_client_content(
-            turns={"role": "user", "parts": [{"text": p1}]},
-            turn_complete=True,
-        )
-        print("[JARVIS] Briefing phase 1 (greeting) sent.")
+        try:
+            await self.session.send_client_content(
+                turns={"role": "user", "parts": [{"text": p1}]},
+                turn_complete=True,
+            )
+            print("[JARVIS] Briefing phase 1 (greeting) sent.")
+        except Exception as e:
+            print(f"[JARVIS] Briefing phase 1 greeting failed gracefully: {e}")
+            if self.ui and hasattr(self.ui, "write_log"):
+                self.ui.write_log(f"SYS: Briefing greeting skipped ({e})")
+            return
         if not want_news and not extra:
             return
 
