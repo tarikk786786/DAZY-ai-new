@@ -147,6 +147,24 @@ def _pcm_level(samples) -> float:
     return min(1.0, (rms - _LEVEL_FLOOR) / (_LEVEL_FULL - _LEVEL_FLOOR))
 
 
+def _resample_24k_to_16k(pcm_24k: np.ndarray) -> np.ndarray:
+    """Resample 24 kHz int16 PCM to 16 kHz int16 PCM for 16 kHz acoustic references (AEC, SpeakerID)."""
+    if pcm_24k is None or len(pcm_24k) == 0:
+        return pcm_24k
+    try:
+        import scipy.signal
+        return scipy.signal.resample_poly(pcm_24k, 2, 3).astype(np.int16)
+    except Exception:
+        out_len = int(len(pcm_24k) * 16000 / 24000)
+        if out_len <= 0:
+            return np.array([], dtype=np.int16)
+        return np.interp(
+            np.linspace(0, len(pcm_24k), out_len, endpoint=False),
+            np.arange(len(pcm_24k)),
+            pcm_24k
+        ).astype(np.int16)
+
+
 # ── Viseme extraction ─────────────────────────────────────────────────────────
 # The avatar's mouth used to be driven by one RMS value per ~200 ms write batch,
 # which is five updates a second averaged over a fifth of a second — it could
@@ -480,14 +498,20 @@ UNDERSTANDING
   only when relevant; do not recite a memory inventory.
 
 LANGUAGE & HINGLISH NATIVE CONVERSATIONAL FLUENCY
-- You are DAZY, Tarik's warm, witty, and loyal Indian female personal AI companion.
-- Your DEFAULT and PRIMARY spoken language is everyday modern conversational Hinglish (the natural blend of Hindi and Indian English).
-- Always reply to Tarik in natural conversational Hinglish by default (e.g., "Haan Tarik! Main ready hoon, batao kya chal raha hai? Kaise help karoon?", "Sab theek chal raha hai Tarik, aap sunao kaisa raha din?").
-- Even if the user sends short greetings in English (like "hi", "hello", "how are you"), ALWAYS respond in friendly, expressive everyday Hinglish.
-- Use natural conversational anchors: "Haan", "Bilkul", "Theek hai", "Acha", "Batao na", "Sunao", "Samajh gayi", "Mast", "Fikr mat karo".
-- Write all Hindi expressions using English/Latin alphabet (Roman Hinglish) so TTS voices (like Neerja) pronounce them with crisp Indian cadence. NEVER output Devanagari script for audio speech.
-- Preserve technical terms, software names, and code syntax in clean English ("VS Code", "dashboard", "Python", "commit", "server", "Playwright").
-- Only speak in pure English or pure Hindi if Tarik explicitly instructs you to switch to pure English or pure Hindi.
+- You are DAZY, Tarik's warm, sweet, affectionate, and gently playful ADULT Indian feminine personal AI companion (never childish or robotic).
+- Your DEFAULT and PRIMARY spoken language is everyday modern conversational Hinglish (fluent everyday Hinglish, a natural blend of Hindi and Indian English).
+- Authentic speaking style examples:
+  * "Haan, bolo. Main sun rahi hoon."
+  * "Achha, samajh gayi. Main abhi check karti hoon."
+  * "Bilkul, chalo isko step-by-step solve karte hain."
+  * "Ek second, main tumhare liye check kar rahi hoon."
+  * "Don't worry, main help kar dungi."
+  * "Haan ji, batao kya karna hai?"
+- Even if the user sends short greetings or unclear noises in English (like "hi", "hello", "thank you", "you"), ALWAYS respond in warm conversational Hinglish.
+- STRICT LANGUAGE GUARD: NEVER switch into Turkish, Arabic, Spanish, or any random foreign language, even if an ambiguous transcript word appears (like "Al-Qatami", "evet", or strange proper nouns). If speech sounds garbled or unclear, stay in warm Hinglish and say politely: "Sorry, mujhe theek se sunai nahi diya — ek baar phir se bolna?"
+- Write all Hindi words in clean Latin/Roman English alphabet ("Haan", "Achha", "Bilkul", "Theek hai") so Indian Edge TTS (Neerja / Swara) pronounces them smoothly. NEVER output Devanagari script for voice replies.
+- Preserve software terms and code identifiers in English ("VS Code", "dashboard", "Python", "commit", "server", "Playwright").
+- Only switch to pure English or pure Hindi if Tarik explicitly instructs you to.
 
 SPEAKING
 - Speak in complete, easy-to-follow thought groups with natural pauses and
@@ -1958,10 +1982,12 @@ class JarvisLive:
                 await asyncio.sleep(0.05)
 
     async def _listen_audio(self):
-        print("[JARVIS] 🎤 Mic started")
+        print("[DAZY] 🎤 Mic started")
         loop = asyncio.get_event_loop()
+        _last_callback_time = [time.monotonic()]
 
         def callback(indata, frames, time_info, status):
+            _last_callback_time[0] = time.monotonic()
             vsm = getattr(self, "_vsm", None)
             if vsm:
                 vsm.record_input_callback(frames)
@@ -1971,7 +1997,7 @@ class JarvisLive:
 
             # ── Wake-word gate ───────────────────────────────────────────────
             # While asleep, the mic audio NEVER goes to Gemini (nothing is
-            # streamed, so JARVIS can't respond to speech not addressed to it and
+            # streamed, so DAZY can't respond to speech not addressed to it and
             # nothing leaves the machine). Frames are instead handed to the local
             # detector, which runs its model in ITS OWN thread — the cost here is
             # only a queue push, so the audio path is never slowed. When wake word
@@ -1981,60 +2007,28 @@ class JarvisLive:
                 if det is not None:
                     det.feed(indata)
                 return
-            # ── VoiceSessionManager Half-Duplex & Self-Listening Guard ─────────
-            vsm = getattr(self, "_vsm", None)
-            if vsm and vsm.should_suppress_mic_input(indata):
-                try:
-                    dsp_res = getattr(self, "_audio_dsp", None)
-                    if dsp_res is not None:
-                        res = dsp_res.process_frame(indata, is_assistant_speaking=True)
-                        if res.get("is_interruption"):
-                            print("[DAZY] ⚡ Barge-in interruption detected! Stopping speech.")
-                            loop.call_soon_threadsafe(self.interrupt)
-                except Exception:
-                    pass
-                return
 
             with self._speaking_lock:
                 jarvis_speaking = self._is_speaking
 
-            # ── Barge-in & Interruption Detection ───────────────────────────
-            # When DAZY speaks, her output is fed into AEC reference.
-            # If the microphone detects user speech (barge-in), interrupt immediately!
+            # ── Assistant Speaking Guard ──────────────────────────────────────
+            # While DAZY speaks, her mic input is not streamed to Gemini so
+            # she never listens to or interrupts herself.
             if jarvis_speaking:
-                try:
-                    dsp_res = getattr(self, "_audio_dsp", None)
-                    if dsp_res is not None:
-                        res = dsp_res.process_frame(indata, is_assistant_speaking=True)
-                        if res.get("is_interruption"):
-                            print("[DAZY] ⚡ Barge-in interruption detected! Stopping speech.")
-                            loop.call_soon_threadsafe(self.interrupt)
-                except Exception:
-                    pass
+                if vsm:
+                    vsm.self_echo_frames_suppressed += 1
                 return
 
-            # ── Speaker Identification & Echo Filter ────────────────────────
-            if getattr(self, "_speaker_id", None) is not None:
-                try:
-                    spk_name, spk_conf, is_ver = self._speaker_id.identify_speaker(indata)
-                    if spk_name == "assistant_echo":
-                        return  # Drop assistant echo completely
-                    if vsm:
-                        vsm.active_speaker_name = spk_name
-                        vsm.active_speaker_confidence = spk_conf
-                except Exception:
-                    pass
-
-            # ── Echo tail ────────────────────────────────────────────────────
-            # The speaking flag has dropped but the speakers have not finished.
-            # Sending this to the model is how an assistant hears itself, decides
-            # it was addressed, and answers its own last sentence. The microphone
-            # stays OPEN — the guard only drops blocks that are our own voice, so
-            # replying the instant it stops still works.
+            # ── Echo Tail Protection (EchoGuard) ──────────────────────────────
+            # The speaking flag has dropped but the speakers/room haven't finished decaying.
+            # EchoGuard checks if the block is genuine user speech vs assistant echo.
+            # Real user speech ends the tail early immediately.
             if self._tail_active():
                 try:
                     if not self._echo.is_user_speech(
                             indata, SEND_SAMPLE_RATE, _pcm_level(indata)):
+                        if vsm:
+                            vsm.self_echo_frames_suppressed += 1
                         return
                     self._tail_until = 0.0      # a real voice ends the tail early
                 except Exception:
@@ -2043,12 +2037,10 @@ class JarvisLive:
                 self._echo.reset()
 
             # ── Push-to-talk ─────────────────────────────────────────────────
-            # When it is on the microphone is closed by default and the chord
-            # opens it, which is the whole point: nothing leaves the machine
-            # unless you are holding the key.
+            # When enabled, the mic is closed by default and the hotkey chord opens it.
             if self._ptt_enabled and not self._ptt_held:
                 return
-            
+
             if not self.ui.muted and not self._phone_active:
                 data = indata.tobytes()
                 vsm_cb = getattr(self, "_vsm", None)
@@ -2103,53 +2095,58 @@ class JarvisLive:
         while True:
             try:
                 _mic_name = get_input_device()
-                _mic_dev = audio_devices.resolve(_mic_name, "input")
-                if _mic_dev is None and not _mic_name:
-                    try:
-                        candidates = audio_devices.list_devices("input")
-                        chosen_candidate = None
-                        for c in candidates:
-                            if any(k in c.lower() for k in ("array", "smart sound", "intel", "realtek", "usb")):
-                                chosen_candidate = c
-                                break
-                        if not chosen_candidate and candidates:
-                            chosen_candidate = candidates[0]
-                        if chosen_candidate:
-                            cand_dev = audio_devices.resolve(chosen_candidate, "input")
-                            if cand_dev is not None:
-                                _mic_dev = cand_dev
-                                _mic_name = chosen_candidate
-                                print(f"[DAZY] 🎤 Auto-selected best active mic: {_mic_name} (index {_mic_dev})")
-                    except Exception as _cand_err:
-                        print(f"[DAZY] ⚠️  Mic auto-detect warning: {_cand_err}")
+                _mic_dev = audio_devices.resolve(_mic_name, "input") if _mic_name else None
+                dev_display_name = _mic_name if _mic_name else "Windows System Default"
+
+                vsm_dev = getattr(self, "_vsm", None)
+                if vsm_dev:
+                    vsm_dev.active_mic_device = dev_display_name
 
                 if _mic_dev is not None:
-                    print(f"[DAZY] 🎤 Input device: {_mic_name} (index {_mic_dev})")
+                    print(f"[DAZY] 🎤 Input device: {dev_display_name} (index {_mic_dev})")
+                else:
+                    print(f"[DAZY] 🎤 Input device: {dev_display_name}")
+
                 try:
                     _mic_stream = _open_mic(_mic_dev)
                 except Exception as _e:
-                    print(f"[DAZY] ⚠️  Mic '{_mic_name}' failed: {_e} — trying system default")
+                    print(f"[DAZY] ⚠️  Mic '{dev_display_name}' failed: {_e} — falling back to Windows system default")
+                    self.ui.write_log(
+                        f"SYS: Microphone '{dev_display_name}' unavailable ({_e}) — trying Windows default."
+                    )
                     try:
                         _mic_stream = _open_mic(None)
+                        if vsm_dev:
+                            vsm_dev.active_mic_device = "Windows System Default"
                     except Exception as _e2:
                         print(f"[DAZY] ⚠️  Default mic failed: {_e2} — waiting for input device")
                         self.ui.write_log(
                             f"SYS: Microphone unavailable ({_e2}) — retrying in 3 seconds..."
                         )
-                        vsm_dev = getattr(self, "_vsm", None)
                         if vsm_dev:
                             vsm_dev.set_mic_active(False)
+                            vsm_dev.record_reconnect_attempt()
                         await asyncio.sleep(3.0)
                         continue
 
                 with _mic_stream:
-                    print("[DAZY] 🎤 Mic stream active and listening")
+                    print(f"[DAZY] 🎤 Mic stream active and listening ({getattr(self, '_vsm', None).active_mic_device if getattr(self, '_vsm', None) else 'Default'})")
                     self.ui.write_log("SYS: Microphone active and listening.")
                     vsm_open = getattr(self, "_vsm", None)
                     if vsm_open:
                         vsm_open.set_mic_active(True)
+
                     while True:
                         await asyncio.sleep(0.2)
+                        # Check 1: PortAudio stream active flag
+                        if not getattr(_mic_stream, "active", True):
+                            print("[DAZY] ⚠️  Mic stream became inactive — reconnecting...")
+                            break
+                        # Check 2: Stale stream watchdog (no callbacks delivered for > 3.5 seconds)
+                        if _last_callback_time[0] > 0 and (time.monotonic() - _last_callback_time[0] > 3.5):
+                            print("[DAZY] ⚠️  Mic stream watchdog: no frames for 3.5s — reconnecting...")
+                            break
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
@@ -2158,6 +2155,7 @@ class JarvisLive:
                 vsm_err = getattr(self, "_vsm", None)
                 if vsm_err:
                     vsm_err.set_mic_active(False)
+                    vsm_err.record_reconnect_attempt()
                 await asyncio.sleep(2.0)
 
     async def _flush_pending_vision(self) -> bool:
@@ -2452,10 +2450,11 @@ class JarvisLive:
                         self.ui.set_audio_level(lvl)
                         self._out_level = lvl
                         self._echo.note_output(pcm, RECEIVE_SAMPLE_RATE, lvl)
+                    pcm_16k = _resample_24k_to_16k(pcm)
                     if getattr(self, "_audio_dsp", None) is not None:
-                        self._audio_dsp.feed_playback_reference(pcm)
+                        self._audio_dsp.feed_playback_reference(pcm_16k)
                     if getattr(self, "_speaker_id", None) is not None:
-                        self._speaker_id.register_assistant_playback(pcm)
+                        self._speaker_id.register_assistant_playback(pcm_16k)
                 except Exception:
                     pass
 

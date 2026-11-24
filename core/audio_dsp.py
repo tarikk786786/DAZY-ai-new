@@ -150,7 +150,7 @@ class AcousticEchoCanceller:
         self._interruption_count = 0
         self._last_echo_similarity = 0.0
 
-    def feed_reference_playback(self, pcm_data: bytes | np.ndarray) -> None:
+    def feed_reference_playback(self, pcm_data: bytes | np.ndarray, sample_rate: int = 16000) -> None:
         """Feed actual synthesized speech audio sent to speakers into AEC reference line."""
         if isinstance(pcm_data, bytes):
             samples = np.frombuffer(pcm_data, dtype=np.int16).astype(np.float32) / 32768.0
@@ -158,6 +158,19 @@ class AcousticEchoCanceller:
             samples = pcm_data.astype(np.float32)
             if np.max(np.abs(samples)) > 1.0:
                 samples = samples / 32768.0
+
+        if sample_rate == 24000:
+            try:
+                import scipy.signal
+                samples = scipy.signal.resample_poly(samples, 2, 3).astype(np.float32)
+            except Exception:
+                out_len = int(len(samples) * 16000 / 24000)
+                if out_len > 0:
+                    samples = np.interp(
+                        np.linspace(0, len(samples), out_len, endpoint=False),
+                        np.arange(len(samples)),
+                        samples
+                    ).astype(np.float32)
 
         now = time.monotonic()
         fft_mag = np.abs(np.fft.rfft(samples * np.hanning(len(samples)))) if len(samples) >= 64 else np.zeros(32)
@@ -257,9 +270,9 @@ class AudioPreprocessor:
         self._pre_roll_buffer: collections.deque = collections.deque(maxlen=pre_roll_frames)
         self._is_active_speech_turn = False
 
-    def feed_playback_reference(self, pcm_chunk: bytes | np.ndarray) -> None:
+    def feed_playback_reference(self, pcm_chunk: bytes | np.ndarray, sample_rate: int = 16000) -> None:
         """Feed speaker audio chunk into AEC reference buffer."""
-        self.aec.feed_reference_playback(pcm_chunk)
+        self.aec.feed_reference_playback(pcm_chunk, sample_rate=sample_rate)
 
     def process_frame(
         self, mic_chunk: bytes | np.ndarray, is_assistant_speaking: bool = False

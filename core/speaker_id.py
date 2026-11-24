@@ -34,8 +34,9 @@ AUTHORITATIVE_FEMININE_VOICE = "en-IN-NeerjaNeural"
 class SpeakerIdentifier:
     """Extracts speaker embeddings and verifies speaker identity with confidence scoring."""
 
-    def __init__(self, threshold: float = 0.65):
+    def __init__(self, threshold: float = 0.65, enable_echo_rejection: bool = True):
         self.threshold = threshold
+        self.enable_echo_rejection = enable_echo_rejection
         # Structure: { speaker_name: { "role": str, "permissions": dict, "embeddings": list[list[float]] } }
         self._profiles: Dict[str, Dict[str, Any]] = {}
         self._assistant_echo_fingerprints: collections.deque = collections.deque(maxlen=20)
@@ -143,14 +144,36 @@ class SpeakerIdentifier:
 
         return np.zeros(64, dtype=np.float32)
 
-    def register_assistant_playback(self, pcm_16k: bytes | np.ndarray) -> None:
+    def register_assistant_playback(self, pcm_data: bytes | np.ndarray, sample_rate: int = 16000) -> None:
         """Registers assistant synthesized speech chunks to disqualify them from human speaker attribution."""
-        emb = self.extract_embedding(pcm_16k)
+        if sample_rate == 24000:
+            if isinstance(pcm_data, bytes):
+                arr = np.frombuffer(pcm_data, dtype=np.int16)
+            else:
+                arr = np.asarray(pcm_data, dtype=np.int16)
+            try:
+                import scipy.signal
+                pcm_data = scipy.signal.resample_poly(arr, 2, 3).astype(np.int16)
+            except Exception:
+                out_len = int(len(arr) * 16000 / 24000)
+                if out_len > 0:
+                    pcm_data = np.interp(
+                        np.linspace(0, len(arr), out_len, endpoint=False),
+                        np.arange(len(arr)),
+                        arr
+                    ).astype(np.int16)
+
+        emb = self.extract_embedding(pcm_data)
         if not np.all(emb == 0):
             self._assistant_echo_fingerprints.append(emb)
 
     def is_assistant_speech(self, pcm_chunk: bytes | np.ndarray, similarity_threshold: float = 0.85) -> bool:
         """Checks if the microphone input matches recent assistant synthesized speech."""
+        if not getattr(self, "enable_echo_rejection", False):
+            # Echo rejection temporarily bypassed to prevent discarding real user speech.
+            # EchoGuard provides primary acoustic isolation during echo tail.
+            return False
+
         curr_emb = self.extract_embedding(pcm_chunk)
         if np.all(curr_emb == 0):
             return False

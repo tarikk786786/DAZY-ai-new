@@ -185,6 +185,12 @@ class VoiceSessionManager:
         self.bytes_sent_to_ai_count: int = 0
         self.transcripts_received_count: int = 0
         self.responses_received_count: int = 0
+        self.active_mic_device: str = "Windows System Default"
+        self.reconnect_attempts: int = 0
+
+    def record_reconnect_attempt(self) -> None:
+        with self._lock:
+            self.reconnect_attempts += 1
 
     def record_input_callback(self, frames: int = 1024) -> None:
         with self._lock:
@@ -210,12 +216,6 @@ class VoiceSessionManager:
     def record_response_received(self) -> None:
         with self._lock:
             self.responses_received_count += 1
-        self.frames_captured: int = 0
-        self.frames_queued: int = 0
-        self.frames_dropped_overflow: int = 0
-        self.audio_status_warnings: int = 0
-        self.last_audio_warning: str = ""
-        self.is_mic_open: bool = False
 
     def set_auto_speak_mode(self, mode: AutoSpeakMode | str) -> None:
         if isinstance(mode, str):
@@ -275,13 +275,26 @@ class VoiceSessionManager:
                 return True
             return time.monotonic() < self._tail_until
 
-    def should_suppress_mic_input(self, pcm_data: bytes | np.ndarray) -> bool:
-        """Half-duplex acoustic protection: blocks mic input during assistant speech unless barge-in."""
+    def should_suppress_mic_input(self, pcm_data: bytes | np.ndarray, echo_guard: Optional[Any] = None) -> bool:
+        """Half-duplex acoustic protection: blocks mic input during assistant speech unless real speech or barge-in.
+        
+        If an echo_guard is provided, genuine user speech passes through and ends the tail early.
+        """
         if not self.is_assistant_speaking_or_echo():
             return False
 
-        # Assistant is currently speaking or in reverberation tail
-        self.self_echo_frames_suppressed += 1
+        if echo_guard is not None:
+            try:
+                # If EchoGuard confirms human speech, end the tail early and do not suppress
+                if echo_guard.is_user_speech(pcm_data):
+                    with self._lock:
+                        self._tail_until = 0.0
+                    return False
+            except Exception:
+                pass
+
+        with self._lock:
+            self.self_echo_frames_suppressed += 1
         return True
 
     # ── Deduplication & Replay Guards ──────────────────────────────────────
@@ -491,6 +504,23 @@ class VoiceSessionManager:
         """Provides real-time state for UI diagnostic HUD and Web dashboard."""
         with self._lock:
             return {
+                "mic_callbacks_received": self.input_callbacks_count,
+                "mic_frames_captured": self.frames_captured_count,
+                "frames_captured": self.frames_captured,
+                "frames_queued": self.frames_queued,
+                "frames_dropped": self.frames_dropped_overflow,
+                "frames_dropped_overflow": self.frames_dropped_overflow,
+                "bytes_queued": self.bytes_queued_count,
+                "bytes_sent_to_ai": self.bytes_sent_to_ai_count,
+                "assistant_audio_received": self.responses_received_count,
+                "transcripts_received": self.transcripts_received_count,
+                "active_mic_device": getattr(self, "active_mic_device", "Windows System Default"),
+                "mic_stream_status": "OPEN" if self.is_mic_open else "STOPPED",
+                "audio_callback_errors": self.audio_status_warnings,
+                "last_audio_warning": self.last_audio_warning,
+                "echo_frames_suppressed": self.self_echo_frames_suppressed,
+                "interruption_detection_results": self.player.cancellation_count,
+                "reconnect_attempts": getattr(self, "reconnect_attempts", 0),
                 "active_mic_sessions": self.active_mic_sessions_count,
                 "active_tts_sessions": 1 if self.player.is_playing else 0,
                 "active_speaker": self.active_speaker_name,
@@ -507,11 +537,6 @@ class VoiceSessionManager:
                 "is_speaking": self.player.is_playing,
                 "is_echo_tail": time.monotonic() < self._tail_until,
                 "is_mic_open": self.is_mic_open,
-                "frames_captured": self.frames_captured,
-                "frames_queued": self.frames_queued,
-                "frames_dropped_overflow": self.frames_dropped_overflow,
-                "audio_status_warnings": self.audio_status_warnings,
-                "last_audio_warning": self.last_audio_warning,
                 "input_callbacks_count": self.input_callbacks_count,
                 "frames_captured_count": self.frames_captured_count,
                 "frames_processed_count": self.frames_processed_count,
