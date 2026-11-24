@@ -56,3 +56,9 @@
 - Tom Dörr profile inspiration: https://x.com/tom_doerr
 
 The Tom Dörr reference is treated as inspiration for a curated GitHub/project discovery experience, not endorsement, affiliation or permission to copy branding/content. The supplied image URL could not be independently fetched in the research step, so the UI spec uses the textual reference and the supplied repository list.
+
+## Testing and verification expansion
+
+The `testing/` folder adds the recommended test stack, real-use journey matrix, tool links, PowerShell read-only preflight, tiny k6 smoke, starter Playwright tests, agent evaluation cases and Testing Center UI specification.
+
+On an 8 GB workstation, run suites sequentially. Use hosted CI/staging for heavy load and DAST tests. Never run destructive or active security tests against production.

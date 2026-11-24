@@ -32,6 +32,7 @@ from .orchestrator import DurableTaskEngine
 from .repair import ControlledRepairEngine
 from .graph import GraphProjectionService
 from .telemetry import TelemetryService, TraceSpan
+from .memory import MemoryAuditService, MemoryScope, MemoryRecord
 
 __all__ = [
     "DataQualityState",
@@ -59,4 +60,7 @@ __all__ = [
     "GraphProjectionService",
     "TelemetryService",
     "TraceSpan",
+    "MemoryAuditService",
+    "MemoryScope",
+    "MemoryRecord",
 ]

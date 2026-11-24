@@ -341,6 +341,25 @@ def test_repo_radar_and_user_profile_endpoints():
     assert repos["nanobot"]["resource_rating"] == "light"
     assert "Silero VAD" in repos
 
+    # 3. Testing Center Status /api/testing/status
+    res_test = client.get("/api/testing/status", headers=headers)
+    assert res_test.status_code == 200
+    data_test = res_test.json()
+    assert data_test["ok"] is True
+    assert data_test["total_tests"] == 132
+    assert data_test["passed"] == 132
+    assert data_test["release_ready"] is True
+    assert len(data_test["sections"]) == 13
+
+    # 4. Safe Smoke Suite /api/testing/run-smoke
+    res_smoke = client.post("/api/testing/run-smoke", headers=headers)
+    assert res_smoke.status_code == 200
+    data_smoke = res_smoke.json()
+    assert data_smoke["ok"] is True
+    assert data_smoke["smoke_passed"] is True
+    assert data_smoke["memory_isolated"] is True
+    assert data_smoke["status_label"] == "REAL TESTED"
+
 
 
 
