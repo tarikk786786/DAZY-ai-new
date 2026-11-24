@@ -58,3 +58,6 @@ screenshots/
 # Scratch directories
 scratch/
 *.backup
+
+.coverage
+.coverage.*
