@@ -219,7 +219,20 @@ class VoiceSessionManager:
 
     def set_auto_speak_mode(self, mode: AutoSpeakMode | str) -> None:
         if isinstance(mode, str):
-            mode = AutoSpeakMode[mode.upper()]
+            val = mode.strip().upper()
+            aliases = {
+                "AUTO": AutoSpeakMode.CONTINUOUS,
+                "CONTINUOUS": AutoSpeakMode.CONTINUOUS,
+                "ALWAYS": AutoSpeakMode.CONTINUOUS,
+                "WAKE": AutoSpeakMode.WAKE_ONLY,
+                "WAKE_ONLY": AutoSpeakMode.WAKE_ONLY,
+                "SILENT": AutoSpeakMode.SILENT,
+                "MUTE": AutoSpeakMode.SILENT,
+                "MUTED": AutoSpeakMode.SILENT,
+                "PUSH_TO_TALK": AutoSpeakMode.PUSH_TO_TALK,
+                "PTT": AutoSpeakMode.PUSH_TO_TALK,
+            }
+            mode = aliases.get(val, AutoSpeakMode.WAKE_ONLY)
         with self._lock:
             self.auto_speak_mode = mode
             logger.info("VoiceSessionManager: AutoSpeakMode set to %s", mode.value)

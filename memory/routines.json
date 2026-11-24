@@ -21,12 +21,12 @@
    "minutes": 10,
    "quiet": false,
    "system": true,
-   "enabled": true,
+   "enabled": false,
    "source": "",
    "created": 1795442079.6557248,
    "next_ts": 0.0,
-   "last_run": 1795524622.2145543,
-   "runs": 10,
+   "last_run": 1795526118.2678003,
+   "runs": 12,
    "last_result": "ran"
   },
   {
@@ -52,12 +52,12 @@
    "minutes": 10,
    "quiet": true,
    "system": true,
-   "enabled": true,
+   "enabled": false,
    "source": "",
    "created": 1795442079.6568484,
    "next_ts": 0.0,
-   "last_run": 1795511964.62865,
-   "runs": 6,
+   "last_run": 1795525989.9619381,
+   "runs": 7,
    "last_result": "ran"
   },
   {
@@ -81,13 +81,13 @@
    "minutes": 10,
    "quiet": true,
    "system": true,
-   "enabled": true,
+   "enabled": false,
    "source": "",
    "created": 1795442079.6580682,
-   "next_ts": 1795525200.0,
-   "last_run": 1795512603.3478665,
-   "runs": 8,
-   "last_result": "skipped: missed by 170 min"
+   "next_ts": 1795527000.0,
+   "last_run": 1795525204.8274,
+   "runs": 9,
+   "last_result": "ran"
   }
  ],
  "seeded": true

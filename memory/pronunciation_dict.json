@@ -97,6 +97,12 @@
       "phonetic": "हूँ",
       "lang": "hi",
       "note": "Hinglish first person auxiliary"
+    },
+    "AuditTestTerm": {
+      "spoken": "AuditTestTerm",
+      "phonetic": "Awe Dit Test Term",
+      "lang": "hinglish",
+      "note": ""
     }
   }
 }

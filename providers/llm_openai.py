@@ -48,8 +48,7 @@ from .base import DEFAULT_CAPS, Field, FunctionCall
 # order it the other way, which is exactly why it gets shipped broken — it works
 # on the developer's machine.
 # Spare Gemini models, fastest first, for when the chosen one is out of quota.
-_GEMINI_SPARES = ("gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3-flash-preview",
-                  "gemini-flash-lite-latest")
+_GEMINI_SPARES = ("gemini-2.5-flash",)
 _gemini_rest: dict[str, float] = {}     # model -> monotonic time it may be tried again
 
 PRESETS: dict[str, str] = {
@@ -551,8 +550,8 @@ class OpenAICompatLLM:
         last = ""
         for model in models:
             req = dict(body, model=model)
-            if gemini and "flash" in model:
-                req["reasoning_effort"] = "none" if "lite" in model else "low"
+            if gemini:
+                req.pop("reasoning_effort", None)
             async with cl.stream("POST", f"{self.base}/chat/completions",
                                  headers=self._headers(), json=req) as r:
                 if r.status_code < 400:

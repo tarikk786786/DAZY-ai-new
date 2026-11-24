@@ -12,6 +12,7 @@ Install deps:  pip install fastapi "uvicorn[standard]" cryptography
 import asyncio
 import base64
 import hashlib
+import logging
 import os
 import re
 import secrets
@@ -20,6 +21,8 @@ import string
 import threading
 import time
 from pathlib import Path
+
+logger = logging.getLogger("dazy.dashboard")
 
 _DEPS_OK = False
 try:
@@ -391,7 +394,7 @@ def _ensure_network_access(*ports: int) -> None:
         # ── Try running directly (succeeds when already admin) ────────────────
         try:
             r = subprocess.run(
-                [bat_path], capture_output=True, timeout=8, shell=True
+                ["cmd.exe", "/c", bat_path], capture_output=True, timeout=8, shell=False
             )
             if r.returncode == 0:
                 print(f"[Dashboard] Firewall configured for {', '.join(str(pt) for pt in ports)}.")
@@ -501,41 +504,42 @@ def _ensure_network_access(*ports: int) -> None:
                 pass
         return False
 
-    try:  # ufw
-        r = subprocess.run(["ufw", "status"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5)
-        if "active" in r.stdout.lower():
-            if _privileged(["ufw", "allow", f"{port}/tcp"]):
-                print(f"[Dashboard] ufw: port {port} allowed.")
-            else:
-                print(f"[Dashboard] Run manually:  sudo ufw allow {port}/tcp")
-            return
-    except FileNotFoundError:
-        pass
+    for port in ports:
+        try:  # ufw
+            r = subprocess.run(["ufw", "status"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5)
+            if "active" in r.stdout.lower():
+                if _privileged(["ufw", "allow", f"{port}/tcp"]):
+                    print(f"[Dashboard] ufw: port {port} allowed.")
+                else:
+                    print(f"[Dashboard] Run manually:  sudo ufw allow {port}/tcp")
+                continue
+        except FileNotFoundError:
+            pass
 
-    try:  # firewalld
-        r = subprocess.run(
-            ["firewall-cmd", "--state"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
-        )
-        if "running" in r.stdout.lower():
-            ok = (_privileged(["firewall-cmd", "--add-port", f"{port}/tcp", "--permanent"])
-                  and _privileged(["firewall-cmd", "--reload"]))
-            if ok:
-                print(f"[Dashboard] firewalld: port {port} allowed.")
-            else:
-                print(f"[Dashboard] Run manually:  sudo firewall-cmd --add-port={port}/tcp --permanent && sudo firewall-cmd --reload")
-            return
-    except FileNotFoundError:
-        pass
+        try:  # firewalld
+            r = subprocess.run(
+                ["firewall-cmd", "--state"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=5,
+            )
+            if "running" in r.stdout.lower():
+                ok = (_privileged(["firewall-cmd", "--add-port", f"{port}/tcp", "--permanent"])
+                      and _privileged(["firewall-cmd", "--reload"]))
+                if ok:
+                    print(f"[Dashboard] firewalld: port {port} allowed.")
+                else:
+                    print(f"[Dashboard] Run manually:  sudo firewall-cmd --add-port={port}/tcp --permanent && sudo firewall-cmd --reload")
+                continue
+        except FileNotFoundError:
+            pass
 
-    try:  # iptables (not persistent but works until reboot)
-        r = subprocess.run(["iptables", "-L", "INPUT", "-n"], capture_output=True, timeout=5)
-        if r.returncode == 0:
-            if _privileged(["iptables", "-A", "INPUT", "-p", "tcp", "--dport", str(port), "-j", "ACCEPT"]):
-                print(f"[Dashboard] iptables: port {port} opened.")
-            else:
-                print(f"[Dashboard] Run manually:  sudo iptables -A INPUT -p tcp --dport {port} -j ACCEPT")
-    except FileNotFoundError:
-        pass  # no iptables means firewall is probably off — nothing to do
+        try:  # iptables (not persistent but works until reboot)
+            r = subprocess.run(["iptables", "-L", "INPUT", "-n"], capture_output=True, timeout=5)
+            if r.returncode == 0:
+                if _privileged(["iptables", "-A", "INPUT", "-p", "tcp", "--dport", str(port), "-j", "ACCEPT"]):
+                    print(f"[Dashboard] iptables: port {port} opened.")
+                else:
+                    print(f"[Dashboard] Run manually:  sudo iptables -A INPUT -p tcp --dport {port} -j ACCEPT")
+        except FileNotFoundError:
+            pass  # no iptables means firewall is probably off — nothing to do
 
 
 
@@ -870,8 +874,16 @@ class DashboardServer:
             return True
 
         def _auth(req: Request) -> bool:
-            return _valid(req.headers.get("authorization", "")
-                          .removeprefix("Bearer ").strip())
+            tok = req.headers.get("authorization", "").removeprefix("Bearer ").strip()
+            if tok and _valid(tok):
+                return True
+            q_tok = req.query_params.get("token", "").strip()
+            if q_tok and _valid(q_tok):
+                return True
+            c_tok = req.cookies.get("session_token", "").strip()
+            if c_tok and _valid(c_tok):
+                return True
+            return False
 
         def _who(req: Request) -> str:
             """The client address a throttle counts against."""
@@ -905,8 +917,19 @@ class DashboardServer:
                               f"{int(wait) + 1} seconds."},
                     status_code=429,
                 )
-            body    = await req.json()
-            entered = str(body.get("pin", "")).strip().upper()
+            entered = ""
+            try:
+                body = await req.json()
+                if isinstance(body, dict):
+                    entered = str(body.get("pin", "")).strip().upper()
+            except Exception:
+                pass
+            if not entered:
+                try:
+                    form = await req.form()
+                    entered = str(form.get("pin", "")).strip().upper()
+                except Exception:
+                    pass
             now     = time.time()
             
             # Allow master persistent password (e.g. 786786) OR one-time generated keys
@@ -926,8 +949,9 @@ class DashboardServer:
                 asyncio.create_task(self.broadcast(
                     {"type": "sys", "text": "Remote connection established."}
                 ))
-                # Bearer token in response body — no cookies needed (works on any browser/HTTP)
-                return JSONResponse({"ok": True, "token": tok})
+                res = JSONResponse({"ok": True, "token": tok})
+                res.set_cookie("session_token", tok, max_age=_TOKEN_TTL_SECONDS, httponly=True, samesite="lax")
+                return res
             self._throttle.record_failure(who)
             return JSONResponse({"ok": False, "error": "Invalid or expired key"},
                                 status_code=401)
