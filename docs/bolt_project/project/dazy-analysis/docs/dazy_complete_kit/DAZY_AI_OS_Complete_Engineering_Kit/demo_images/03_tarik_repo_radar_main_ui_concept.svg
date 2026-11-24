@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071426"/><stop offset="1" stop-color="#11102b"/></linearGradient>
+  <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#155eaa"/><stop offset="1" stop-color="#6d28d9"/></linearGradient>
+  <style>
+    .panel{fill:#0b1830;stroke:#24466c;stroke-width:1.4}.sub{fill:#101f3c;stroke:#284d77;stroke-width:1}
+    .t{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#e8f2ff}.muted{fill:#8ba6c6;font-family:Inter,Segoe UI,Arial,sans-serif}
+    .h{font-size:24px;font-weight:700}.s{font-size:16px}.xs{font-size:13px}.metric{font-size:30px;font-weight:700}
+  </style>
+</defs>
+<rect width="1600" height="1000" fill="url(#bg)"/>
+<rect x="0" y="0" width="1600" height="76" fill="#081329" stroke="#21466e"/>
+<circle cx="38" cy="38" r="20" fill="url(#glow)"/><path d="M28 39 L38 23 L48 39 L38 54Z" fill="#c5e8ff"/>
+<text x="72" y="34" class="t h">DAZY AI OS</text><text x="72" y="56" class="muted xs">Think · Plan · Execute · Verify</text>
+<rect x="470" y="17" width="520" height="42" rx="12" class="sub"/><text x="494" y="44" class="muted s">⌕  Search agents, tools, repos, tasks…</text>
+<circle cx="1316" cy="37" r="6" fill="#22c55e"/><text x="1330" y="43" class="t s">Backend connected</text>
+<circle cx="1490" cy="37" r="19" fill="#275a90"/><text x="1480" y="43" class="t s">T</text><text x="1408" y="26" class="t s">Tarik</text><text x="1408" y="49" class="muted xs">Profile</text>
+<!-- sidebar -->
+<rect x="16" y="94" width="230" height="890" rx="16" class="panel"/>
+<text x="38" y="132" class="t s">COMMAND CENTER</text>
+<text x="38" y="177" class="t s">◈  Live Brain</text><text x="38" y="220" class="t s">♙  Agents &amp; Workers</text>
+<text x="38" y="263" class="t s">▤  Tasks &amp; Schedules</text><text x="38" y="306" class="t s">◉  Memory</text>
+<text x="38" y="349" class="t s">⌘  Models &amp; Providers</text><text x="38" y="392" class="t s">⛭  Tools, Skills &amp; MCP</text>
+<rect x="28" y="414" width="206" height="46" rx="10" fill="url(#glow)"/><text x="43" y="443" class="t s" font-weight="700">⌕  Repo Radar</text>
+<text x="38" y="502" class="t s">▦  Repositories</text><text x="38" y="545" class="t s">◷  Resource Monitor</text>
+<text x="38" y="588" class="t s">⚕  Diagnostics &amp; Repair</text><text x="38" y="631" class="t s">⚙  Settings</text>
+<rect x="30" y="890" width="202" height="70" rx="12" class="sub"/><text x="47" y="919" class="t s">Low Resource Mode</text><text x="47" y="943" fill="#4ade80" class="xs">● Enabled · 8 GB profile</text>
+<!-- cards -->
+<rect x="266" y="94" width="250" height="112" rx="15" class="panel"/><text x="288" y="128" class="muted s">Active workers</text><text x="288" y="171" class="t metric">1 / 2</text>
+<rect x="532" y="94" width="250" height="112" rx="15" class="panel"/><text x="554" y="128" class="muted s">Running tasks</text><text x="554" y="171" class="t metric">03</text>
+<rect x="798" y="94" width="250" height="112" rx="15" class="panel"/><text x="820" y="128" class="muted s">Integration health</text><text x="820" y="171" class="t metric">8 / 10</text>
+<rect x="1064" y="94" width="250" height="112" rx="15" class="panel"/><text x="1086" y="128" class="muted s">RAM pressure</text><text x="1086" y="171" class="t metric">Measured</text>
+<rect x="1330" y="94" width="250" height="112" rx="15" class="panel"/><text x="1352" y="128" class="muted s">Profile</text><text x="1352" y="171" class="t metric">Tarik</text>
+<!-- Repo radar -->
+<rect x="266" y="224" width="900" height="470" rx="18" class="panel"/>
+<text x="294" y="266" class="t h">Repo Radar</text><text x="294" y="293" class="muted s">Discover, evaluate and safely connect useful AI projects</text>
+<rect x="294" y="314" width="580" height="48" rx="11" class="sub"/><text x="315" y="344" class="muted s">Paste a GitHub URL or search repositories…</text>
+<rect x="889" y="314" width="244" height="48" rx="11" fill="url(#glow)"/><text x="926" y="344" class="t s">Evaluate repository</text>
+<rect x="294" y="382" width="405" height="128" rx="13" class="sub"/>
+<text x="316" y="416" class="t h">Nanobot</text><text x="316" y="443" class="muted s">Personal agent · Memory · MCP · Scheduling</text>
+<text x="316" y="474" fill="#4ade80" class="s">MIT · First adapter candidate</text><text x="316" y="495" class="muted xs">Resource footprint: not benchmarked</text>
+<rect x="716" y="382" width="417" height="128" rx="13" class="sub"/>
+<text x="738" y="416" class="t h">OpenManus</text><text x="738" y="443" class="muted s">Multi-step tasks · Browser tools · Python</text>
+<text x="738" y="474" fill="#4ade80" class="s">MIT · On-demand task runner</text><text x="738" y="495" class="muted xs">Resource footprint: not benchmarked</text>
+<rect x="294" y="526" width="405" height="128" rx="13" class="sub"/>
+<text x="316" y="560" class="t h">AgenticSeek</text><text x="316" y="587" class="muted s">Local browser and coding agent</text>
+<text x="316" y="618" fill="#fbbf24" class="s">GPL-3.0 · Isolated / remote preferred</text><text x="316" y="639" class="muted xs">Local models off by default</text>
+<rect x="716" y="526" width="417" height="128" rx="13" class="sub"/>
+<text x="738" y="560" class="t h">n8n</text><text x="738" y="587" class="muted s">Visual workflows · Triggers · API automation</text>
+<text x="738" y="618" fill="#fbbf24" class="s">Sustainable Use License · External integration</text><text x="738" y="639" class="muted xs">Remote service; avoid local always-on install</text>
+<!-- side panels -->
+<rect x="1184" y="224" width="396" height="216" rx="18" class="panel"/>
+<text x="1210" y="266" class="t h">Profile &amp; Identity</text><circle cx="1247" cy="326" r="30" fill="url(#glow)"/><text x="1237" y="335" class="t h">T</text>
+<text x="1294" y="322" class="t h">Tarik</text><text x="1294" y="349" class="muted s">Display name · Editable</text><text x="1210" y="395" fill="#4ade80" class="s">✓ Canonical profile loaded</text><text x="1210" y="419" class="muted xs">No hard-coded “John” fallback</text>
+<rect x="1184" y="458" width="396" height="236" rx="18" class="panel"/>
+<text x="1210" y="500" class="t h">Resource-aware runtime</text>
+<text x="1210" y="541" class="muted s">Worker concurrency</text><text x="1530" y="541" class="t s">1</text>
+<text x="1210" y="579" class="muted s">Local heavyweight models</text><text x="1454" y="579" fill="#fbbf24" class="s">Off</text>
+<text x="1210" y="617" class="muted s">3D visualization</text><text x="1450" y="617" class="t s">On demand</text>
+<text x="1210" y="655" class="muted s">Agent runtimes</text><text x="1450" y="655" class="t s">Optional</text>
+<!-- bottom -->
+<rect x="266" y="714" width="1314" height="270" rx="18" class="panel"/>
+<text x="294" y="755" class="t h">Recent evaluation activity</text>
+<text x="294" y="800" class="t s">✓ Repository metadata fetched</text><text x="294" y="833" class="t s">✓ License reviewed</text><text x="294" y="866" class="t s">◌ Dependency audit pending approval</text><text x="294" y="899" class="t s">◌ Sandbox test not started</text>
+<rect x="880" y="780" width="646" height="150" rx="13" class="sub"/>
+<text x="908" y="817" class="t h">Trust before install</text><text x="908" y="849" class="muted s">Source revision · License · Dependencies · Permissions</text>
+<text x="908" y="878" class="muted s">Resource profile · Sandbox result · Rollback plan</text>
+<text x="908" y="907" fill="#7dd3fc" class="s">Install actions require explicit approval</text>
+</svg>

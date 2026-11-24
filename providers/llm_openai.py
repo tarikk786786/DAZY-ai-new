@@ -564,10 +564,20 @@ class OpenAICompatLLM:
 
     @contextlib.asynccontextmanager
     async def _open_stream(self, cl, body: dict):
-        """POST the streaming request; on Gemini, step past a model that is
+        """POST the streaming request; on Gemini or Groq, step past a model that is
         out of quota or overloaded before anything has been said."""
         gemini = "generativelanguage.googleapis.com" in self.base
-        models = self._gemini_order() if gemini else [body.get("model")]
+        groq = "api.groq.com" in self.base
+        primary = body.get("model")
+        if gemini:
+            models = self._gemini_order()
+        elif groq:
+            # Ladder across available Groq models if quota is exhausted
+            fallbacks = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b"]
+            models = [primary] + [m for m in fallbacks if m != primary]
+        else:
+            models = [primary]
+
         last = ""
         for model in models:
             req = dict(body, model=model)
@@ -579,10 +589,10 @@ class OpenAICompatLLM:
                     yield r
                     return
                 last = f"{r.status_code} {_terse((await r.aread()).decode('utf-8', 'replace'))}"
-                if not gemini or r.status_code not in (429, 503):
-                    raise RuntimeError(last)
-                # a minute's quota or a load spike: rest this model briefly
-                _gemini_rest[model] = time.monotonic() + (60 if r.status_code == 429 else 20)
+                if (gemini or groq) and r.status_code in (429, 503):
+                    # rate limited: try the next model in the ladder
+                    continue
+                raise RuntimeError(last)
         raise RuntimeError(last)
 
     # -- for the settings panel ---------------------------------------------

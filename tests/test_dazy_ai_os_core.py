@@ -361,6 +361,110 @@ def test_repo_radar_and_user_profile_endpoints():
     assert data_smoke["status_label"] == "REAL TESTED"
 
 
+def test_godmode_dag_task_engine():
+    """Verify GodMode DAG task orchestration, cycle rejection, and topological unblocking."""
+    engine = DurableTaskEngine.get_instance()
+
+    # 1. Circular dependency rejection
+    cyclic_plan = [
+        {"key": "step_a", "title": "Step A", "dependencies": ["step_b"]},
+        {"key": "step_b", "title": "Step B", "dependencies": ["step_a"]},
+    ]
+    with pytest.raises(ValueError, match="Circular dependency"):
+        engine.submit_dag(cyclic_plan)
+
+    # 2. Valid 3-step pipeline: Prep -> Build -> Verify
+    pipeline = [
+        {"key": "prep", "title": "Prepare Environment", "dependencies": []},
+        {"key": "build", "title": "Compile Codebase", "dependencies": ["prep"]},
+        {"key": "verify", "title": "Run Smoke Gates", "dependencies": ["build"]},
+    ]
+    tasks = engine.submit_dag(pipeline)
+    assert len(tasks) == 3
+    t_prep, t_build, t_verify = tasks
+
+    assert t_prep.status == TaskStatus.QUEUED
+    assert t_build.status == TaskStatus.WAITING
+    assert t_verify.status == TaskStatus.WAITING
+
+    # 3. get_ready_tasks includes prep but not build or verify yet
+    ready = engine.get_ready_tasks(correlation_id=t_prep.correlation_id)
+    ready_ids = {r.id for r in ready}
+    assert t_prep.id in ready_ids
+    assert t_build.id not in ready_ids
+
+    # 4. Advance prep -> build becomes QUEUED
+    unblocked_1 = engine.advance_dag(t_prep.id, output={"env": "ready"})
+    assert len(unblocked_1) == 1
+    assert unblocked_1[0].id == t_build.id
+    assert unblocked_1[0].status == TaskStatus.QUEUED
+
+    # 5. Advance build -> verify becomes QUEUED
+    unblocked_2 = engine.advance_dag(t_build.id, output={"build": "success"})
+    assert len(unblocked_2) == 1
+    assert unblocked_2[0].id == t_verify.id
+    assert unblocked_2[0].status == TaskStatus.QUEUED
+
+    # 6. Advance verify -> pipeline complete
+    unblocked_3 = engine.advance_dag(t_verify.id, output={"passed": 10})
+    assert len(unblocked_3) == 0
+
+
+def test_smol_ai_multi_model_arena_and_dag_endpoints():
+    """Verify HTTP endpoints for smol-ai Multi-AI Arena comparison and GodMode DAG submission."""
+    import time
+    from starlette.testclient import TestClient
+    from dashboard.server import DashboardServer
+
+    server = DashboardServer()
+    token = "test_token_tarik_arena"
+    server._tokens[token] = time.time()
+    app = server._build_app()
+
+    client = TestClient(app)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 1. Arena Providers List
+    res_prov = client.get("/api/arena/providers", headers=headers)
+    assert res_prov.status_code == 200
+    data_prov = res_prov.json()
+    assert data_prov["ok"] is True
+    prov_ids = {p["id"] for p in data_prov["providers"]}
+    assert "groq" in prov_ids
+    assert "gemini" in prov_ids
+    assert "mock" in prov_ids
+
+    # 2. Arena Compare with mock
+    compare_req = {
+        "prompt": "Explain Quantum Computing in simple Hinglish",
+        "models": ["mock"]
+    }
+    res_comp = client.post("/api/arena/compare", headers=headers, json=compare_req)
+    assert res_comp.status_code == 200
+    data_comp = res_comp.json()
+    assert data_comp["ok"] is True
+    assert len(data_comp["results"]) == 1
+    mock_res = data_comp["results"][0]
+    assert mock_res["id"] == "mock"
+    assert mock_res["status"] == "ok"
+    assert mock_res["latency_ms"] >= 0
+
+    # 3. HTTP DAG Submit Endpoint
+    dag_plan = {
+        "plan": [
+            {"key": "fetch", "title": "Fetch Data", "dependencies": []},
+            {"key": "process", "title": "Process Features", "dependencies": ["fetch"]},
+        ]
+    }
+    res_dag = client.post("/api/os/dag/submit", headers=headers, json=dag_plan)
+    assert res_dag.status_code == 200
+    data_dag = res_dag.json()
+    assert data_dag["ok"] is True
+    assert len(data_dag["tasks"]) == 2
+
+
+
+
 
 
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import sqlite3
 import threading
@@ -56,6 +57,7 @@ class DurableTaskEngine:
                     priority INTEGER,
                     attempts INTEGER,
                     max_retries INTEGER,
+                    dependencies TEXT,
                     created_at TEXT,
                     updated_at TEXT,
                     error TEXT
@@ -63,6 +65,10 @@ class DurableTaskEngine:
             """)
             try:
                 conn.execute("ALTER TABLE tasks ADD COLUMN idempotency_key TEXT")
+            except Exception:
+                pass
+            try:
+                conn.execute("ALTER TABLE tasks ADD COLUMN dependencies TEXT")
             except Exception:
                 pass
             conn.commit()
@@ -73,6 +79,13 @@ class DurableTaskEngine:
                 conn.row_factory = sqlite3.Row
                 rows = conn.execute("SELECT * FROM tasks ORDER BY created_at ASC").fetchall()
                 for r in rows:
+                    raw_deps = r["dependencies"] if "dependencies" in r.keys() else "[]"
+                    deps = []
+                    if raw_deps:
+                        try:
+                            deps = json.loads(raw_deps) if isinstance(raw_deps, str) else list(raw_deps)
+                        except Exception:
+                            deps = []
                     t = TaskRecord(
                         id=r["id"],
                         correlation_id=r["correlation_id"],
@@ -82,6 +95,7 @@ class DurableTaskEngine:
                         priority=r["priority"],
                         attempts=r["attempts"],
                         max_retries=r["max_retries"],
+                        dependencies=deps,
                         created_at=r["created_at"],
                         updated_at=r["updated_at"],
                         error=r["error"],
@@ -148,16 +162,152 @@ class DurableTaskEngine:
         return record
 
     def _persist_task(self, t: TaskRecord, idempotency_key: Optional[str] = None) -> None:
+        deps_json = json.dumps(t.dependencies) if t.dependencies else "[]"
         with sqlite3.connect(self._db_path) as conn:
             conn.execute("""
                 INSERT OR REPLACE INTO tasks
-                (id, correlation_id, idempotency_key, title, status, assigned_worker_id, priority, attempts, max_retries, created_at, updated_at, error)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (id, correlation_id, idempotency_key, title, status, assigned_worker_id, priority, attempts, max_retries, dependencies, created_at, updated_at, error)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 t.id, t.correlation_id, idempotency_key, t.title, t.status.value, t.assigned_worker_id,
-                t.priority, t.attempts, t.max_retries, t.created_at, t.updated_at, t.error
+                t.priority, t.attempts, t.max_retries, deps_json, t.created_at, t.updated_at, t.error
             ))
             conn.commit()
+
+    def submit_dag(
+        self,
+        tasks_plan: List[Dict[str, Any]],
+        correlation_id: Optional[str] = None,
+    ) -> List[TaskRecord]:
+        """Submits a Directed Acyclic Graph (DAG) of subtasks with cycle detection (GodMode-Team pattern).
+        Each task dict:
+          - key: unique identifier within the plan (e.g. 'plan_repo', 'run_tests')
+          - title: human-readable task description
+          - worker_id: optional assigned worker
+          - dependencies: list of prerequisite keys
+          - input_payload: dict of task inputs
+        """
+        corr_id = correlation_id or f"corr_dag_{uuid.uuid4().hex[:12]}"
+        
+        # 1. Validate Acyclicity using topological sort
+        graph: Dict[str, List[str]] = {}
+        in_degree: Dict[str, int] = {}
+        key_to_item: Dict[str, Dict[str, Any]] = {}
+
+        for item in tasks_plan:
+            k = item.get("key") or item.get("title")
+            key_to_item[k] = item
+            graph[k] = []
+            in_degree[k] = 0
+
+        for item in tasks_plan:
+            k = item.get("key") or item.get("title")
+            for dep in item.get("dependencies", []):
+                if dep not in in_degree:
+                    raise ValueError(f"Unknown dependency '{dep}' for task '{k}'")
+                graph[dep].append(k)
+                in_degree[k] += 1
+
+        queue = [k for k, d in in_degree.items() if d == 0]
+        visited_count = 0
+        while queue:
+            node = queue.pop(0)
+            visited_count += 1
+            for neighbor in graph[node]:
+                in_degree[neighbor] -= 1
+                if in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+
+        if visited_count != len(tasks_plan):
+            raise ValueError("Circular dependency detected in DAG task plan")
+
+        # 2. Materialize TaskRecords with real IDs
+        key_to_id: Dict[str, str] = {}
+        created_records: List[TaskRecord] = []
+
+        with self._lock:
+            for item in tasks_plan:
+                k = item.get("key") or item.get("title")
+                task_id = f"dag_task_{uuid.uuid4().hex[:12]}"
+                key_to_id[k] = task_id
+
+            for item in tasks_plan:
+                k = item.get("key") or item.get("title")
+                task_id = key_to_id[k]
+                resolved_deps = [key_to_id[d] for d in item.get("dependencies", [])]
+                
+                # If dependencies exist, task starts WAITING; otherwise QUEUED
+                initial_status = TaskStatus.WAITING if resolved_deps else TaskStatus.QUEUED
+
+                record = TaskRecord(
+                    id=task_id,
+                    correlation_id=corr_id,
+                    title=item.get("title", k),
+                    status=initial_status,
+                    assigned_worker_id=item.get("worker_id", "wrk_orchestrator"),
+                    priority=item.get("priority", 1),
+                    dependencies=resolved_deps,
+                    input_payload=item.get("input_payload", {}),
+                )
+                self._active_tasks[task_id] = record
+                self._persist_task(record)
+                created_records.append(record)
+
+        for rec in created_records:
+            self._emit(
+                EventType.TASK_CREATED,
+                corr_id,
+                {"task_id": rec.id, "title": rec.title, "status": rec.status.value, "deps": rec.dependencies}
+            )
+
+        return created_records
+
+    def get_ready_tasks(self, correlation_id: Optional[str] = None) -> List[TaskRecord]:
+        """Returns all tasks in QUEUED status whose prerequisite dependencies are all COMPLETED."""
+        with self._lock:
+            ready: List[TaskRecord] = []
+            for t in self._active_tasks.values():
+                if correlation_id and t.correlation_id != correlation_id:
+                    continue
+                if t.status in (TaskStatus.QUEUED, TaskStatus.WAITING):
+                    deps_satisfied = True
+                    for dep_id in t.dependencies:
+                        dep_task = self._active_tasks.get(dep_id)
+                        if not dep_task or dep_task.status != TaskStatus.COMPLETED:
+                            deps_satisfied = False
+                            break
+                    if deps_satisfied:
+                        ready.append(t)
+            return ready
+
+    def advance_dag(self, task_id: str, output: Optional[Dict[str, Any]] = None) -> List[TaskRecord]:
+        """Completes a task and advances the DAG by unblocking dependent tasks."""
+        with self._lock:
+            updated = self.update_task_status(task_id, TaskStatus.COMPLETED, output=output)
+            if not updated:
+                return []
+
+            corr_id = updated.correlation_id
+            newly_ready: List[TaskRecord] = []
+
+            for t in self._active_tasks.values():
+                if t.correlation_id == corr_id and t.status == TaskStatus.WAITING and task_id in t.dependencies:
+                    # Check if all deps for t are now complete
+                    all_done = all(
+                        self._active_tasks.get(d) and self._active_tasks[d].status == TaskStatus.COMPLETED
+                        for d in t.dependencies
+                    )
+                    if all_done:
+                        t_ready = t.model_copy(update={
+                            "status": TaskStatus.QUEUED,
+                            "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                        })
+                        self._active_tasks[t.id] = t_ready
+                        self._persist_task(t_ready)
+                        newly_ready.append(t_ready)
+                        self._emit(EventType.TASK_STARTED, corr_id, {"task_id": t.id, "title": t.title, "unblocked_by": task_id})
+
+            return newly_ready
 
     def cancel_task(self, task_id: str, reason: str = "Cancelled by operator") -> Optional[TaskRecord]:
         """Safely cancels an active or queued task."""

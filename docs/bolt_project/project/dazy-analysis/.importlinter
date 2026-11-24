@@ -1,0 +1,33 @@
+[importlinter]
+root_packages =
+    core
+    providers
+    actions
+    dashboard
+    gui
+    memory
+
+[importlinter:contract:1]
+name = Strict Lower Layer Isolation
+type = forbidden
+source_modules =
+    memory
+forbidden_modules =
+    core
+    providers
+    actions
+    dashboard
+    gui
+
+[importlinter:contract:2]
+name = Core Isolation from High-Level Actions
+type = forbidden
+source_modules =
+    core.audio_devices
+    core.voice_session_manager
+    core.speaker_id
+    core.listening_fsm
+forbidden_modules =
+    actions
+    dashboard
+    gui

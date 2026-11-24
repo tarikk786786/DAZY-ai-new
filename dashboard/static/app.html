@@ -460,6 +460,7 @@
       <button class="nav-btn" data-page="brain"><span class="nav-ico">⚛</span><span class="nav-text">Live Brain 3D</span></button>
       <button class="nav-btn" data-page="command"><span class="nav-ico">⌬</span><span class="nav-text">AI OS Command</span></button>
       <button class="nav-btn" data-page="testing"><span class="nav-ico">✓</span><span class="nav-text">Testing Center</span></button>
+      <button class="nav-btn" data-page="arena"><span class="nav-ico">⚔</span><span class="nav-text">Multi-AI Arena</span></button>
       <button class="nav-btn" data-page="files"><span class="nav-ico">▧</span><span class="nav-text">Files</span><span class="nav-count" id="fileCount">—</span></button>
       <button class="nav-btn" data-page="activity"><span class="nav-ico">◷</span><span class="nav-text">Activity</span></button>
       <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice & Diarization</span></button>
@@ -874,6 +875,57 @@
             </div>
           </div>
         </section>
+        <section class="page" id="page-arena">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">SMOL-AI &amp; GODMODE-TEAM HYBRID ENGINE</div>
+              <h1 class="page-title">Multi-AI Arena &amp; DAG Engine</h1>
+              <p class="page-description">Side-by-side model comparison, latency &amp; token benchmarking, and DAG task orchestration.</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <button class="rail-action" id="btnRunArena" style="background:var(--cyan);color:#0a0e14;font-weight:750;padding:6px 14px;border-radius:7px;border:none;cursor:pointer;">⚔ Run Battle</button>
+            </div>
+          </div>
+          <div class="section-scroll">
+            <div class="card" style="padding:16px 18px;margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:750;color:var(--text);">Prompt to Compare</div>
+                <div style="display:flex;gap:8px;font-size:10px;color:var(--muted);">
+                  <span>Select active providers to benchmark</span>
+                </div>
+              </div>
+              <textarea id="arenaPrompt" rows="3" placeholder="Type a prompt to test across models (e.g. 'Explain the difference between threading and asyncio in Python in 2 bullet points')..." style="width:100%;background:#090d16;border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:10px;font-size:11px;font-family:inherit;resize:vertical;margin-bottom:10px;"></textarea>
+              
+              <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:6px;align-items:center;" id="arenaModelCheckboxes">
+                <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="groq" checked> ⚡ Groq (Qwen 27B)</label>
+                <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="gemini" checked> 🧠 Gemini 2.5 Flash</label>
+                <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="deepseek"> 🔬 DeepSeek Chat</label>
+                <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="openrouter"> 🌐 OpenRouter</label>
+                <label style="font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" value="mock" checked> ⚡ Local Mock</label>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px;margin-bottom:16px;" id="arenaResultsGrid">
+              <div class="card" style="padding:14px;background:#090d16;">
+                <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:6px;">Waiting for battle…</div>
+                <div style="font-size:10px;color:var(--muted);line-height:1.5;">Type a prompt above and click "Run Battle" to evaluate responses, speed, and tokens side-by-side.</div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:16px 18px;margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div>
+                  <div style="font-size:12px;font-weight:750;color:var(--mint);">GodMode-Team DAG Orchestration</div>
+                  <div style="font-size:10px;color:var(--muted);">Execute multi-step dependent task graphs with automatic topological resolution.</div>
+                </div>
+                <button class="rail-action" id="btnRunDagDemo" style="background:var(--mint);color:#0a0e14;font-weight:750;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;">Execute Audit Pipeline DAG</button>
+              </div>
+              <div id="dagPipelineContainer" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="font-size:10px;color:var(--muted);">Click "Execute Audit Pipeline DAG" to test real asynchronous dependency unblocking.</div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="page" id="page-settings">
           <div class="page-head"><div><div class="eyebrow">YOUR WORKSPACE</div><h1 class="page-title">Preferences</h1><p class="page-description">Browser-side controls for this remote dashboard.</p></div></div>
           <div class="section-scroll"><div class="card" style="padding:17px 18px"><div class="card-title" style="margin-bottom:12px">Voice input</div><div class="setting-row"><div><label for="speechLang">Recognition language</label><small>Used only when your browser supports speech recognition.</small></div><select id="speechLang"><option value="hi-IN">Hindi · India</option><option value="en-IN">English · India</option><option value="en-US">English · US</option><option value="bn-IN">Bengali · India</option></select></div><div class="setting-row"><div><label>Voice replies</label><small>Browser auto-speech is disabled to avoid a second voice. DAZY speaks through the desktop engine.</small></div><span class="status-chip">DESKTOP AUDIO</span></div><div class="setting-row"><div><label>Reduced motion</label><small>Respect your device's accessibility setting.</small></div><span class="status-chip">AUTO</span></div></div><div class="card" style="padding:17px 18px;margin-top:13px"><div class="card-title">Connection details</div><div class="system-row" style="margin-top:12px"><div class="system-icon">⌁</div><div><div class="system-label">WebSocket</div><div class="system-value" id="settingsSocket">Connecting</div></div></div><div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport</div><div class="system-value" id="settingsTransport">Detecting browser context</div></div></div><div class="system-row"><div class="system-icon">◷</div><div><div class="system-label">Session token</div><div class="system-value">Stored in this tab session</div></div></div><p class="rail-note" style="margin:12px 0 0">This interface does not store API keys or assistant memories. Provider settings remain in the desktop application.</p></div></div>
@@ -947,6 +999,7 @@
     brain:['Live Brain 3D','Spatial neural topology and telemetry projection'],
     command:['AI OS Command Center','Registries, durable tasks, incident triage & repair'],
     testing:['Testing Center','Real-use verification, smoke tests, and release gate metrics'],
+    arena:['Multi-AI Comparison Arena','smol-ai multi-model battle & GodMode DAG execution'],
     files:['Files','Transfer files to your computer'],
     activity:['Activity','Live events from your assistant'],
     settings:['Settings','Manage this browser session'],
@@ -1388,7 +1441,7 @@
   }
   function autoGrow(){const el=$('chatInput');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
   async function wakeAssistant(){try{const res=await authFetch('/api/wake',{method:'POST'});if(!res.ok)throw new Error('Wake request failed');toast('Wake signal sent','success');}catch(err){toast(err.message||'Could not wake DAZY','error');}}
-  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='brain')loadBrainGraph();if(page==='command')loadCommandCenter();if(page==='testing')loadTestingCenter();if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
+  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='brain')loadBrainGraph();if(page==='command')loadCommandCenter();if(page==='testing')loadTestingCenter();if(page==='arena')loadArena();if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
   function fileSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';if(bytes<1073741824)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1073741824).toFixed(2)+' GB';}
   function fileGlyph(name){const ext=(name.split('.').pop()||'').toLowerCase();if(['png','jpg','jpeg','webp','gif','svg'].includes(ext))return'▧';if(['mp3','wav','m4a','ogg','flac'].includes(ext))return'♫';if(['mp4','mov','mkv','webm'].includes(ext))return'▶';if(ext==='pdf')return'▤';if(['doc','docx','txt','md'].includes(ext))return'≡';if(['zip','rar','7z'].includes(ext))return'▣';return'◈';}
   async function loadFiles(showToast=true){$('fileListState').textContent='Loading…';try{const res=await authFetch('/api/files');const data=await res.json();if(!res.ok)throw new Error(data.error||'Could not load files');state.files=Array.isArray(data.files)?data.files:[];$('statFiles').textContent=String(state.files.length);$('fileCount').textContent=String(state.files.length);$('fileListState').textContent=state.files.length+' item(s)';const box=$('fileList');box.innerHTML='';if(!state.files.length){box.innerHTML='<div class="rail-note">No uploaded files yet. Send a file from this device to get started.</div>';return;}for(const file of state.files){const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name||'');const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name||'Unnamed file';const size=document.createElement('div');size.className='file-size';size.textContent=fileSize(Number(file.size)||0);info.append(name,size);const link=document.createElement('a');link.className='file-open';link.textContent='Download';link.href='/uploads/'+encodeURIComponent(file.name||'')+'?token='+encodeURIComponent(authToken);link.setAttribute('download',file.name||'file');row.append(glyph,info,link);box.appendChild(row);}}catch(err){$('fileListState').textContent='Unavailable';$('fileList').innerHTML='<div class="rail-note">'+escapeHTML(err.message||'File list unavailable')+'</div>';if(showToast)toast(err.message||'Could not load files','error');}}
@@ -2239,6 +2292,182 @@
     }
   }
 
+  async function loadArena() {
+    try {
+      const res = await authFetch('/api/arena/providers');
+      const data = await res.json();
+      if (data.ok && Array.isArray(data.providers)) {
+        const cboxDiv = $('arenaModelCheckboxes');
+        if (cboxDiv) {
+          cboxDiv.innerHTML = '';
+          data.providers.forEach(p => {
+            const lbl = document.createElement('label');
+            lbl.style = 'font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer;';
+            const isChecked = (p.id === 'groq' || p.id === 'gemini' || p.id === 'mock');
+            lbl.innerHTML = `<input type="checkbox" value="${escapeHTML(p.id)}" ${isChecked ? 'checked' : ''}>
+              <span>${p.id === 'groq' ? '⚡' : p.id === 'gemini' ? '🧠' : p.id === 'mock' ? '⚡' : '🌐'} ${escapeHTML(p.name)}</span>
+              <small style="color:var(--muted);font-size:9px;">(${escapeHTML(p.speed)})</small>`;
+            cboxDiv.appendChild(lbl);
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load arena providers', e);
+    }
+  }
+
+  async function runArenaComparison() {
+    const promptInput = $('arenaPrompt');
+    const prompt = (promptInput?.value || '').trim();
+    if (!prompt) {
+      toast('Please enter a prompt to compare', 'error');
+      promptInput?.focus();
+      return;
+    }
+
+    const checkedModels = [];
+    document.querySelectorAll('#arenaModelCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+      checkedModels.push(cb.value);
+    });
+
+    if (checkedModels.length === 0) {
+      toast('Please select at least one provider', 'error');
+      return;
+    }
+
+    const btn = $('btnRunArena');
+    if (btn) { btn.disabled = true; btn.textContent = '⚔ Battling…'; }
+    const grid = $('arenaResultsGrid');
+    if (grid) {
+      grid.innerHTML = `<div class="card" style="padding:14px;background:#090d16;grid-column:1/-1;">
+        <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:6px;">Dispatching parallel comparison…</div>
+        <div style="font-size:10px;color:var(--muted);">Streaming queries to ${checkedModels.length} models concurrently. Please wait…</div>
+      </div>`;
+    }
+
+    try {
+      const res = await authFetch('/api/arena/compare', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ prompt, models: checkedModels })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Comparison query failed');
+
+      if (grid) {
+        grid.innerHTML = '';
+        data.results.forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.style = 'padding:14px;background:#090d16;display:flex;flex-direction:column;justify-content:space-between;';
+
+          const stColor = r.status === 'ok' ? 'var(--mint)' : r.status === 'rate_limited' ? 'var(--gold)' : 'var(--red)';
+          card.innerHTML = `
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-size:11px;font-weight:750;color:var(--cyan);">${escapeHTML(r.id.toUpperCase())} <span style="font-weight:400;color:var(--muted);font-size:9px;">(${escapeHTML(r.model)})</span></span>
+                <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.05);color:${stColor};">${escapeHTML(r.status.toUpperCase())}</span>
+              </div>
+              <div style="display:flex;gap:12px;margin-bottom:8px;font-size:9px;color:var(--muted);font-family:ui-monospace,monospace;">
+                <span>⏱ ${r.latency_ms} ms</span>
+                <span>🔢 ~${r.tokens} tokens</span>
+              </div>
+              <div style="font-size:10px;color:var(--text);line-height:1.5;white-space:pre-wrap;max-height:220px;overflow-y:auto;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;border:1px solid var(--line2);">${escapeHTML(r.response)}</div>
+            </div>
+            <div style="margin-top:10px;display:flex;justify-content:flex-end;">
+              <button class="rail-action" style="font-size:9px;padding:3px 8px;" onclick="navigator.clipboard.writeText(${JSON.stringify(r.response)}).then(()=>alert('Copied!'))">Copy</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+      toast('Battle complete!', 'success');
+    } catch (err) {
+      toast('Arena error: ' + (err.message || 'Unknown'), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '⚔ Run Battle'; }
+    }
+  }
+
+  async function executeDagPipeline() {
+    const btn = $('btnRunDagDemo');
+    const container = $('dagPipelineContainer');
+    if (btn) { btn.disabled = true; btn.textContent = 'Orchestrating DAG…'; }
+    if (container) {
+      container.innerHTML = '<div style="font-size:10px;color:var(--cyan);">Initializing GodMode-Team DAG pipeline with cycle validation…</div>';
+    }
+
+    try {
+      const plan = [
+        {"key": "step1_audit", "title": "1. AST Code & Architecture Audit", "dependencies": []},
+        {"key": "step2_vuln", "title": "2. Security & RLS Taint Analysis", "dependencies": ["step1_audit"]},
+        {"key": "step3_smoke", "title": "3. Regression Gate Verification", "dependencies": ["step2_vuln"]}
+      ];
+
+      const res = await authFetch('/api/os/dag/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ plan })
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'DAG submission failed');
+
+      const tasks = data.tasks;
+      function renderDagSteps(ts) {
+        if (!container) return;
+        container.innerHTML = '';
+        ts.forEach(t => {
+          const row = document.createElement('div');
+          row.style = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--line2);border-radius:7px;';
+          const badgeColor = t.status === 'COMPLETED' ? 'var(--mint)' : t.status === 'RUNNING' ? 'var(--cyan)' : t.status === 'QUEUED' ? 'var(--gold)' : 'var(--muted)';
+          row.innerHTML = `
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--text);">${escapeHTML(t.title)}</div>
+              <div style="font-size:8px;color:var(--muted);font-family:ui-monospace,monospace;">ID: ${t.id} | Deps: [${(t.dependencies||[]).join(', ')}]</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:9px;font-weight:700;color:${badgeColor};">${escapeHTML(t.status)}</span>
+              ${t.status === 'QUEUED' ? `<button class="rail-action" style="font-size:9px;padding:3px 8px;background:var(--mint);color:#0a0e14;" onclick="window.__advanceDagStep('${t.id}')">Advance Step ▶</button>` : ''}
+            </div>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      window.__currentDagTasks = tasks;
+      renderDagSteps(window.__currentDagTasks);
+      toast('DAG Plan submitted successfully. Ready step unblocked.', 'success');
+
+      window.__advanceDagStep = async (taskId) => {
+        try {
+          const advRes = await authFetch('/api/os/dag/advance', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ task_id: taskId, output: { status: 'passed' } })
+          });
+          const advData = await advRes.json();
+          if (advData.ok) {
+            window.__currentDagTasks = window.__currentDagTasks.map(tk => {
+              if (tk.id === taskId) return { ...tk, status: 'COMPLETED' };
+              const isUnblocked = (advData.unblocked_tasks || []).find(u => u.id === tk.id);
+              if (isUnblocked) return { ...tk, status: 'QUEUED' };
+              return tk;
+            });
+            renderDagSteps(window.__currentDagTasks);
+            toast('DAG step advanced & downstream unblocked!', 'success');
+          }
+        } catch (e) {
+          toast('Error advancing DAG: ' + e.message, 'error');
+        }
+      };
+
+    } catch (err) {
+      toast('DAG orchestration failed: ' + err.message, 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Execute Audit Pipeline DAG'; }
+    }
+  }
+
   window.__executeRepair = async (planId, requiresApproval) => {
     if (requiresApproval) {
       $('confirmTitle').textContent = 'Authorize Risky Autonomous Action';
@@ -2415,6 +2644,10 @@
 
     // ── Testing Center Controls ──
     $('btnRunSmoke')?.addEventListener('click', runSafeSmokeSuite);
+
+    // ── Multi-AI Arena & DAG Controls ──
+    $('btnRunArena')?.addEventListener('click', runArenaComparison);
+    $('btnRunDagDemo')?.addEventListener('click', executeDagPipeline);
   }
   function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
   async function init(){

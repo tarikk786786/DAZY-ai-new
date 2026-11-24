@@ -1,0 +1,41 @@
+﻿project,path,kind,description,github_url
+DAZY-ai-new,actions,directory,23 discovered action modules,https://github.com/tarikk786786/DAZY-ai-new/tree/main/actions
+DAZY-ai-new,agent,directory,"Planner, executor, queue and error handler",https://github.com/tarikk786786/DAZY-ai-new/tree/main/agent
+DAZY-ai-new,agents,directory,Agent profiles and local skills,https://github.com/tarikk786786/DAZY-ai-new/tree/main/agents
+DAZY-ai-new,agents/skills,directory,Six project-local SKILL.md files,https://github.com/tarikk786786/DAZY-ai-new/tree/main/agents/skills
+DAZY-ai-new,core,directory,"AI, audio, tasks, ambient, devices, memory and automation systems",https://github.com/tarikk786786/DAZY-ai-new/tree/main/core
+DAZY-ai-new,core/mcp,directory,"MCP client, manager, registry, adapter and security",https://github.com/tarikk786786/DAZY-ai-new/tree/main/core/mcp
+DAZY-ai-new,core/capabilities,directory,Unified capability discovery and registry,https://github.com/tarikk786786/DAZY-ai-new/tree/main/core/capabilities
+DAZY-ai-new,providers,directory,LLM/STT/TTS provider adapters and registry,https://github.com/tarikk786786/DAZY-ai-new/tree/main/providers
+DAZY-ai-new,memory,directory,"Memory, preferences, Supabase sync and voice data",https://github.com/tarikk786786/DAZY-ai-new/tree/main/memory
+DAZY-ai-new,knowledge,directory,"Indian, Islamic, language and personal knowledge",https://github.com/tarikk786786/DAZY-ai-new/tree/main/knowledge
+DAZY-ai-new,integrations,directory,"Gmail, Telegram, Quran, Wikipedia, weather, API discovery",https://github.com/tarikk786786/DAZY-ai-new/tree/main/integrations
+DAZY-ai-new,plugins,directory,"Automation, Gmail, public API and Telegram plugins",https://github.com/tarikk786786/DAZY-ai-new/tree/main/plugins
+DAZY-ai-new,gui,directory,PyQt dashboard and panels,https://github.com/tarikk786786/DAZY-ai-new/tree/main/gui
+DAZY-ai-new,dashboard,directory,Remote dashboard UI/server,https://github.com/tarikk786786/DAZY-ai-new/tree/main/dashboard
+DAZY-ai-new,backend,directory,FastAPI service and Dockerfile,https://github.com/tarikk786786/DAZY-ai-new/tree/main/backend
+DAZY-ai-new,mobile,directory,Mobile companion client,https://github.com/tarikk786786/DAZY-ai-new/tree/main/mobile
+DAZY-ai-new,tests,directory,21 test modules plus test asset,https://github.com/tarikk786786/DAZY-ai-new/tree/main/tests
+DAZY-ai-new,docs,directory,"Architecture, providers, capabilities, ADRs and engineering kits",https://github.com/tarikk786786/DAZY-ai-new/tree/main/docs
+DAZY-web,src,directory,React application source,https://github.com/tarikk786786/DAZY-web/tree/main/src
+DAZY-web,src/lib,directory,"Supabase, speech and types",https://github.com/tarikk786786/DAZY-web/tree/main/src/lib
+DAZY-web,supabase/functions/dazy-chat,directory,Edge Function AI gateway,https://github.com/tarikk786786/DAZY-web/tree/main/supabase/functions/dazy-chat
+DAZY-web,supabase,directory,Supabase configuration,https://github.com/tarikk786786/DAZY-web/tree/main/supabase
+DAZY-ai-new,main.py,file,Desktop runtime entry,https://github.com/tarikk786786/DAZY-ai-new/blob/main/main.py
+DAZY-ai-new,requirements.txt,file,Desktop Python dependency list,https://github.com/tarikk786786/DAZY-ai-new/blob/main/requirements.txt
+DAZY-ai-new,setup.py,file,OS-aware installation and Playwright browser setup,https://github.com/tarikk786786/DAZY-ai-new/blob/main/setup.py
+DAZY-ai-new,readme.md,file,Desktop project README (inherited MARK wording in places),https://github.com/tarikk786786/DAZY-ai-new/blob/main/readme.md
+DAZY-ai-new,docs/PROVIDERS.md,file,ASR/TTS/LLM provider notes,https://github.com/tarikk786786/DAZY-ai-new/blob/main/docs/PROVIDERS.md
+DAZY-ai-new,docs/CAPABILITIES.md,file,Actions/plugins/skills/MCP architecture,https://github.com/tarikk786786/DAZY-ai-new/blob/main/docs/CAPABILITIES.md
+DAZY-ai-new,docs/DAZY_ARCHITECTURE.md,file,Architecture blueprint,https://github.com/tarikk786786/DAZY-ai-new/blob/main/docs/DAZY_ARCHITECTURE.md
+DAZY-ai-new,skills-lock.json,file,Locked Supabase agent skills,https://github.com/tarikk786786/DAZY-ai-new/blob/main/skills-lock.json
+DAZY-ai-new,.agent/PROJECT_STATE.md,file,Historical project state; contains sensitive-looking details—handle carefully,https://github.com/tarikk786786/DAZY-ai-new/blob/main/.agent/PROJECT_STATE.md
+DAZY-ai-new,.agent/PROJECT_TASK_LEDGER.md,file,Historical task ledger,https://github.com/tarikk786786/DAZY-ai-new/blob/main/.agent/PROJECT_TASK_LEDGER.md
+DAZY-ai-new,.agent/EXECUTION_LOG.md,file,Historical execution report,https://github.com/tarikk786786/DAZY-ai-new/blob/main/.agent/EXECUTION_LOG.md
+DAZY-web,package.json,file,Direct npm dependencies and scripts,https://github.com/tarikk786786/DAZY-web/blob/main/package.json
+DAZY-web,src/App.tsx,file,Main web UI,https://github.com/tarikk786786/DAZY-web/blob/main/src/App.tsx
+DAZY-web,src/useDazy.ts,file,"Conversation, memory and reminders",https://github.com/tarikk786786/DAZY-web/blob/main/src/useDazy.ts
+DAZY-web,src/useVoiceInput.ts,file,Browser speech recognition,https://github.com/tarikk786786/DAZY-web/blob/main/src/useVoiceInput.ts
+DAZY-web,src/lib/speech.ts,file,Browser speech synthesis and chimes,https://github.com/tarikk786786/DAZY-web/blob/main/src/lib/speech.ts
+DAZY-web,supabase/config.toml,file,Function JWT verification config,https://github.com/tarikk786786/DAZY-web/blob/main/supabase/config.toml
+DAZY-web,supabase/functions/dazy-chat/index.ts,file,Current Groq/OpenRouter/DeepSeek chat function,https://github.com/tarikk786786/DAZY-web/blob/main/supabase/functions/dazy-chat/index.ts

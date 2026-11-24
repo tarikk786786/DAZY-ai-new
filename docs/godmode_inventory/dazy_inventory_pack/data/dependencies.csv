@@ -1,0 +1,60 @@
+﻿project,group,package,declared_requirement,purpose,status
+DAZY-ai-new,core,PyQt6,">=6.6,<7",Desktop GUI,declared
+DAZY-ai-new,core,sounddevice,">=0.4,<1",Audio I/O,declared
+DAZY-ai-new,core,numpy,">=1.24,<3",Signal processing,declared
+DAZY-ai-new,core,google-genai,">=2.8.0,<3",Gemini SDK,declared
+DAZY-ai-new,core,httpx,">=0.27,<1",HTTP clients,declared
+DAZY-ai-new,web,requests,">=2.31,<3",HTTP clients,declared
+DAZY-ai-new,web,certifi,>=2024.2.2,TLS root certificates,declared
+DAZY-ai-new,web,beautifulsoup4,">=4.12,<5",HTML parsing,declared
+DAZY-ai-new,web,playwright,">=1.40,<2",Browser automation,declared
+DAZY-ai-new,media,yt-dlp,unbounded,Media/YouTube extraction,declared
+DAZY-ai-new,computer,pyautogui,unversioned,Mouse/keyboard,declared
+DAZY-ai-new,computer,pyperclip,unversioned,Clipboard,declared
+DAZY-ai-new,vision,pillow,>=13.0.0,Image tools,declared
+DAZY-ai-new,vision,opencv-python,">=4.8,<5",Image processing,declared
+DAZY-ai-new,vision,mss,">=9,<11",Screen capture,declared
+DAZY-ai-new,system,psutil,">=5.9,<8",System monitoring,declared
+DAZY-ai-new,files,send2trash,unversioned,Recoverable deletion,declared
+DAZY-ai-new,files,python-pptx,unversioned,PowerPoint,declared
+DAZY-ai-new,backend,fastapi,">=0.110,<1",API backend,declared
+DAZY-ai-new,backend,uvicorn[standard],">=0.27,<1",ASGI server,declared
+DAZY-ai-new,security,cryptography,>=50.0.0,Cryptographic support,declared
+DAZY-ai-new,backend,python-multipart,">=0.0.9,<1",Multipart uploads,declared
+DAZY-ai-new,device,qrcode[pil],">=7,<9",QR pairing,declared
+DAZY-ai-new,integration,google-api-python-client,unversioned,Google APIs,declared
+DAZY-ai-new,integration,google-auth-oauthlib,unversioned,Google OAuth,declared
+DAZY-ai-new,iot,tinytuya,unversioned,Tuya devices,declared
+DAZY-ai-new,iot,paho-mqtt,unversioned,MQTT,declared
+DAZY-ai-new,files,openpyxl,unversioned,Excel output,declared
+DAZY-ai-new,media,youtube-transcript-api,unversioned,YouTube transcripts,declared
+DAZY-ai-new,desktop,pygetwindow,unversioned,Window geometry,declared
+DAZY-ai-new,search,ddgs,">=9,<10",Search client,declared
+DAZY-ai-new,files,pdfplumber,unversioned,PDF parsing,declared
+DAZY-ai-new,files,PyPDF2,unversioned,PDF fallback,declared
+DAZY-ai-new,files,python-docx,unversioned,DOCX parsing,declared
+DAZY-ai-new,monitoring,pynvml,unversioned,NVIDIA GPU monitoring,declared
+DAZY-ai-new,Windows-only,comtypes,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,Windows-only,pycaw,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,Windows-only,win10toast,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,Windows-only,pywin32,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,Windows-only,wmi,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,Windows-only,pywinauto,sys_platform == win32,Windows device/COM/UI integration,declared
+DAZY-ai-new,optional,pandas,optional/commented or opt-in,CSV/spreadsheet analysis,optional-not-default
+DAZY-ai-new,optional,pydub,optional/commented or opt-in,Audio conversion; ffmpeg usually needed,optional-not-default
+DAZY-ai-new,optional,mediapipe,optional/commented or opt-in,Pose detection,optional-not-default
+DAZY-ai-new,optional,faster-whisper,optional/commented or opt-in,Local ASR,optional-not-default
+DAZY-ai-new,optional,piper-tts,optional/commented or opt-in,Local TTS,optional-not-default
+DAZY-ai-new,optional,openwakeword,optional/commented or opt-in,Local wake word,optional-not-default
+DAZY-ai-new/backend,backend requirements,fastapi,>=0.110.0,Backend API,declared
+DAZY-ai-new/backend,backend requirements,uvicorn,>=0.28.0,ASGI server,declared
+DAZY-ai-new/backend,backend requirements,pydantic,>=2.6.0,Validation,declared
+DAZY-ai-new/backend,backend requirements,httpx,>=0.27.0,HTTP,declared
+DAZY-web,npm direct dependency,@supabase/supabase-js,^2.45.0,Supabase SDK,declared
+DAZY-web,npm direct dependency,react,^18.3.1,UI,declared
+DAZY-web,npm direct dependency,react-dom,^18.3.1,DOM renderer,declared
+DAZY-web,npm direct dependency,@types/react,^18.3.12,React types,declared
+DAZY-web,npm direct dependency,@types/react-dom,^18.3.1,React DOM types,declared
+DAZY-web,npm direct dependency,@vitejs/plugin-react,^4.3.4,Vite React plugin,declared
+DAZY-web,npm direct dependency,typescript,^5.6.3,TypeScript,declared
+DAZY-web,npm direct dependency,vite,^5.4.11,Bundler/dev server,declared

@@ -1,0 +1,757 @@
+{
+  "generated_on": "2026-11-24",
+  "scope": [
+    "tarikk786786/DAZY-ai-new",
+    "tarikk786786/DAZY-web"
+  ],
+  "note": "Source inventory; not runtime health verification.",
+  "items": [
+    {
+      "category": "repository",
+      "name": "DAZY-ai-new",
+      "kind": "GitHub repository",
+      "status": "audited-source",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new",
+      "description": "Desktop DAZY/Mark-LVII-derived multimodal assistant",
+      "notes": "main and dazy-transformation observed at 48c9952d47485fee2f244595bc60a4d665c8be7a"
+    },
+    {
+      "category": "repository",
+      "name": "DAZY-web",
+      "kind": "GitHub repository",
+      "status": "audited-source",
+      "source": "https://github.com/tarikk786786/DAZY-web",
+      "description": "React/TypeScript web companion",
+      "notes": "main observed at 0f8803261c69377379587745c21942c68935d26a"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "Gemini Live",
+      "kind": "Google GenAI SDK",
+      "status": "source-and-dependency",
+      "source": "https://github.com/googleapis/python-genai",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "OpenRouter",
+      "kind": "model API",
+      "status": "source-or-docs",
+      "source": "https://openrouter.ai/",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "Groq",
+      "kind": "model API",
+      "status": "source-or-docs",
+      "source": "https://groq.com/",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "DeepSeek",
+      "kind": "model API",
+      "status": "source-or-docs",
+      "source": "https://www.deepseek.com/",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "Sarvam AI",
+      "kind": "model API",
+      "status": "source-or-docs",
+      "source": "https://www.sarvam.ai/",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "Qwen",
+      "kind": "model ecosystem",
+      "status": "source-or-docs",
+      "source": "https://github.com/QwenLM/Qwen2.5",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "LLM/provider",
+      "name": "OpenAI-compatible endpoints",
+      "kind": "provider adapter",
+      "status": "source-or-docs",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/llm_openai.py",
+      "description": "LLM/provider option documented or represented in desktop source",
+      "notes": "Runtime credentials and selected machine config not verified"
+    },
+    {
+      "category": "speech provider",
+      "name": "Shrutam2",
+      "kind": "STT",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/stt_shrutam2.py",
+      "description": "Desktop provider adapter: Shrutam2",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "SraVaani",
+      "kind": "STT",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/stt_sravaani.py",
+      "description": "Desktop provider adapter: SraVaani",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Whisper/Faster Whisper",
+      "kind": "STT",
+      "status": "optional-adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/stt_whisper.py",
+      "description": "Desktop provider adapter: Whisper/Faster Whisper",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Kokoro",
+      "kind": "TTS",
+      "status": "optional-adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_kokoro.py",
+      "description": "Desktop provider adapter: Kokoro",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Sherpa",
+      "kind": "TTS",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_sherpa.py",
+      "description": "Desktop provider adapter: Sherpa",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Edge TTS",
+      "kind": "TTS",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_edge.py",
+      "description": "Desktop provider adapter: Edge TTS",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Svara",
+      "kind": "TTS",
+      "status": "adapter-and-docs",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_svara.py",
+      "description": "Desktop provider adapter: Svara",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "DhVaani",
+      "kind": "TTS",
+      "status": "adapter-and-docs",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_dhvaani.py",
+      "description": "Desktop provider adapter: DhVaani",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Higgs",
+      "kind": "TTS",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_higgs.py",
+      "description": "Desktop provider adapter: Higgs",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "System TTS",
+      "kind": "TTS",
+      "status": "adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_system.py",
+      "description": "Desktop provider adapter: System TTS",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Piper",
+      "kind": "TTS",
+      "status": "optional-adapter",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_piper.py",
+      "description": "Desktop provider adapter: Piper",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "ElevenLabs",
+      "kind": "TTS",
+      "status": "adapter-api-key",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_elevenlabs.py",
+      "description": "Desktop provider adapter: ElevenLabs",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Chatterbox",
+      "kind": "TTS",
+      "status": "source-not-in-explicit-registry",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_chatterbox.py",
+      "description": "Desktop provider adapter: Chatterbox",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Mithi",
+      "kind": "TTS",
+      "status": "source-not-in-explicit-registry",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_mithi.py",
+      "description": "Desktop provider adapter: Mithi",
+      "notes": ""
+    },
+    {
+      "category": "speech provider",
+      "name": "Volt",
+      "kind": "TTS",
+      "status": "source-not-in-explicit-registry",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/providers/tts_volt.py",
+      "description": "Desktop provider adapter: Volt",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "background_monitor",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/background_monitor.py",
+      "description": "Background monitoring",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "background_tasks",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/background_tasks.py",
+      "description": "Background jobs",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "browser_control",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/browser_control.py",
+      "description": "Playwright browser control",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "code_helper",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/code_helper.py",
+      "description": "Coding assistance",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "computer_control",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/computer_control.py",
+      "description": "Mouse/keyboard/clipboard control",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "computer_settings",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/computer_settings.py",
+      "description": "OS and computer settings",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "desktop",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/desktop.py",
+      "description": "Desktop automation",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "dev_agent",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/dev_agent.py",
+      "description": "Developer agent",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "file_controller",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/file_controller.py",
+      "description": "File operations",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "file_processor",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/file_processor.py",
+      "description": "Document/file processing",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "flight_finder",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/flight_finder.py",
+      "description": "Flight search",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "game_updater",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/game_updater.py",
+      "description": "Game update operations",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "open_app",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/open_app.py",
+      "description": "Application launch",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "proactive",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/proactive.py",
+      "description": "Proactive assistance",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "reminder",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/reminder.py",
+      "description": "Reminders",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "routines",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/routines.py",
+      "description": "Routines",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "screen_processor",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/screen_processor.py",
+      "description": "Screen/camera processing",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "send_message",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/send_message.py",
+      "description": "Message sending",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "system_monitor",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/system_monitor.py",
+      "description": "System monitoring",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "video_player",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/video_player.py",
+      "description": "Video playback",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "weather_report",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/weather_report.py",
+      "description": "Weather report",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "web_search",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/web_search.py",
+      "description": "Web/news search",
+      "notes": ""
+    },
+    {
+      "category": "action",
+      "name": "youtube_video",
+      "kind": "desktop action",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/actions/youtube_video.py",
+      "description": "YouTube/transcript operations",
+      "notes": ""
+    },
+    {
+      "category": "plugin",
+      "name": "Automation",
+      "kind": "plugin",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/plugins/automation.py",
+      "description": "Activepieces workflow operations",
+      "notes": ""
+    },
+    {
+      "category": "plugin",
+      "name": "Gmail",
+      "kind": "plugin",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/plugins/gmail.py",
+      "description": "Unread mail and draft operations",
+      "notes": ""
+    },
+    {
+      "category": "plugin",
+      "name": "Public APIs",
+      "kind": "plugin",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/plugins/public_apis.py",
+      "description": "Weather, Wikipedia and Quran",
+      "notes": ""
+    },
+    {
+      "category": "plugin",
+      "name": "Telegram",
+      "kind": "plugin",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/plugins/telegram.py",
+      "description": "Telegram notifications/messages",
+      "notes": ""
+    },
+    {
+      "category": "plugin",
+      "name": "Template",
+      "kind": "plugin",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/plugins/_template.py",
+      "description": "Plugin template",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Automation advisor",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/automation-advisor/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "DAZY personality",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/dazy-personality/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Emotional intelligence",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/emotional-intelligence/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Indian languages",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/indian-languages/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Islamic research",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/islamic-research/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Software development",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/agents/skills/software-development/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Supabase",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/.agents/skills/supabase/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "skill",
+      "name": "Supabase Postgres best practices",
+      "kind": "SKILL.md",
+      "status": "source-present-or-lockfile",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/.agents/skills/supabase-postgres-best-practices/SKILL.md",
+      "description": "Reusable agent instruction/knowledge package",
+      "notes": ""
+    },
+    {
+      "category": "MCP/capability",
+      "name": "MCP client",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/client.py",
+      "description": "MCP transport client",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "MCP manager",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/manager.py",
+      "description": "Attach/detach external MCP servers and mount tools",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "MCP registry",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/registry.py",
+      "description": "Track server records",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "MCP tool adapter",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/tool_adapter.py",
+      "description": "Map MCP tools to DAZY capability declarations",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "MCP security",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/security.py",
+      "description": "MCP operation safety support",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "Capability registry",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/capabilities/registry.py",
+      "description": "Unified actions/plugins/skills/MCP registry",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "MCP/capability",
+      "name": "Capability discovery",
+      "kind": "framework module",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/capabilities/discovery.py",
+      "description": "Discover source capabilities",
+      "notes": "Connected external servers are not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Gmail",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/google/gmail.py",
+      "description": "Google Gmail integration",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Telegram",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/communication/telegram.py",
+      "description": "Telegram integration",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Wikipedia",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/research/wikipedia.py",
+      "description": "Wikipedia research",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Open-Meteo",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/utilities/weather.py",
+      "description": "Weather and geocoding",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Quran",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/knowledge/quran.py",
+      "description": "Quran verse/reference integration",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "API discovery",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/integrations/api_discovery.py",
+      "description": "Discover APIs",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Supabase sync",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/memory/supabase_sync.py",
+      "description": "Cloud synchronization",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "integration",
+      "name": "Activepieces",
+      "kind": "integration",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-ai-new/blob/main/core/mcp/activepieces_adapter.py",
+      "description": "Automation platform adapter",
+      "notes": "Live auth/connection not verified"
+    },
+    {
+      "category": "web",
+      "name": "React",
+      "kind": "npm dependency/build tool",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/package.json",
+      "description": "Web UI library",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "React DOM",
+      "kind": "npm dependency/build tool",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/package.json",
+      "description": "Browser renderer",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "Supabase JS",
+      "kind": "npm dependency/build tool",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/package.json",
+      "description": "Supabase SDK",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "Vite",
+      "kind": "npm dependency/build tool",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/package.json",
+      "description": "Build/dev server",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "TypeScript",
+      "kind": "npm dependency/build tool",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/package.json",
+      "description": "Type checker/language",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "Web Speech API",
+      "kind": "browser-native API",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/src/useVoiceInput.ts",
+      "description": "Browser speech recognition",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "SpeechSynthesis API",
+      "kind": "browser-native API",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/src/lib/speech.ts",
+      "description": "Browser TTS",
+      "notes": ""
+    },
+    {
+      "category": "web",
+      "name": "Web Audio API",
+      "kind": "browser-native API",
+      "status": "source-present",
+      "source": "https://github.com/tarikk786786/DAZY-web/blob/main/src/lib/speech.ts",
+      "description": "Reminder/send chimes",
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "projectId": "73187881",
+  "functions": {
+    "dazy-chat": {
+      "hasChanged": false,
+      "hash": "549cfb279a72a4b45f8ae47ee39aba59a04447f578219da7c44b1d3ce661457c"
+    },
+    "dazy-status": {
+      "hasChanged": false,
+      "hash": "2e036c25d667ddb9a636e8bd96289a83900f580d3fbe8a1a880f781d0cc96f6b"
+    },
+    "admin-secrets": {
+      "hasChanged": false,
+      "hash": "678cce8d548f0c45fbdac10af6171484f528d568934eb1fa3f76583f0bede1c4"
+    }
+  }
+}

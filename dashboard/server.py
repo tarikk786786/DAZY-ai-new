@@ -1660,6 +1660,250 @@ class DashboardServer:
             except Exception as e:
                 return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
+        # ── GodMode-Team DAG Task Orchestration ─────────────────────────────
+
+        @app.post("/api/os/dag/submit")
+        async def os_dag_submit_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                plan = body.get("plan", [])
+                if not isinstance(plan, list) or not plan:
+                    return JSONResponse({"ok": False, "error": "Plan must be a non-empty list of tasks"}, status_code=400)
+                from core.ai_os import DurableTaskEngine
+                created = DurableTaskEngine.get_instance().submit_dag(plan, correlation_id=body.get("correlation_id"))
+                return JSONResponse({"ok": True, "tasks": [t.model_dump() for t in created]})
+            except ValueError as ve:
+                return JSONResponse({"ok": False, "error": str(ve)}, status_code=400)
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/os/dag/advance")
+        async def os_dag_advance_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                task_id = body.get("task_id", "")
+                output = body.get("output", {})
+                from core.ai_os import DurableTaskEngine
+                unblocked = DurableTaskEngine.get_instance().advance_dag(task_id, output=output)
+                return JSONResponse({"ok": True, "unblocked_tasks": [t.model_dump() for t in unblocked]})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        # ── smol-ai Multi-AI Comparison Arena ────────────────────────────────
+
+        @app.get("/api/arena/providers")
+        async def arena_providers_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                cfg_path = BASE_DIR / "config" / "api_keys.json"
+                keys_data = {}
+                if cfg_path.exists():
+                    try:
+                        with open(cfg_path, "r", encoding="utf-8") as f:
+                            keys_data = json.load(f)
+                    except Exception:
+                        pass
+
+                providers = [
+                    {
+                        "id": "groq",
+                        "name": "Groq (Qwen 2.5 27B)",
+                        "model": "qwen/qwen3.8-27b",
+                        "configured": bool(keys_data.get("groq_api_key") or os.environ.get("GROQ_API_KEY")),
+                        "speed": "Ultra Fast (<1.2s)",
+                        "tier": "Free / Tier 1"
+                    },
+                    {
+                        "id": "gemini",
+                        "name": "Google Gemini 2.5 Flash",
+                        "model": "gemini-2.5-flash",
+                        "configured": bool(keys_data.get("gemini_api_key") or os.environ.get("GEMINI_API_KEY")),
+                        "speed": "Fast (~2.0s)",
+                        "tier": "Free Tier"
+                    },
+                    {
+                        "id": "openrouter",
+                        "name": "OpenRouter (GPT-4o Mini)",
+                        "model": "openai/gpt-4o-mini",
+                        "configured": bool(keys_data.get("openrouter_api_key") or os.environ.get("OPENROUTER_API_KEY")),
+                        "speed": "Balanced (~2.5s)",
+                        "tier": "Pay-per-token"
+                    },
+                    {
+                        "id": "deepseek",
+                        "name": "DeepSeek Chat",
+                        "model": "deepseek-chat",
+                        "configured": bool(keys_data.get("deepseek_api_key") or os.environ.get("DEEPSEEK_API_KEY")),
+                        "speed": "High Reasoning (~3.0s)",
+                        "tier": "Economy"
+                    },
+                    {
+                        "id": "mock",
+                        "name": "Local Rule-based / Mock",
+                        "model": "mock-instant",
+                        "configured": True,
+                        "speed": "Instant (<10ms)",
+                        "tier": "Offline"
+                    }
+                ]
+                return JSONResponse({"ok": True, "providers": providers})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/arena/compare")
+        async def arena_compare_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                prompt = (body.get("prompt") or "").strip()
+                selected_models = body.get("models") or ["groq", "mock"]
+                if not prompt:
+                    return JSONResponse({"ok": False, "error": "Prompt cannot be empty"}, status_code=400)
+
+                cfg_path = BASE_DIR / "config" / "api_keys.json"
+                keys_data = {}
+                if cfg_path.exists():
+                    try:
+                        with open(cfg_path, "r", encoding="utf-8") as f:
+                            keys_data = json.load(f)
+                    except Exception:
+                        pass
+
+                import httpx
+
+                async def query_single_model(m_id: str) -> dict:
+                    start_ts = time.time()
+                    if m_id == "mock":
+                        return {
+                            "id": "mock",
+                            "model": "mock-instant",
+                            "status": "ok",
+                            "response": f"[Local Mock] Verified output for: '{prompt[:50]}...'",
+                            "latency_ms": round((time.time() - start_ts) * 1000, 1),
+                            "tokens": len(prompt.split()) + 8
+                        }
+
+                    endpoint_map = {
+                        "groq": {
+                            "url": "https://api.groq.com/openai/v1/chat/completions",
+                            "key": keys_data.get("groq_api_key") or os.environ.get("GROQ_API_KEY", ""),
+                            "model": "qwen/qwen3.8-27b",
+                        },
+                        "gemini": {
+                            "url": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+                            "key": keys_data.get("gemini_api_key") or os.environ.get("GEMINI_API_KEY", ""),
+                            "model": "gemini-2.5-flash",
+                        },
+                        "openrouter": {
+                            "url": "https://openrouter.ai/api/v1/chat/completions",
+                            "key": keys_data.get("openrouter_api_key") or os.environ.get("OPENROUTER_API_KEY", ""),
+                            "model": "openai/gpt-4o-mini",
+                        },
+                        "deepseek": {
+                            "url": "https://api.deepseek.com/v1/chat/completions",
+                            "key": keys_data.get("deepseek_api_key") or os.environ.get("DEEPSEEK_API_KEY", ""),
+                            "model": "deepseek-chat",
+                        },
+                    }
+
+                    target = endpoint_map.get(m_id)
+                    if not target or not target["key"]:
+                        return {
+                            "id": m_id,
+                            "model": target["model"] if target else m_id,
+                            "status": "not_configured",
+                            "response": f"API Key for {m_id} is missing in config/api_keys.json.",
+                            "latency_ms": 0.0,
+                            "tokens": 0
+                        }
+
+                    try:
+                        headers = {
+                            "Authorization": f"Bearer {target['key']}",
+                            "Content-Type": "application/json"
+                        }
+                        if m_id == "openrouter":
+                            headers["HTTP-Referer"] = "https://dazy.ai"
+                            headers["X-Title"] = "DAZY-Arena"
+
+                        payload = {
+                            "model": target["model"],
+                            "messages": [{"role": "user", "content": prompt}],
+                            "max_tokens": 512,
+                            "temperature": 0.7
+                        }
+
+                        async with httpx.AsyncClient(timeout=15.0) as client:
+                            resp = await client.post(target["url"], headers=headers, json=payload)
+                            latency = round((time.time() - start_ts) * 1000, 1)
+                            if resp.status_code == 200:
+                                data = resp.json()
+                                reply_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                                usage = data.get("usage", {})
+                                total_tokens = usage.get("total_tokens", len(reply_text.split()))
+                                return {
+                                    "id": m_id,
+                                    "model": target["model"],
+                                    "status": "ok",
+                                    "response": reply_text,
+                                    "latency_ms": latency,
+                                    "tokens": total_tokens
+                                }
+                            elif resp.status_code == 429:
+                                return {
+                                    "id": m_id,
+                                    "model": target["model"],
+                                    "status": "rate_limited",
+                                    "response": "429: Provider rate limit exceeded. Retry in a few moments.",
+                                    "latency_ms": latency,
+                                    "tokens": 0
+                                }
+                            else:
+                                return {
+                                    "id": m_id,
+                                    "model": target["model"],
+                                    "status": "error",
+                                    "response": f"HTTP {resp.status_code}: {resp.text[:150]}",
+                                    "latency_ms": latency,
+                                    "tokens": 0
+                                }
+                    except httpx.TimeoutException:
+                        return {
+                            "id": m_id,
+                            "model": target["model"],
+                            "status": "timeout",
+                            "response": "Query timed out after 15 seconds.",
+                            "latency_ms": round((time.time() - start_ts) * 1000, 1),
+                            "tokens": 0
+                        }
+                    except Exception as err:
+                        return {
+                            "id": m_id,
+                            "model": target["model"],
+                            "status": "error",
+                            "response": str(err),
+                            "latency_ms": round((time.time() - start_ts) * 1000, 1),
+                            "tokens": 0
+                        }
+
+                tasks = [query_single_model(m) for m in selected_models]
+                results = await asyncio.gather(*tasks)
+
+                return JSONResponse({
+                    "ok": True,
+                    "prompt": prompt,
+                    "results": results,
+                    "timestamp": time.time()
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         # ── Phone mic real-time audio → Gemini Live ──────────────────────────
 
         @app.websocket("/ws/phone-audio")

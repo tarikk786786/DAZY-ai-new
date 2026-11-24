@@ -1,0 +1,19 @@
+{
+  "generated": "2026-11-24",
+  "file_count_before_manifest": 21,
+  "repositories": [
+    {
+      "name": "DAZY-ai-new",
+      "commit": "48c9952d47485fee2f244595bc60a4d665c8be7a",
+      "tracked_paths": 434
+    },
+    {
+      "name": "DAZY-web",
+      "commit": "0f8803261c69377379587745c21942c68935d26a",
+      "tracked_paths": "tree inspected; compact app"
+    }
+  ],
+  "inventory_items": 83,
+  "dependency_rows": 59,
+  "repository_map_rows": 40
+}
