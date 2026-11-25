@@ -180,13 +180,14 @@ class WhisperSTT:
     def _accept_language(self, code: str, confidence: float, text: str) -> None:
         """Update the language the voice follows — only on real evidence.
 
-        The FIRST detection is always taken, whatever it scores: at the start of
-        a session there is nothing to keep, and refusing to choose would leave
-        the assistant with no language at all.
+        Biases against random spurious guesses (Turkish/Arabic) on Hinglish audio.
         """
         code = code.strip().lower()
         if not code:
             return
+        if code not in ("en", "hi", "hi-en", "ur"):
+            if confidence < 0.90 or len(text) < 25:
+                return
         if not self.detected_language:
             self.detected_language = code
             return
@@ -208,7 +209,11 @@ class WhisperSTT:
         base = _normalise(self.base_url)
         wav = audio.to_wav(pcm, rate=sample_rate)
         headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
-        data = {"model": self.model_name, "response_format": "json"}
+        data = {
+            "model": self.model_name,
+            "response_format": "json",
+            "prompt": "Haan Tarik, main DAZY hoon. Kaise ho? Sab theek hai? Bolo kya madad chahiye, project aur system health check karein?",
+        }
         if self.language:
             data["language"] = self.language
         with httpx.Client(timeout=60.0, trust_env=not _is_loopback(base)) as cl:
@@ -222,7 +227,7 @@ class WhisperSTT:
         # taken as it always was — but through the same door, so the first-vs-
         # switch rules stay in one place.
         self._accept_language(
-            str(payload.get("language") or self.language or ""), 1.0, "x" * 99)
+            str(payload.get("language") or self.language or ""), 1.0, (payload.get("text") or ""))
         return (payload.get("text") or "").strip()
 
     # ── the contract ─────────────────────────────────────────────────────────
@@ -232,10 +237,18 @@ class WhisperSTT:
             return ""
         # Whisper invents sentences out of silence — the well-known artefact
         # where a fraction of a second of room tone becomes "Thank you." in
-        # whatever language it guessed. A quarter of a second is below anything
-        # a person says on purpose, so it is dropped before it can become one.
-        if audio.duration_s(pcm, sample_rate) < 0.25:
+        # whatever language it guessed. Below 0.35s or below speech RMS is dropped.
+        if audio.duration_s(pcm, sample_rate) < 0.35:
             return ""
+        try:
+            import numpy as np
+            samples = audio.to_float32(pcm)
+            if samples.size > 0:
+                rms = float(np.sqrt(np.mean(samples * samples)))
+                if rms < 0.004:
+                    return ""
+        except Exception:
+            pass
         if language:
             self.language = language
 

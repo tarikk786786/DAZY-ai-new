@@ -1355,6 +1355,116 @@ class DashboardServer:
             except Exception as e:
                 return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
+        @app.post("/api/voice-preview")
+        async def voice_preview_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                voice = str(body.get("voice") or "en-IN-NeerjaNeural").strip()
+                text = str(body.get("text") or "Haan ji Tarik, main DAZY hoon. Kaise ho aap? Sab theek chal raha hai?").strip()
+                rate = int(body.get("rate") or 0)
+                pitch = int(body.get("pitch") or 0)
+                import edge_tts, base64
+                rate_str = f"{rate:+d}%" if rate else "+0%"
+                pitch_str = f"{pitch:+d}Hz" if pitch else "+0Hz"
+                comm = edge_tts.Communicate(text, voice=voice, rate=rate_str, pitch=pitch_str)
+                mp3_buf = bytearray()
+                async for chunk in comm.stream():
+                    if chunk["type"] == "audio":
+                        mp3_buf.extend(chunk["data"])
+                b64 = base64.b64encode(bytes(mp3_buf)).decode("ascii")
+                return JSONResponse({"ok": True, "voice": voice, "audio_base64": b64, "mime": "audio/mpeg", "bytes": len(mp3_buf)})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/voice-settings")
+        async def get_voice_settings_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from memory.config_manager import load_api_keys
+                from providers.tts_edge import INDIAN_FEMALE_VOICES
+                cfg = load_api_keys()
+                edge_cfg = cfg.get("providers", {}).get("creds", {}).get("edge_tts", {})
+                return JSONResponse({
+                    "ok": True,
+                    "language_mode": cfg.get("language_mode", "hinglish"),
+                    "voice": edge_cfg.get("voice", "en-IN-NeerjaNeural"),
+                    "rate": edge_cfg.get("rate", 0),
+                    "pitch": edge_cfg.get("pitch", 0),
+                    "voices": [{"id": v[0], "label": v[1]} for v in INDIAN_FEMALE_VOICES],
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.post("/api/voice-settings")
+        async def save_voice_settings_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                body = await req.json()
+                from memory.config_manager import load_api_keys, save_api_keys
+                from core.voice_session_manager import VoiceSessionManager
+                cfg = load_api_keys()
+                if "language_mode" in body:
+                    cfg["language_mode"] = str(body["language_mode"]).strip().lower()
+                providers = cfg.setdefault("providers", {}).setdefault("creds", {})
+                edge_cfg = providers.setdefault("edge_tts", {})
+                if "voice" in body:
+                    v = str(body["voice"]).strip()
+                    edge_cfg["voice"] = v
+                    VoiceSessionManager.get_instance().authoritative_voice = v
+                if "rate" in body:
+                    edge_cfg["rate"] = int(body["rate"])
+                if "pitch" in body:
+                    edge_cfg["pitch"] = int(body["pitch"])
+                save_api_keys(cfg)
+                return JSONResponse({"ok": True, "voice": edge_cfg.get("voice"), "language_mode": cfg.get("language_mode")})
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+        @app.get("/api/suggestions")
+        async def suggestions_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            return JSONResponse({
+                "ok": True,
+                "greeting": "Hey! Main DAZY hoon. Tum mujhse naturally Hinglish mein baat kar sakte ho. Kuch bhi poochho, bolo ya koi task do. Main sun rahi hoon ❤️",
+                "suggestions": [
+                    "DAZY, aaj mere kya important tasks hain?",
+                    "Mujhe ye project samjhao, easy Hinglish mein.",
+                    "Mere PC ka health check karo.",
+                    "Meri upcoming reminders batao.",
+                    "Is project mein koi bugs find karo.",
+                    "Chalo thodi der baat karte hain.",
+                ],
+            })
+
+        @app.get("/api/os/memory")
+        async def os_memory_ep(req: Request):
+            if not _auth(req):
+                return JSONResponse({"error": "Unauthorized"}, status_code=401)
+            try:
+                from memory.memory_manager import load_memory
+                mem = load_memory()
+                routines = []
+                routines_path = BASE_DIR / "memory" / "routines.json"
+                if routines_path.exists():
+                    try:
+                        routines = json.loads(routines_path.read_text(encoding="utf-8"))
+                        if isinstance(routines, dict):
+                            routines = routines.get("routines", [])
+                    except Exception:
+                        routines = []
+                return JSONResponse({
+                    "ok": True,
+                    "memory": mem,
+                    "routines": routines[:10] if isinstance(routines, list) else [],
+                })
+            except Exception as e:
+                return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
         # ── DAZY AI OS REST & Telemetry Endpoints ────────────────────────────
 
         @app.get("/api/os/overview")

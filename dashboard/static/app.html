@@ -11,7 +11,7 @@
       color-scheme:dark;--bg:#080b14;--bg2:#0b1020;--panel:rgba(16,22,39,.78);--panel2:rgba(21,29,50,.78);
       --line:rgba(159,180,226,.13);--line2:rgba(159,180,226,.22);--text:#eef3ff;--muted:#8793ad;--dim:#56627b;
       --violet:#a78bfa;--pink:#fb83bd;--cyan:#64d8ff;--mint:#72e0b4;--amber:#f6c779;--red:#fb7185;
-      --shadow:0 22px 70px rgba(0,0,0,.36);--radius:22px;--sidebar:246px;--rail:292px;
+      --shadow:0 22px 70px rgba(0,0,0,.36);--radius:22px;--sidebar:248px;--rail:310px;
     }
     *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
     body{overflow:hidden;background:radial-gradient(ellipse at 50% -25%,rgba(101,91,192,.18),transparent 50%),radial-gradient(ellipse at 100% 65%,rgba(50,153,191,.07),transparent 38%),var(--bg)}
@@ -29,7 +29,7 @@
     .overview-scroll{overflow:auto;min-height:0;padding:2px 2px 18px}.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(230px,.85fr);align-items:center;min-height:245px;padding:25px 28px;background:radial-gradient(ellipse at 78% 50%,rgba(142,111,241,.2),transparent 42%),linear-gradient(125deg,rgba(28,32,61,.94),rgba(12,23,38,.92));border-color:rgba(167,139,250,.2)}.hero:after{content:"";position:absolute;width:320px;height:320px;right:10%;top:-56%;border:1px solid rgba(181,164,255,.13);border-radius:50%;box-shadow:0 0 0 28px rgba(181,164,255,.025),0 0 0 58px rgba(181,164,255,.018);pointer-events:none}.hero-copy{position:relative;z-index:2}.hero-tag{display:inline-flex;align-items:center;gap:7px;color:#c7b7ff;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);padding:6px 10px;border-radius:30px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hero h2{font-size:clamp(25px,3vw,38px);line-height:1.12;letter-spacing:-.05em;margin:17px 0 10px;max-width:540px}.hero h2 span{background:linear-gradient(95deg,#c4aaff,#70dfff 55%,#f59bc9);background-size:180% auto;color:transparent;background-clip:text;animation:shimmer 8s linear infinite}.hero-copy p{font-size:11px;color:#a5b1c9;line-height:1.7;max-width:420px;margin:0 0 18px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.orb-stage{height:195px;display:grid;place-items:center;position:relative;z-index:2}.orb{width:132px;height:132px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 27%,#e2c9ff 0%,#9a80ed 13%,#536cd0 34%,#12213c 67%,#070c18 100%);box-shadow:inset -15px -18px 28px rgba(0,0,0,.55),inset 5px 6px 18px rgba(255,255,255,.25),0 0 38px rgba(139,116,250,.5),0 0 90px rgba(90,177,231,.19);animation:float 5s ease-in-out infinite}.orb:before{content:"";position:absolute;inset:-20px;border-radius:50%;border:1px solid rgba(150,194,255,.32);transform:rotate(-20deg) scaleY(.33);box-shadow:0 0 18px rgba(133,186,255,.13)}.orb:after{content:"";position:absolute;inset:-37px;border:1px solid rgba(189,161,255,.2);border-radius:50%;transform:rotate(62deg) scaleY(.4)}.orb-core{position:absolute;inset:31%;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,rgba(166,206,255,.9) 22%,rgba(148,120,245,.1) 73%);filter:blur(1px);box-shadow:0 0 26px #a7cfff;animation:pulse 3.2s ease-in-out infinite}.orb-caption{position:absolute;bottom:2px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#aeb9d0}.hero[data-state="offline"] .orb{filter:grayscale(.65);opacity:.6;animation:none}
     .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:13px 0}.stat-card{padding:15px 16px;min-height:92px}.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:9px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}.stat-icon{font-size:14px;color:var(--violet)}.stat-value{font-size:18px;font-weight:780;letter-spacing:-.035em;margin-top:12px}.stat-note{font-size:9px;color:var(--muted);margin-top:4px}.overview-lower{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(220px,.65fr);gap:12px}.mini-chat{min-height:175px;display:flex;flex-direction:column}.mini-feed{padding:13px 17px 17px;display:grid;gap:9px;overflow:hidden}.mini-item{display:flex;gap:9px;align-items:flex-start;font-size:10px;line-height:1.55;color:#b8c3d9}.mini-avatar{width:21px;height:21px;flex:none;border-radius:7px;background:rgba(167,139,250,.17);display:grid;place-items:center;color:#c4b1ff;font-size:10px}.mini-avatar.user{background:rgba(100,216,255,.12);color:var(--cyan)}.mini-item span{display:block;color:var(--muted);font-size:8px;margin-top:2px}.quick-card{padding-bottom:14px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px}.quick-tile{border:1px solid var(--line);background:rgba(255,255,255,.025);padding:12px;border-radius:13px;text-align:left;cursor:pointer;transition:.2s}.quick-tile:hover{border-color:rgba(167,139,250,.4);transform:translateY(-2px);background:rgba(167,139,250,.07)}.quick-tile i{font-style:normal;font-size:17px;display:block;margin-bottom:8px}.quick-tile b{display:block;font-size:10px}.quick-tile small{font-size:8px;color:var(--muted);display:block;margin-top:4px}
     /* Chat */
-    .chat-page{gap:0}.chat-toolbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid var(--line);border-radius:16px 16px 0 0;background:rgba(15,21,37,.85)}.chat-avatar{width:30px;height:30px;border-radius:10px;background:linear-gradient(140deg,rgba(167,139,250,.6),rgba(100,216,255,.35));display:grid;place-items:center;font-weight:850;color:white}.chat-agent-name{font-size:11px;font-weight:760}.chat-agent-state{font-size:9px;color:var(--muted);margin-top:3px}.chat-feed{flex:1;min-height:0;overflow:auto;padding:17px 17px 20px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(7,11,20,.43);display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.chat-feed::-webkit-scrollbar,.overview-scroll::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:5px}.chat-feed::-webkit-scrollbar-thumb,.overview-scroll::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:rgba(145,160,195,.16);border-radius:8px}.chat-empty{margin:auto;text-align:center;max-width:360px;padding:25px}.chat-empty .empty-orb{width:65px;height:65px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#e5d7ff,#9275e8 35%,#192d51 72%);box-shadow:0 0 35px rgba(152,120,245,.28);animation:float 5s ease-in-out infinite}.chat-empty h3{font-size:19px;letter-spacing:-.03em;margin:0 0 8px}.chat-empty p{font-size:10px;color:var(--muted);line-height:1.6;margin:0}.suggestions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:17px}.suggestions button{font-size:9px;color:#bac5dd;padding:7px 9px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer}.suggestions button:hover{border-color:rgba(167,139,250,.4)}.message{max-width:min(82%,760px);padding:11px 13px;border-radius:15px;line-height:1.65;font-size:11px;word-break:break-word;animation:rise .2s ease}.message.assistant{align-self:flex-start;background:linear-gradient(135deg,rgba(142,115,231,.14),rgba(43,68,107,.18));border:1px solid rgba(167,139,250,.17);border-bottom-left-radius:5px}.message.user{align-self:flex-end;background:rgba(53,126,158,.13);border:1px solid rgba(100,216,255,.14);border-bottom-right-radius:5px}.message.system{align-self:center;color:var(--muted);font-size:9px;padding:3px 9px;background:transparent;border:0}.message-meta{font-size:8px;letter-spacing:.12em;color:#95a0b8;opacity:.75;margin-bottom:5px;text-transform:uppercase;font-weight:800}.message p{margin:0 0 7px}.message p:last-child{margin-bottom:0}.message ul,.message ol{padding-left:18px;margin:6px 0}.message pre{white-space:pre-wrap;overflow:auto;padding:9px;background:rgba(0,0,0,.25);border-radius:8px;font-size:10px}.message code{font-family:ui-monospace,Consolas,monospace;color:#b6e9ff;background:rgba(0,0,0,.2);padding:1px 4px;border-radius:4px}.message strong{color:#f0e9ff}.message a{color:var(--cyan)}.pending-dot{display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle}.pending-dot i{width:4px;height:4px;border-radius:50%;background:var(--violet);animation:pulse 1s infinite}.pending-dot i:nth-child(2){animation-delay:.15s}.pending-dot i:nth-child(3){animation-delay:.3s}.chat-composer{padding:12px;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;background:rgba(15,21,37,.88)}.composer-box{display:flex;align-items:flex-end;gap:8px;border:1px solid rgba(153,169,207,.18);border-radius:14px;background:rgba(4,8,16,.55);padding:7px}.composer-box:focus-within{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.07)}#chatInput{flex:1;min-height:37px;max-height:130px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:9px 7px;font-size:11px;line-height:1.5}#chatInput::placeholder{color:#69758e}.composer-tool{height:35px;min-width:35px;border:0;border-radius:10px;background:transparent;color:#a5b0c8;cursor:pointer;font-size:15px}.composer-tool:hover{background:rgba(255,255,255,.06);color:white}.composer-tool.recording{color:var(--red);background:rgba(251,113,133,.1);animation:pulse 1s infinite}.voice-always-btn{transition:all .2s ease;font-weight:600}.voice-always-btn:hover{border-color:rgba(114,224,180,.6)!important;color:var(--mint)!important}.voice-always-btn.active{animation:pulse 1.8s infinite}.send-btn{height:35px;padding:0 16px;border:0;border-radius:10px;background:linear-gradient(110deg,#9c7cf2,#5dcce0);color:#0b1020;font-size:10px;letter-spacing:.09em;font-weight:900;cursor:pointer}.send-btn:disabled{opacity:.4;cursor:not-allowed}.composer-hint{display:flex;justify-content:space-between;gap:12px;color:#65718a;font-size:8px;margin:8px 4px 0}.composer-hint strong{color:#8a96af;font-weight:650}
+    .chat-page{gap:0}.chat-toolbar{display:flex;align-items:center;gap:10px;padding:12px 15px;border:1px solid var(--line);border-radius:16px 16px 0 0;background:rgba(15,21,37,.85)}.chat-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(140deg,rgba(167,139,250,.6),rgba(100,216,255,.35));display:grid;place-items:center;font-weight:850;color:white}.chat-agent-name{font-size:12px;font-weight:760}.chat-agent-state{font-size:10px;color:var(--muted);margin-top:2px}.chat-feed{flex:1;min-height:0;overflow:auto;padding:18px 20px 22px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(7,11,20,.43);display:flex;flex-direction:column;gap:13px;scroll-behavior:smooth}.chat-feed::-webkit-scrollbar,.overview-scroll::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:5px}.chat-feed::-webkit-scrollbar-thumb,.overview-scroll::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:rgba(145,160,195,.16);border-radius:8px}.chat-empty{margin:auto;text-align:center;max-width:460px;padding:25px}.chat-empty .empty-orb{width:68px;height:68px;border-radius:50%;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#e5d7ff,#9275e8 35%,#192d51 72%);box-shadow:0 0 35px rgba(152,120,245,.28);animation:float 5s ease-in-out infinite}.chat-empty h3{font-size:20px;letter-spacing:-.03em;margin:0 0 8px}.chat-empty p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}.suggestions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:17px}.suggestions button{font-size:11px;color:#cdd8ef;padding:8px 13px;border-radius:20px;border:1px solid var(--line2);background:rgba(255,255,255,.04);cursor:pointer;transition:.2s}.suggestions button:hover{border-color:rgba(100,216,255,.55);background:rgba(100,216,255,.08)}.message{max-width:min(84%,740px);padding:13px 16px;border-radius:16px;line-height:1.65;font-size:13px;word-break:break-word;animation:rise .2s ease}.message.assistant{align-self:flex-start;background:linear-gradient(135deg,rgba(142,115,231,.16),rgba(43,68,107,.2));border:1px solid rgba(167,139,250,.22);border-bottom-left-radius:5px}.message.user{align-self:flex-end;background:rgba(53,126,158,.18);border:1px solid rgba(100,216,255,.22);border-bottom-right-radius:5px}.message.system{align-self:center;color:var(--muted);font-size:10px;padding:4px 10px;background:transparent;border:0}.message-meta{font-size:9px;letter-spacing:.12em;color:#95a0b8;opacity:.8;margin-bottom:5px;text-transform:uppercase;font-weight:800}.message p{margin:0 0 8px}.message p:last-child{margin-bottom:0}.message ul,.message ol{padding-left:18px;margin:6px 0}.message pre{white-space:pre-wrap;overflow:auto;padding:10px;background:rgba(0,0,0,.28);border-radius:8px;font-size:11.5px}.message code{font-family:ui-monospace,Consolas,monospace;color:#b6e9ff;background:rgba(0,0,0,.24);padding:2px 5px;border-radius:4px}.message strong{color:#f0e9ff}.message a{color:var(--cyan)}.pending-dot{display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle}.pending-dot i{width:4px;height:4px;border-radius:50%;background:var(--violet);animation:pulse 1s infinite}.pending-dot i:nth-child(2){animation-delay:.15s}.pending-dot i:nth-child(3){animation-delay:.3s}.chat-composer{padding:12px 14px;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;background:rgba(15,21,37,.88)}.composer-box{display:flex;align-items:flex-end;gap:8px;border:1px solid rgba(153,169,207,.18);border-radius:14px;background:rgba(4,8,16,.55);padding:7px}.composer-box:focus-within{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.07)}#chatInput{flex:1;min-height:38px;max-height:130px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:8px 8px;font-size:13px;line-height:1.5}#chatInput::placeholder{color:#69758e}.composer-tool{height:36px;min-width:36px;border:0;border-radius:10px;background:transparent;color:#a5b0c8;cursor:pointer;font-size:15px}.composer-tool:hover{background:rgba(255,255,255,.06);color:white}.composer-tool.recording{color:var(--red);background:rgba(251,113,133,.1);animation:pulse 1s infinite}.voice-always-btn{transition:all .2s ease;font-weight:600}.voice-always-btn:hover{border-color:rgba(114,224,180,.6)!important;color:var(--mint)!important}.voice-always-btn.active{animation:pulse 1.8s infinite}.send-btn{height:36px;padding:0 16px;border:0;border-radius:10px;background:linear-gradient(110deg,#9c7cf2,#5dcce0);color:#0b1020;font-size:11px;letter-spacing:.09em;font-weight:900;cursor:pointer}.send-btn:disabled{opacity:.4;cursor:not-allowed}.composer-hint{display:flex;justify-content:space-between;gap:12px;color:#65718a;font-size:9px;margin:8px 4px 0}.composer-hint strong{color:#8a96af;font-weight:650}
     /* Files and activity */
     .section-scroll{flex:1;min-height:0;overflow:auto;padding:2px 2px 18px}.dropzone{border:1px dashed rgba(167,139,250,.34);border-radius:18px;padding:28px 18px;text-align:center;background:rgba(167,139,250,.045);transition:.2s}.dropzone.drag{border-color:var(--cyan);background:rgba(100,216,255,.08);transform:scale(.995)}.drop-icon{font-size:25px;margin-bottom:9px}.dropzone h3{font-size:13px;margin:0 0 5px}.dropzone p{font-size:10px;color:var(--muted);margin:0 0 14px}.file-list{display:grid;gap:8px;margin-top:14px}.file-row{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid var(--line)}.file-glyph{width:35px;height:35px;border-radius:10px;background:rgba(100,216,255,.09);display:grid;place-items:center;font-size:16px}.file-info{min-width:0;flex:1}.file-name{font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-size{font-size:9px;color:var(--muted);margin-top:4px}.file-open{font-size:9px;color:var(--cyan);text-decoration:none}.activity-list{display:grid;gap:8px}.activity-row{display:flex;gap:11px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.022)}.activity-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--violet);margin:4px 2px;box-shadow:0 0 10px rgba(167,139,250,.4)}.activity-row.user .activity-dot{background:var(--cyan)}.activity-row.system .activity-dot{background:var(--amber)}.activity-copy{font-size:10px;line-height:1.55;color:#bdc8dd;min-width:0}.activity-copy time{display:block;font-size:8px;color:var(--muted);margin-top:4px}
     /* Right rail */
@@ -452,24 +452,38 @@
 <div class="ambient" aria-hidden="true"></div>
 <div class="app">
   <aside class="sidebar" id="sidebar" aria-label="Main navigation">
-    <div class="brand"><div class="brand-mark">D</div><div><div class="brand-name">DAZY</div><div class="brand-sub">Personal intelligence</div></div></div>
-    <div class="nav-label">Workspace</div>
-    <nav class="nav" aria-label="Workspace areas">
-      <button class="nav-btn" data-page="overview"><span class="nav-ico">◈</span><span class="nav-text">Overview</span></button>
+    <div class="brand"><div class="brand-mark">D</div><div><div class="brand-name">DAZY</div><div class="brand-sub">Sovereign AI OS · Tarik</div></div></div>
+    
+    <!-- Compact Left-Column Reactor Core Status -->
+    <div class="side-card" id="sideReactorCard" style="margin:0 3px 12px;padding:11px 12px;border-color:rgba(100,216,255,.22);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="sideReactorOrb" style="width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e2c9ff,#8e73f1 55%,#0e172a);box-shadow:0 0 14px rgba(139,116,250,.55);flex:none;"></div>
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--text);" id="sideReactorState">IDLE · HINGLISH</div>
+          <div style="font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sideStatus">Connecting session…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-label">Command Center</div>
+    <nav class="nav" aria-label="Workspace areas" style="overflow-y:auto;padding-right:2px;">
+      <button class="nav-btn" data-page="overview"><span class="nav-ico">◈</span><span class="nav-text">Home Command</span></button>
       <button class="nav-btn active" data-page="chat"><span class="nav-ico">✧</span><span class="nav-text">Conversation</span></button>
       <button class="nav-btn" data-page="brain"><span class="nav-ico">⚛</span><span class="nav-text">Live Brain 3D</span></button>
-      <button class="nav-btn" data-page="command"><span class="nav-ico">⌬</span><span class="nav-text">AI OS Command</span></button>
-      <button class="nav-btn" data-page="testing"><span class="nav-ico">✓</span><span class="nav-text">Testing Center</span></button>
+      <button class="nav-btn" data-page="command"><span class="nav-ico">⌬</span><span class="nav-text">Tasks &amp; Workers</span></button>
+      <button class="nav-btn" data-page="memory"><span class="nav-ico">◉</span><span class="nav-text">Memory Center</span></button>
+      <button class="nav-btn" data-page="tools"><span class="nav-ico">⚡</span><span class="nav-text">Tools &amp; MCP</span></button>
+      <button class="nav-btn" data-page="system"><span class="nav-ico">▥</span><span class="nav-text">PC Health &amp; Logs</span></button>
       <button class="nav-btn" data-page="arena"><span class="nav-ico">⚔</span><span class="nav-text">Multi-AI Arena</span></button>
+      <button class="nav-btn" data-page="testing"><span class="nav-ico">✓</span><span class="nav-text">Testing Center</span></button>
       <button class="nav-btn" data-page="files"><span class="nav-ico">▧</span><span class="nav-text">Files</span><span class="nav-count" id="fileCount">—</span></button>
       <button class="nav-btn" data-page="activity"><span class="nav-ico">◷</span><span class="nav-text">Activity</span></button>
-      <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice & Diarization</span></button>
+      <button class="nav-btn" data-page="diagnostics"><span class="nav-ico">⌁</span><span class="nav-text">Voice &amp; Audio</span></button>
     </nav>
-    <div class="nav-label" style="margin-top:18px">Preferences</div>
+    <div class="nav-label" style="margin-top:10px">Preferences</div>
     <nav class="nav" aria-label="User preferences"><button class="nav-btn" data-page="settings"><span class="nav-ico">⚙</span><span class="nav-text">Settings</span></button></nav>
     <div class="sidebar-spacer"></div>
-    <div class="side-card"><div class="side-card-top"><span class="tiny-orb"></span><span id="sideStatus">Starting secure link</span></div><p>DAZY is connected through your local assistant session. Your desktop remains the primary voice engine.</p></div>
-    <div class="profile"><div class="avatar" id="userAvatar">T</div><div><div class="profile-name" id="userProfileName">Tarik</div><div class="profile-caption" id="userProfileSub">Private workspace</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
+    <div class="profile"><div class="avatar" id="userAvatar">T</div><div><div class="profile-name" id="userProfileName">Tarik</div><div class="profile-caption" id="userProfileSub">Owner · Hinglish</div></div><button class="icon-btn" id="openSettings" title="Settings">⋯</button></div>
   </aside>
   <div class="mobile-backdrop" id="mobileBackdrop"></div>
   <div class="main-shell">
@@ -523,7 +537,7 @@
                 <div class="orb-visualizer-wrap">
                   <canvas id="orbWaveform" width="140" height="24" class="orb-waveform-canvas"></canvas>
                 </div>
-              </div><div class="orb-caption" id="orbCaption">WAITING FOR LINK</div></div>
+              </div>
             </div>
             <div class="stat-grid">
               <div class="card stat-card"><div class="stat-top"><span>Remote connection</span><span class="stat-icon">⌁</span></div><div class="stat-value" id="statConnection">Offline</div><div class="stat-note" id="statConnectionNote">Waiting for WebSocket</div></div>
@@ -538,8 +552,46 @@
           </div>
         </section>
         <section class="page active chat-page" id="page-chat" role="region" aria-label="Live conversation area">
-          <div class="chat-toolbar"><div class="chat-avatar">D</div><div><div class="chat-agent-name">DAZY <span style="color:var(--violet);font-size:8px;letter-spacing:.12em">AI COMPANION</span></div><div class="chat-agent-state" id="chatAgentState">Waiting for desktop session</div></div><div class="top-spacer"></div><button class="action-btn" data-action="wake">Wake</button><button class="icon-btn" id="clearChat" title="Clear this browser view">↺</button></div>
-          <div class="chat-feed" id="chatFeed" aria-live="polite" tabindex="0" aria-label="Conversation message history"><div class="chat-empty" id="chatEmpty"><div class="empty-orb"></div><h3>Hey, I'm DAZY.</h3><p>Your conversation is routed to the assistant running on your computer. Send a message or tap the microphone to speak.</p><div class="suggestions"><button data-prompt="Hey DAZY, are you connected?">Check connection</button><button data-prompt="Let's continue where we left off.">Continue conversation</button><button data-prompt="Give me a quick system status update.">System status</button></div></div></div>
+          <div class="chat-toolbar">
+            <div class="chat-avatar">D</div>
+            <div>
+              <div class="chat-agent-name">DAZY <span style="color:var(--violet);font-size:8px;letter-spacing:.12em">INDIAN HINGLISH · ADULT VOICE</span></div>
+              <div class="chat-agent-state" id="chatAgentState">Haan ji, main sun rahi hoon ❤️</div>
+            </div>
+            <div class="top-spacer"></div>
+            <button class="action-btn" id="btnToggleHelpPrompt" title="What can I say?" style="font-size:9px;padding:6px 9px;">💬 What can I say?</button>
+            <button class="action-btn" data-action="wake">Wake</button>
+            <button class="icon-btn" id="clearChat" title="Clear this browser view">↺</button>
+          </div>
+          
+          <!-- Expandable "What can I say?" Hinglish Guide Banner -->
+          <div id="whatCanISayBar" style="display:none;padding:10px 15px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(16,23,42,.92);border-bottom:1px solid var(--line);font-size:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+              <strong style="color:var(--cyan);">🗣️ Aap DAZY se natural Hinglish mein kya bol sakte ho:</strong>
+              <button type="button" onclick="document.getElementById('whatCanISayBar').style.display='none'" style="background:none;border:0;color:var(--muted);cursor:pointer;font-size:12px;">✕</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;" class="suggestions">
+              <button data-prompt="DAZY, aaj mere kya important tasks hain?">DAZY, aaj mere kya important tasks hain?</button>
+              <button data-prompt="Mujhe ye project samjhao, easy Hinglish mein.">Mujhe ye project samjhao, easy Hinglish mein.</button>
+              <button data-prompt="Mere PC ka health check karo.">Mere PC ka health check karo.</button>
+              <button data-prompt="Meri upcoming reminders batao.">Meri upcoming reminders batao.</button>
+              <button data-prompt="Chalo thodi der baat karte hain.">Chalo thodi der baat karte hain.</button>
+            </div>
+          </div>
+
+          <div class="chat-feed" id="chatFeed" aria-live="polite" tabindex="0" aria-label="Conversation message history">
+            <div class="chat-empty" id="chatEmpty" style="max-width:480px;">
+              <div class="empty-orb"></div>
+              <h3 style="font-size:21px;margin-bottom:10px;">Hey! Main DAZY hoon ❤️</h3>
+              <p style="font-size:12px;color:#b8c3d9;line-height:1.65;">Tum mujhse naturally <strong>Hinglish</strong> mein baat kar sakte ho. Kuch bhi poochho, bolo ya koi task do. Main sun rahi hoon.</p>
+              <div class="suggestions" style="margin-top:20px;">
+                <button data-prompt="DAZY, aaj mere kya important tasks hain?">📋 Aaj ke important tasks</button>
+                <button data-prompt="Mujhe ye project samjhao, easy Hinglish mein.">🧠 Project Hinglish mein samjhao</button>
+                <button data-prompt="Mere PC ka health check karo.">💻 PC Health Check</button>
+                <button data-prompt="Chalo thodi der baat karte hain.">💬 Baat karte hain</button>
+              </div>
+            </div>
+          </div>
           <div class="chat-composer"><form id="chatForm"><div id="liveTranscriptBanner" class="live-transcript-banner" style="display:none">
               <div class="transcribe-pulse-indicator"></div>
               <span class="transcribe-speaker">USER:</span>
@@ -547,12 +599,12 @@
             </div>
             <div class="composer-box">
               <button class="composer-tool" type="button" id="attachBtn" title="Attach file">＋</button>
-              <textarea id="chatInput" rows="1" placeholder="Message DAZY… (Enter to send)" aria-label="Message DAZY"></textarea>
+              <textarea id="chatInput" rows="1" placeholder="Hinglish ya English mein message likho… (Enter to send)" aria-label="Message DAZY"></textarea>
               <canvas id="micWaveCanvas" width="64" height="24" class="mic-wave-canvas" style="display:none"></canvas>
               <button class="composer-tool voice-always-btn" type="button" id="alwaysListeningBtn" title="Toggle Continuous Always-Listening" style="font-size:10px;padding:0 9px;width:auto;border:1px solid var(--line);border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🎙️ Always: OFF</button>
               <button class="composer-tool" type="button" id="micBtn" title="Voice input (Tap to speak)">♩</button>
               <button class="send-btn" id="sendBtn" type="submit">SEND ↑</button>
-            </div></form><div class="composer-hint"><span><strong>Enter</strong> to send · <strong>Shift + Enter</strong> for a new line</span><span>Desktop assistant handles speech output · no duplicate browser voice</span></div><input type="file" id="fileInput" multiple hidden></div>
+            </div></form><div class="composer-hint"><span><strong>Enter</strong> to send · <strong>Shift + Enter</strong> for new line</span><span>Default Language: <strong>Hinglish (Neerja Adult Indian Voice)</strong> · Zero Self-Echo</span></div><input type="file" id="fileInput" multiple hidden></div>
         </section>
         <section class="page" id="page-files">
           <div class="page-head"><div><div class="eyebrow">PERSONAL STORAGE</div><h1 class="page-title">Files & transfers</h1><p class="page-description">Send files from this device to the computer running DAZY.</p></div><button class="action-btn" id="refreshFiles">↻ Refresh</button></div>
@@ -943,21 +995,134 @@
             </div>
           </div>
         </section>
+
+        <!-- Memory Center Page -->
+        <section class="page" id="page-memory">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">PERSISTENT CONTEXT &amp; ROUTINES</div>
+              <h1 class="page-title">Memory Center &amp; Reminders</h1>
+              <p class="page-description">Real-time view of Tarik's stored facts, personal context, and active scheduled routines.</p>
+            </div>
+            <button class="action-btn" id="refreshMemoryBtn">↻ Refresh</button>
+          </div>
+          <div class="section-scroll">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
+              <div class="card" style="padding:17px 18px;">
+                <div class="card-title" style="margin-bottom:10px;color:var(--violet);">🧠 Stored Memory &amp; Facts</div>
+                <div id="memoryFactsContainer" style="font-size:11px;line-height:1.65;color:#cfd9ee;">Loading memory ledger…</div>
+              </div>
+              <div class="card" style="padding:17px 18px;">
+                <div class="card-title" style="margin-bottom:10px;color:var(--cyan);">⏰ Upcoming Routines &amp; Reminders</div>
+                <div id="memoryRoutinesContainer" style="font-size:11px;line-height:1.65;color:#cfd9ee;">Loading routines…</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tools & MCP Registry Page -->
+        <section class="page" id="page-tools">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">CAPABILITY DISCOVERY</div>
+              <h1 class="page-title">Tools, Skills &amp; MCP Registry</h1>
+              <p class="page-description">Inspect active actions, plugins, external MCP integrations, and sandbox permissions.</p>
+            </div>
+            <button class="action-btn" id="refreshToolsBtn">↻ Refresh</button>
+          </div>
+          <div class="section-scroll">
+            <div class="card" style="padding:17px 18px;margin-bottom:14px;">
+              <div class="card-title" style="margin-bottom:10px;color:var(--mint);">⚡ Registered Tools &amp; Capabilities</div>
+              <div id="toolsRegistryGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">Loading registry…</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PC Health & Logs Page -->
+        <section class="page" id="page-system">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">SYSTEM OPERATIONS &amp; SRE</div>
+              <h1 class="page-title">PC Health, Traces &amp; Self-Repair</h1>
+              <p class="page-description">Live hardware telemetry, incident monitor, and automated system healing diagnostics.</p>
+            </div>
+            <button class="action-btn primary" id="refreshSystemBtn">↻ Live Telemetry</button>
+          </div>
+          <div class="section-scroll">
+            <div class="stat-grid" style="margin-top:0;">
+              <div class="card stat-card"><div class="stat-top"><span>CPU Load</span></div><div class="stat-value" id="sysCpuVal">—</div><div class="stat-note">Host utilization</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Host Memory</span></div><div class="stat-value" id="sysRamVal">—</div><div class="stat-note">DAZY target &lt; 180MB idle</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Battery / Power</span></div><div class="stat-value" id="sysBattVal">—</div><div class="stat-note">Workstation state</div></div>
+              <div class="card stat-card"><div class="stat-top"><span>Active Incidents</span></div><div class="stat-value" id="sysIncVal">0</div><div class="stat-note">Real-time health monitor</div></div>
+            </div>
+            <div class="card" style="padding:17px 18px;margin-top:14px;">
+              <div class="card-title" style="margin-bottom:10px;">🛠️ System Incidents &amp; Self-Repair Log</div>
+              <div id="sysIncidentsList" style="font-size:11px;color:#cfd9ee;">Checking runtime telemetry…</div>
+            </div>
+          </div>
+        </section>
+
         <section class="page" id="page-settings">
-          <div class="page-head"><div><div class="eyebrow">YOUR WORKSPACE</div><h1 class="page-title">Preferences</h1><p class="page-description">Browser-side controls for this remote dashboard.</p></div></div>
-          <div class="section-scroll"><div class="card" style="padding:17px 18px"><div class="card-title" style="margin-bottom:12px">Voice input</div><div class="setting-row"><div><label for="speechLang">Recognition language</label><small>Used only when your browser supports speech recognition.</small></div><select id="speechLang"><option value="hi-IN">Hindi · India</option><option value="en-IN">English · India</option><option value="en-US">English · US</option><option value="bn-IN">Bengali · India</option></select></div><div class="setting-row"><div><label>Voice replies</label><small>Browser auto-speech is disabled to avoid a second voice. DAZY speaks through the desktop engine.</small></div><span class="status-chip">DESKTOP AUDIO</span></div><div class="setting-row"><div><label>Reduced motion</label><small>Respect your device's accessibility setting.</small></div><span class="status-chip">AUTO</span></div></div><div class="card" style="padding:17px 18px;margin-top:13px"><div class="card-title">Connection details</div><div class="system-row" style="margin-top:12px"><div class="system-icon">⌁</div><div><div class="system-label">WebSocket</div><div class="system-value" id="settingsSocket">Connecting</div></div></div><div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport</div><div class="system-value" id="settingsTransport">Detecting browser context</div></div></div><div class="system-row"><div class="system-icon">◷</div><div><div class="system-label">Session token</div><div class="system-value">Stored in this tab session</div></div></div><p class="rail-note" style="margin:12px 0 0">This interface does not store API keys or assistant memories. Provider settings remain in the desktop application.</p></div></div>
+          <div class="page-head"><div><div class="eyebrow">VOICE, PERSONALITY &amp; WORKSPACE</div><h1 class="page-title">Voice &amp; Preferences</h1><p class="page-description">Customize DAZY's Indian feminine voice, Hinglish fluency, listening mode, and session controls.</p></div></div>
+          <div class="section-scroll">
+            <div class="card" style="padding:17px 18px;border-color:rgba(167,139,250,.28);">
+              <div class="card-title" style="margin-bottom:12px;color:var(--violet);">🎙️ DAZY Voice &amp; Hinglish Personality</div>
+              <div class="setting-row">
+                <div><label for="voiceSelect">Authoritative Indian Voice</label><small>Adult Indian female neural voice tuned for Hinglish prosody.</small></div>
+                <select id="voiceSelect">
+                  <option value="en-IN-NeerjaNeural">Neerja (Warm Hinglish Adult Female)</option>
+                  <option value="hi-IN-SwaraNeural">Swara (Hindi / Hinglish Melodic)</option>
+                  <option value="en-IN-AnanyaNeural">Ananya (Cheerful Indian English)</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <div><label for="languageModeSelect">Default Conversational Language</label><small>Enforces natural code-switched Hinglish across responses.</small></div>
+                <select id="languageModeSelect">
+                  <option value="hinglish">Hinglish (Default Recommended)</option>
+                  <option value="hindi">Hindi (Roman / Pure)</option>
+                  <option value="english">Indian English</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <div><label>Voice Preview &amp; Audition</label><small>Click to hear DAZY introduce herself in real Hinglish audio right here.</small></div>
+                <div style="display:flex;gap:8px;">
+                  <button type="button" class="action-btn" id="btnPreviewVoice">🔊 Preview Voice</button>
+                  <button type="button" class="action-btn primary" id="btnSaveVoiceSettings">💾 Save</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:17px 18px;margin-top:13px">
+              <div class="card-title" style="margin-bottom:12px">Browser Microphone &amp; Speech Input</div>
+              <div class="setting-row"><div><label for="speechLang">Recognition language</label><small>Used when browser speech recognition captures voice directly.</small></div><select id="speechLang"><option value="en-IN">Hinglish / Indian English (Recommended)</option><option value="hi-IN">Hindi · India</option><option value="en-US">English · US</option><option value="bn-IN">Bengali · India</option></select></div>
+              <div class="setting-row"><div><label>Voice replies</label><small>Desktop audio engine speaks once cleanly — browser auto-speech disabled to avoid echo.</small></div><span class="status-chip">DESKTOP AUDIO</span></div>
+              <div class="setting-row"><div><label>Reduced motion</label><small>Respect your device's accessibility setting.</small></div><span class="status-chip">AUTO</span></div>
+            </div>
+            <div class="card" style="padding:17px 18px;margin-top:13px">
+              <div class="card-title">Connection details</div>
+              <div class="system-row" style="margin-top:12px"><div class="system-icon">⌁</div><div><div class="system-label">WebSocket</div><div class="system-value" id="settingsSocket">Connecting</div></div></div>
+              <div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport</div><div class="system-value" id="settingsTransport">Detecting browser context</div></div></div>
+              <div class="system-row"><div class="system-icon">◷</div><div><div class="system-label">Session token</div><div class="system-value">Stored in this tab session</div></div></div>
+            </div>
+          </div>
         </section>
       </main>
-      <aside class="right-rail" aria-label="Live system panel">
+      <aside class="right-rail" aria-label="Memory, tasks &amp; live system panel">
         <div class="card rail-card"><div class="rail-heading"><b>Live system</b><span id="systemUpdated">Waiting</span></div>
           <div class="system-row"><div class="system-icon">⌁</div><div><div class="system-label">Assistant link</div><div class="system-value" id="railLink">Connecting…</div></div><span class="status-chip wait" id="railLinkChip">WAIT</span></div>
           <div class="system-row"><div class="system-icon">◉</div><div><div class="system-label">Microphone</div><div class="system-value" id="railMic">Not active</div></div><span class="status-chip" id="railMicChip">IDLE</span></div>
-          <div class="system-row"><div class="system-icon">▧</div><div><div class="system-label">File service</div><div class="system-value" id="railFiles">Available on request</div></div><span class="status-chip">API</span></div>
           <div class="system-row"><div class="system-icon">◇</div><div><div class="system-label">Transport security</div><div class="system-value" id="railSecurity">Checking</div></div><span class="status-chip wait" id="railSecurityChip">CHECK</span></div>
         </div>
-        <div class="card rail-card"><div class="rail-heading"><b>Quick controls</b><span>Assistant</span></div><div class="rail-actions"><button class="rail-action" data-action="wake"><i>⌁</i><span>Wake DAZY</span></button><button class="rail-action" id="railAlwaysListenBtn" title="Toggle Continuous Microphone"><i>🎙️</i><span id="railAlwaysListenLabel">Always Mic</span></button><button class="rail-action" data-goto="chat"><i>✧</i><span>Message</span></button><button class="rail-action" data-goto="files"><i>▧</i><span>Send file</span></button></div></div>
-        <div class="card rail-card"><div class="rail-heading"><b>Session health</b><span id="healthText">—</span></div><div class="rail-note" id="healthNote">Waiting for the dashboard to receive a status event from the desktop application.</div><div class="engine-meter"><span id="healthBar" style="width:20%"></span></div></div>
-        <div class="card rail-card"><div class="rail-heading"><b>Privacy note</b><span>LOCAL</span></div><p class="rail-note">The dashboard connects to your own DAZY instance. Mic access starts only after you tap the voice button. No browser speech synthesis is triggered automatically.</p></div>
+        <div class="card rail-card">
+          <div class="rail-heading"><b>Contextual Memory &amp; Reminders</b><span style="cursor:pointer;color:var(--cyan);" data-page="memory">View all →</span></div>
+          <div id="railMemoryList" style="font-size:10px;color:#b8c3d9;line-height:1.5;max-height:140px;overflow:auto;">Loading memories…</div>
+        </div>
+        <div class="card rail-card">
+          <div class="rail-heading"><b>Active Tasks &amp; Workers</b><span style="cursor:pointer;color:var(--cyan);" data-page="command">Command →</span></div>
+          <div id="railTasksList" style="font-size:10px;color:#b8c3d9;line-height:1.5;">No active background tasks.</div>
+        </div>
+        <div class="card rail-card"><div class="rail-heading"><b>Quick controls</b><span>Assistant</span></div><div class="rail-actions"><button class="rail-action" data-action="wake"><i>⌁</i><span>Wake DAZY</span></button><button class="rail-action" id="railAlwaysListenBtn" title="Toggle Continuous Microphone"><i>🎙️</i><span id="railAlwaysListenLabel">Always Mic</span></button><button class="rail-action" data-goto="settings"><i>🔊</i><span>Voice Test</span></button><button class="rail-action" data-goto="system"><i>▥</i><span>PC Health</span></button></div></div>
+        <div class="card rail-card"><div class="rail-heading"><b>Session health</b><span id="healthText">—</span></div><div class="rail-note" id="healthNote">Waiting for live status from DAZY.</div><div class="engine-meter"><span id="healthBar" style="width:20%"></span></div></div>
       </aside>
     </div>
   </div>
@@ -1008,18 +1173,22 @@
     page:'chat', messages:0, files:[], seen:new Set(), recentSeen:new Map(), localUserEcho:[], activity:[], pending:new Map(),
     recognition:null, recognitionActive:false, phoneSocket:null, audioContext:null, micStream:null, audioNode:null,
     micMode:'idle', currentStatus:'unknown', aesKey:null, encReady:false, sendBusy:false,
-    alwaysListening:false, userExplicitStop:false, connectedNoticeShown:false
+    alwaysListening:false, userExplicitStop:false, connectedNoticeShown:false,
+    lastAssistantAudioAt:0, recentToasts:new Map()
   };
   const titles = {
-    overview:['Overview','Your personal AI workspace'],
-    chat:['Conversation','A private conversation with DAZY'],
+    overview:['Overview','Your personal AI command center'],
+    chat:['Conversation','Natural Hinglish dialogue with DAZY'],
     brain:['Live Brain 3D','Spatial neural topology and telemetry projection'],
-    command:['AI OS Command Center','Registries, durable tasks, incident triage & repair'],
-    testing:['Testing Center','Real-use verification, smoke tests, and release gate metrics'],
+    command:['Tasks & Workers','Registries, durable tasks, incident triage & repair'],
+    memory:['Memory Center','Persistent facts, user context & scheduled routines'],
+    tools:['Tools & MCP Registry','Connected capabilities, plugins & external integrations'],
+    system:['PC Health & Logs','Hardware telemetry, system traces & self-repair'],
+    testing:['Testing Center','Real-use verification, smoke tests & release gate metrics'],
     arena:['Multi-AI Comparison Arena','smol-ai multi-model battle & GodMode DAG execution'],
     files:['Files','Transfer files to your computer'],
     activity:['Activity','Live events from your assistant'],
-    settings:['Settings','Manage this browser session'],
+    settings:['Voice & Settings','Configure Hinglish voice, personality & listening mode'],
     diagnostics:['Voice & Diarization','Neural audio pipeline & speaker telemetry']
   };
   const encoder = new TextEncoder();
@@ -1027,8 +1196,22 @@
   const KDF_ROUNDS = 200000;
 
   function toast(message, type='') {
-    const node=document.createElement('div'); node.className='toast '+type; node.textContent=String(message||'');
-    $('toastStack').appendChild(node); setTimeout(()=>node.remove(),4200);
+    const text = String(message || '').trim();
+    if (!text) return;
+    const now = Date.now();
+    const lastAt = state.recentToasts.get(text) || 0;
+    if (now - lastAt < 8000) return; // Strict deduplication prevents toast spam loops
+    state.recentToasts.set(text, now);
+    const stack = $('toastStack');
+    if (!stack) return;
+    while (stack.children.length >= 3) {
+      stack.firstElementChild.remove();
+    }
+    const node = document.createElement('div');
+    node.className = 'toast ' + type;
+    node.textContent = text;
+    stack.appendChild(node);
+    setTimeout(() => { if (node.parentNode) node.remove(); }, 3500);
   }
   function nowTime(){ return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
   function setConnection(online, label) {
@@ -1351,22 +1534,27 @@
     if(!message||typeof message!=='object')return;
     const type=String(message.type||'');
     if(type==='log') {
+      if (message.speaker === 'assistant') state.lastAssistantAudioAt = Date.now();
       addMessage(message.speaker||'assistant',message.text,message.ts,{dedupe:true,remote:true});
       if (message.speaker === 'user') {
         showLiveTranscript(false);
       }
     }
     else if(type==='voice_state') {
+      if (message.state === 'speaking') state.lastAssistantAudioAt = Date.now();
       updateVoiceState(message.state, message);
+      syncSideReactor(message.state);
     }
     else if(type==='partial_transcript' || type==='interim_transcript') {
       showLiveTranscript(true, message.text);
       if (voiceEngine.state !== 'speaking') {
         updateVoiceState('transcribing');
+        syncSideReactor('transcribing');
       }
     }
     else if(type==='audio_level') {
       if (message.output !== undefined) {
+        if (Number(message.output) > 0.05) state.lastAssistantAudioAt = Date.now();
         document.documentElement.style.setProperty('--output-level', Number(message.output).toFixed(2));
       }
       if (message.input !== undefined) {
@@ -1375,12 +1563,13 @@
     }
     else if(type==='status') {
       state.currentStatus=String(message.state||'unknown');
-      $('chatAgentState').textContent='Assistant state: '+state.currentStatus;
+      $('chatAgentState').textContent='Assistant: '+state.currentStatus;
       $('systemUpdated').textContent='Updated '+nowTime();
     }
     else if(type==='wake') {
-      addMessage('system','Wake word detected — assistant is waking.',null);
+      addMessage('system','Wake word detected — DAZY is listening.',null);
       updateVoiceState('listening');
+      syncSideReactor('listening');
     }
     else if(type==='sys') {
       if (message.text && (message.text.includes('connection established') || message.text.includes('Remote connection'))) {
@@ -1393,6 +1582,7 @@
     else if(type==='error') {
       toast(message.text||message.error||'Assistant reported an error','error');
       updateVoiceState('error');
+      syncSideReactor('error');
     }
     else if(type==='trace_span') {
       if (message.span && state.page === 'command') {
@@ -1419,11 +1609,32 @@
       }
     }
     else if(type==='task_created' || type==='task_started' || type==='task_completed' || type==='task_failed') {
+      loadRightRailTelemetry();
       if (state.page === 'command') loadCommandCenter();
     }
     else if(type==='incident_detected' || type==='repair_executed') {
       if (state.page === 'command') loadCommandCenter();
+      if (state.page === 'system') loadSystemHealth();
     }
+  }
+  function syncSideReactor(st) {
+    const orb = $('sideReactorOrb');
+    const lbl = $('sideReactorState');
+    if (!orb || !lbl) return;
+    const s = String(st || 'idle').toLowerCase();
+    const map = {
+      listening: ['LISTENING · HINGLISH', 'radial-gradient(circle at 35% 30%,#e0f7ff,#64d8ff 55%,#0e223a)', '0 0 18px rgba(100,216,255,.8)'],
+      transcribing: ['HEARING SPEECH…', 'radial-gradient(circle at 35% 30%,#e0f7ff,#4bbdd5 55%,#0e223a)', '0 0 16px rgba(100,216,255,.7)'],
+      thinking: ['THINKING…', 'radial-gradient(circle at 35% 30%,#f1e4ff,#a78bfa 55%,#1b153d)', '0 0 18px rgba(167,139,250,.85)'],
+      speaking: ['SPEAKING HINGLISH ❤️', 'radial-gradient(circle at 35% 30%,#d4ffec,#72e0b4 55%,#0b2e26)', '0 0 18px rgba(114,224,180,.8)'],
+      muted: ['MIC MUTED', 'radial-gradient(circle at 35% 30%,#ffd9e0,#fb7185 55%,#2d0d16)', '0 0 14px rgba(251,113,133,.6)'],
+      error: ['AUDIO ERROR', 'radial-gradient(circle at 35% 30%,#ffd9e0,#fb7185 55%,#2d0d16)', '0 0 14px rgba(251,113,133,.7)'],
+      idle: ['IDLE · HINGLISH', 'radial-gradient(circle at 35% 30%,#e2c9ff,#8e73f1 55%,#0e172a)', '0 0 14px rgba(139,116,250,.55)']
+    };
+    const info = map[s] || map.idle;
+    lbl.textContent = info[0];
+    orb.style.background = info[1];
+    orb.style.boxShadow = info[2];
   }
   function connectSocket(){
     if(state.manuallyClosed)return;
@@ -1433,7 +1644,7 @@
     try {ws=new WebSocket(protocol+'://'+location.host+'/ws?token='+encodeURIComponent(authToken));}
     catch(err){setConnection(false,'Connection error');scheduleReconnect();return;}
     state.socket=ws;
-    ws.onopen=()=>{if(state.socket!==ws)return;state.reconnectDelay=1000;setConnection(true,'Connected');toast('DAZY session connected','success');};
+    ws.onopen=()=>{if(state.socket!==ws)return;state.reconnectDelay=1000;setConnection(true,'Connected');loadRightRailTelemetry();};
     ws.onmessage=(event)=>{if(state.socket!==ws)return;try{handleEvent(JSON.parse(event.data));}catch(err){console.warn('Ignored malformed dashboard event',err);}};
     ws.onerror=()=>{if(state.socket===ws)setConnection(false,'Connection error');};
     ws.onclose=()=>{if(state.socket!==ws)return;state.socket=null;setConnection(false,'Reconnecting');scheduleReconnect();};
@@ -1458,7 +1669,7 @@
   }
   function autoGrow(){const el=$('chatInput');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
   async function wakeAssistant(){try{const res=await authFetch('/api/wake',{method:'POST'});if(!res.ok)throw new Error('Wake request failed');toast('Wake signal sent','success');}catch(err){toast(err.message||'Could not wake DAZY','error');}}
-  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='brain')loadBrainGraph();if(page==='command')loadCommandCenter();if(page==='testing')loadTestingCenter();if(page==='arena')loadArena();if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
+  function goTo(page){if(!titles[page])return;state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));document.querySelectorAll('.nav-btn[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));$('topTitle').textContent=titles[page][0];$('topSubtitle').textContent=titles[page][1];$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');if(page==='files')loadFiles();if(page==='diagnostics'){loadDiagnostics();loadPronunciationDict();}if(page==='brain')loadBrainGraph();if(page==='command')loadCommandCenter();if(page==='memory')loadMemoryCenter();if(page==='tools')loadToolsCenter();if(page==='system')loadSystemHealth();if(page==='settings')loadVoiceSettingsUI();if(page==='testing')loadTestingCenter();if(page==='arena')loadArena();if(page==='chat')setTimeout(()=>$('chatInput').focus(),50);}
   function fileSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';if(bytes<1073741824)return(bytes/1048576).toFixed(1)+' MB';return(bytes/1073741824).toFixed(2)+' GB';}
   function fileGlyph(name){const ext=(name.split('.').pop()||'').toLowerCase();if(['png','jpg','jpeg','webp','gif','svg'].includes(ext))return'▧';if(['mp3','wav','m4a','ogg','flac'].includes(ext))return'♫';if(['mp4','mov','mkv','webm'].includes(ext))return'▶';if(ext==='pdf')return'▤';if(['doc','docx','txt','md'].includes(ext))return'≡';if(['zip','rar','7z'].includes(ext))return'▣';return'◈';}
   async function loadFiles(showToast=true){$('fileListState').textContent='Loading…';try{const res=await authFetch('/api/files');const data=await res.json();if(!res.ok)throw new Error(data.error||'Could not load files');state.files=Array.isArray(data.files)?data.files:[];$('statFiles').textContent=String(state.files.length);$('fileCount').textContent=String(state.files.length);$('fileListState').textContent=state.files.length+' item(s)';const box=$('fileList');box.innerHTML='';if(!state.files.length){box.innerHTML='<div class="rail-note">No uploaded files yet. Send a file from this device to get started.</div>';return;}for(const file of state.files){const row=document.createElement('div');row.className='file-row';const glyph=document.createElement('div');glyph.className='file-glyph';glyph.textContent=fileGlyph(file.name||'');const info=document.createElement('div');info.className='file-info';const name=document.createElement('div');name.className='file-name';name.textContent=file.name||'Unnamed file';const size=document.createElement('div');size.className='file-size';size.textContent=fileSize(Number(file.size)||0);info.append(name,size);const link=document.createElement('a');link.className='file-open';link.textContent='Download';link.href='/uploads/'+encodeURIComponent(file.name||'')+'?token='+encodeURIComponent(authToken);link.setAttribute('download',file.name||'file');row.append(glyph,info,link);box.appendChild(row);}}catch(err){$('fileListState').textContent='Unavailable';$('fileList').innerHTML='<div class="rail-note">'+escapeHTML(err.message||'File list unavailable')+'</div>';if(showToast)toast(err.message||'Could not load files','error');}}
@@ -1506,7 +1717,7 @@
     try {
       setMicState('starting', 'Starting voice recognition');
       const recognition = new Recognition();
-      recognition.lang = $('speechLang').value || 'en-US';
+      recognition.lang = ($('speechLang') && $('speechLang').value) || 'en-IN';
       recognition.continuous = Boolean(isContinuous || state.alwaysListening);
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
@@ -1515,10 +1726,15 @@
         state.recognitionActive = true;
         setMicState('browser', state.alwaysListening ? 'Always Listening · Speak freely' : 'Listening · Click to stop');
         updateVoiceState('listening');
-        toast(state.alwaysListening ? 'Continuous Listening active: Speak anytime!' : 'Listening… speak now');
+        syncSideReactor('listening');
+        // Persistent UI badge represents state cleanly — zero repeated toast notifications!
       };
 
       recognition.onresult = (event) => {
+        // Acoustic Echo Isolation: Drop input while assistant is speaking or within 1.8s tail
+        if (voiceEngine.state === 'speaking' || (Date.now() - (state.lastAssistantAudioAt || 0) < 1800)) {
+          return;
+        }
         let interimText = '';
         let finalText = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -1531,23 +1747,33 @@
         }
         if (interimText.trim()) {
           showLiveTranscript(true, interimText.trim());
-          if (voiceEngine.state !== 'speaking') updateVoiceState('transcribing');
+          if (voiceEngine.state !== 'speaking') {
+            updateVoiceState('transcribing');
+            syncSideReactor('transcribing');
+          }
         }
-        if (finalText.trim()) {
+        const cleaned = finalText.trim();
+        if (cleaned) {
+          const low = cleaned.toLowerCase().replace(/[.!,?]/g, '').trim();
+          if (['', 'you', 'thank you', 'bye'].includes(low)) {
+            showLiveTranscript(false);
+            return;
+          }
           showLiveTranscript(false);
-          sendMessage(finalText.trim());
+          sendMessage(cleaned);
         }
       };
 
       recognition.onerror = (event) => {
-        if (event.error === 'no-speech') {
+        if (event.error === 'no-speech' || event.error === 'aborted') {
           return;
         }
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          toast('Microphone permission blocked in browser. Please allow microphone in browser URL bar.', 'error');
+          toast('Microphone permission blocked in browser. Please allow microphone in URL bar.', 'error');
           state.alwaysListening = false;
           setMicState('idle');
           updateVoiceState('error');
+          syncSideReactor('error');
         } else {
           console.warn('Speech recognition warning:', event.error);
         }
@@ -1562,17 +1788,17 @@
                 recognition.start();
                 state.recognitionActive = true;
                 setMicState('browser', 'Always Listening active');
-                updateVoiceState('listening');
               } catch (e) {
-                console.warn('Continuous recognition restart error', e);
+                console.warn('Continuous recognition restart skipped:', e.message);
               }
             }
-          }, 250);
+          }, 450);
           return;
         }
         state.recognition = null;
         setMicState('idle');
         updateVoiceState('idle');
+        syncSideReactor('idle');
       };
 
       state.recognition = recognition;
@@ -2546,6 +2772,143 @@
     }
   }
 
+  // ── Complete Advanced Screen Loaders (Memory, Tools, System Health, Voice Preview) ──
+
+  async function loadRightRailTelemetry() {
+    try {
+      const mRes = await authFetch('/api/os/memory');
+      if (mRes.ok) {
+        const md = await mRes.json();
+        const memBox = $('railMemoryList');
+        if (memBox) {
+          const items = [];
+          const mem = md.memory || {};
+          if (typeof mem === 'object' && !Array.isArray(mem)) {
+            for (const [k, v] of Object.entries(mem)) {
+              if (v && typeof v !== 'object') items.push(`<div>• <strong>${escapeHTML(k)}:</strong> ${escapeHTML(String(v).slice(0, 60))}</div>`);
+            }
+          }
+          const rts = Array.isArray(md.routines) ? md.routines : [];
+          rts.slice(0, 3).forEach(r => {
+            const name = r.name || r.label || r.prompt || 'Scheduled routine';
+            items.push(`<div style="color:var(--cyan);">⏰ ${escapeHTML(String(name).slice(0, 55))}</div>`);
+          });
+          memBox.innerHTML = items.length ? items.join('') : '<div class="muted">Remembering facts & routines automatically.</div>';
+        }
+      }
+      const tRes = await authFetch('/api/os/tasks');
+      if (tRes.ok) {
+        const td = await tRes.json();
+        const tBox = $('railTasksList');
+        if (tBox) {
+          const tasks = Array.isArray(td.tasks) ? td.tasks : [];
+          if (!tasks.length) {
+            tBox.innerHTML = '<div class="muted">No active background tasks.</div>';
+          } else {
+            tBox.innerHTML = tasks.slice(0, 4).map(t => `<div style="margin-bottom:4px;">◈ <strong>${escapeHTML(t.title || t.task_id)}</strong> <span style="color:var(--mint);font-size:9px;">[${escapeHTML(t.status || 'QUEUED')}]</span></div>`).join('');
+          }
+        }
+      }
+    } catch (err) {}
+  }
+
+  async function loadMemoryCenter() {
+    try {
+      const res = await authFetch('/api/os/memory');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Memory fetch error');
+      const factsEl = $('memoryFactsContainer');
+      const rtsEl = $('memoryRoutinesContainer');
+      const mem = data.memory || {};
+      if (factsEl) {
+        const rows = [];
+        for (const [sec, val] of Object.entries(mem)) {
+          if (typeof val === 'object' && val !== null) {
+            for (const [k, v] of Object.entries(val)) {
+              rows.push(`<div style="padding:7px 0;border-bottom:1px solid var(--line);"><strong>${escapeHTML(sec)} / ${escapeHTML(k)}:</strong> ${escapeHTML(JSON.stringify(v))}</div>`);
+            }
+          } else {
+            rows.push(`<div style="padding:7px 0;border-bottom:1px solid var(--line);"><strong>${escapeHTML(sec)}:</strong> ${escapeHTML(String(val))}</div>`);
+          }
+        }
+        factsEl.innerHTML = rows.length ? rows.join('') : '<div class="muted">Memory ledger is clean and ready.</div>';
+      }
+      if (rtsEl) {
+        const rts = Array.isArray(data.routines) ? data.routines : [];
+        rtsEl.innerHTML = rts.length ? rts.map(r => `<div style="padding:8px 0;border-bottom:1px solid var(--line);"><strong>${escapeHTML(r.name || 'Routine')}</strong><br><span style="color:var(--muted);font-size:10px;">${escapeHTML(r.schedule || r.cron || r.trigger || 'Scheduled')} — ${escapeHTML(r.action || r.prompt || '')}</span></div>`).join('') : '<div class="muted">No reminders or routines scheduled yet.</div>';
+      }
+    } catch (e) {
+      toast('Memory load error: ' + e.message, 'error');
+    }
+  }
+
+  async function loadToolsCenter() {
+    try {
+      const res = await authFetch('/api/os/registries');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Registry load failed');
+      const grid = $('toolsRegistryGrid');
+      if (!grid) return;
+      const items = [...(data.actions || []), ...(data.plugins || []), ...(data.skills || [])];
+      if (!items.length) {
+        grid.innerHTML = '<div class="muted">No tools discovered.</div>';
+        return;
+      }
+      grid.innerHTML = items.map(item => {
+        const name = item.name || item.id || String(item);
+        const desc = item.description || item.hint || 'Registered DAZY system capability';
+        const badge = item.kind || item.tier || 'TOOL';
+        return `<div style="padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <strong style="color:var(--cyan);font-size:11px;">${escapeHTML(name)}</strong>
+            <span class="status-chip" style="font-size:8px;">${escapeHTML(badge)}</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.45;">${escapeHTML(String(desc).slice(0, 120))}</div>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      toast('Tools load error: ' + e.message, 'error');
+    }
+  }
+
+  async function loadSystemHealth() {
+    try {
+      const [tRes, iRes] = await Promise.all([authFetch('/api/os/telemetry'), authFetch('/api/os/incidents')]);
+      if (tRes.ok) {
+        const td = await tRes.json();
+        const metrics = td.telemetry || td;
+        if ($('sysCpuVal')) $('sysCpuVal').textContent = (metrics.cpu_percent !== undefined ? metrics.cpu_percent + '%' : '—');
+        if ($('sysRamVal')) $('sysRamVal').textContent = (metrics.ram_mb !== undefined ? Math.round(metrics.ram_mb) + ' MB' : (metrics.memory_percent !== undefined ? metrics.memory_percent + '%' : 'Healthy'));
+        if ($('sysBattVal')) $('sysBattVal').textContent = (metrics.battery_percent !== undefined ? metrics.battery_percent + '%' : 'AC Power');
+      }
+      if (iRes.ok) {
+        const idata = await iRes.json();
+        const incs = Array.isArray(idata.incidents) ? idata.incidents : [];
+        if ($('sysIncVal')) $('sysIncVal').textContent = String(incs.length);
+        const listEl = $('sysIncidentsList');
+        if (listEl) {
+          listEl.innerHTML = incs.length ? incs.map(inc => `<div style="padding:9px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;">
+              <strong style="color:var(--amber);">${escapeHTML(inc.title || inc.category || 'System Notice')}</strong>
+              <span class="status-chip">${escapeHTML(inc.severity || 'INFO')}</span>
+            </div>
+            <div style="margin-top:4px;color:var(--muted);">${escapeHTML(inc.details || inc.message || '')}</div>
+          </div>`).join('') : '<div style="color:var(--mint);">✅ Zero active system incidents. All services operational.</div>';
+        }
+      }
+    } catch (e) {}
+  }
+
+  async function loadVoiceSettingsUI() {
+    try {
+      const res = await authFetch('/api/voice-settings');
+      if (!res.ok) return;
+      const d = await res.json();
+      if ($('voiceSelect') && d.voice) $('voiceSelect').value = d.voice;
+      if ($('languageModeSelect') && d.language_mode) $('languageModeSelect').value = d.language_mode;
+    } catch (e) {}
+  }
+
   function initEvents(){
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.page)));
     document.querySelectorAll('[data-goto]').forEach(btn=>btn.addEventListener('click',()=>goTo(btn.dataset.goto)));
@@ -2554,6 +2917,60 @@
     $('mobileBackdrop').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('mobileBackdrop').classList.remove('show');});
     $('menuBtn').addEventListener('click',()=>$('mobileBackdrop').classList.toggle('show'));
     $('openSettings').addEventListener('click',()=>goTo('settings'));
+    $('btnToggleHelpPrompt')?.addEventListener('click', () => {
+      const bar = $('whatCanISayBar');
+      if (bar) bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+    });
+    $('refreshMemoryBtn')?.addEventListener('click', loadMemoryCenter);
+    $('refreshToolsBtn')?.addEventListener('click', loadToolsCenter);
+    $('refreshSystemBtn')?.addEventListener('click', loadSystemHealth);
+
+    $('btnPreviewVoice')?.addEventListener('click', async () => {
+      const btn = $('btnPreviewVoice');
+      const voice = $('voiceSelect')?.value || 'en-IN-NeerjaNeural';
+      const langMode = $('languageModeSelect')?.value || 'hinglish';
+      const sampleText = langMode === 'english'
+        ? "Hey Tarik, I am DAZY! Everything is connected and ready for your tasks."
+        : "Haan ji Tarik, main DAZY hoon! Main aapki Hinglish friend aur personal assistant hoon. Bolo kya help chahiye?";
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Synthesizing…'; }
+      try {
+        const res = await authFetch('/api/voice-preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ voice, text: sampleText })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.audio_base64) throw new Error(data.error || 'Preview synthesis failed');
+        const audio = new Audio('data:audio/mpeg;base64,' + data.audio_base64);
+        state.lastAssistantAudioAt = Date.now();
+        syncSideReactor('speaking');
+        audio.onended = () => { state.lastAssistantAudioAt = Date.now(); syncSideReactor('idle'); };
+        await audio.play();
+        toast(`Playing preview for ${voice}`, 'success');
+      } catch (e) {
+        toast('Preview error: ' + e.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🔊 Preview Voice'; }
+      }
+    });
+
+    $('btnSaveVoiceSettings')?.addEventListener('click', async () => {
+      const voice = $('voiceSelect')?.value || 'en-IN-NeerjaNeural';
+      const language_mode = $('languageModeSelect')?.value || 'hinglish';
+      try {
+        const res = await authFetch('/api/voice-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ voice, language_mode })
+        });
+        if (!res.ok) throw new Error('Save failed');
+        toast(`Saved voice (${voice}) & language (${language_mode})`, 'success');
+        if ($('topbarLangBadge')) $('topbarLangBadge').textContent = language_mode === 'english' ? '🇬🇧 English' : (language_mode === 'hindi' ? '🇮🇳 Hindi' : '🗣️ Hinglish');
+      } catch (e) {
+        toast('Save error: ' + e.message, 'error');
+      }
+    });
+
     $('chatForm').addEventListener('submit',event=>{event.preventDefault();sendMessage($('chatInput').value);});
     $('chatInput').addEventListener('input',autoGrow);
     $('chatInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();$('chatForm').requestSubmit();}});
@@ -2569,7 +2986,7 @@
     $('clearChat').addEventListener('click',()=>{const feed=$('chatFeed');feed.innerHTML='';state.seen.clear();toast('Chat view cleared. Server history is unchanged.');});
     $('clearActivity').addEventListener('click',()=>{$('activityList').innerHTML='<div class="rail-note">Activity view cleared. New events will appear here.</div>';state.activity=[];});
     document.querySelectorAll('[data-prompt]').forEach(btn=>btn.addEventListener('click',()=>{goTo('chat');$('chatInput').value=btn.dataset.prompt;$('chatForm').requestSubmit();}));
-    $('speechLang').value=localStorage.getItem('dazy_speech_language')||'hi-IN';$('speechLang').addEventListener('change',()=>localStorage.setItem('dazy_speech_language',$('speechLang').value));
+    $('speechLang').value=localStorage.getItem('dazy_speech_language')||'en-IN';$('speechLang').addEventListener('change',()=>localStorage.setItem('dazy_speech_language',$('speechLang').value));
     
     // ── Voice & Microphone Mode Controller Integration ──
     async function syncVoiceModeUI() {
@@ -2584,6 +3001,7 @@
           if ($('topbarMicIcon')) $('topbarMicIcon').textContent = isSilent ? '🔇' : '🎙️';
           if ($('heroMuteToggle')) $('heroMuteToggle').textContent = isSilent ? '🎙️ Unmute Mic' : '🔇 Mute Mic';
           if ($('dazyOrb')) $('dazyOrb').setAttribute('data-state', isSilent ? 'muted' : 'idle');
+          syncSideReactor(isSilent ? 'muted' : (mode === 'CONTINUOUS' ? 'listening' : 'idle'));
         }
       } catch (err) {}
     }
@@ -2709,14 +3127,16 @@
   function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
   async function init(){
     $('settingsTransport').textContent=location.protocol==='https:'?'HTTPS / WSS':'HTTP / WS';
-    $('railSecurity').textContent=location.protocol==='https:'?'HTTPS protected':'Plain HTTP';
-    $('railSecurityChip').textContent=location.protocol==='https:'?'TLS':'INSECURE';
-    $('railSecurityChip').className='status-chip'+(location.protocol==='https:'?'':' wait');
-    $('secureBadge').textContent=location.protocol==='https:'?'TLS · CHECKING':'HTTP · LOCAL NETWORK';
-    if(location.protocol!=='https:')toast('This dashboard is using HTTP. Use HTTPS for encrypted transport on an untrusted network.','error');
+    $('railSecurity').textContent=location.protocol==='https:'?'HTTPS protected':'Localhost HTTP';
+    $('railSecurityChip').textContent=location.protocol==='https:'?'TLS':'LOCAL';
+    $('railSecurityChip').className='status-chip'+(location.protocol==='https:'?'':' ok');
+    $('secureBadge').textContent=location.protocol==='https:'?'TLS · CHECKING':'HTTP · LOCAL WORKSPACE';
+    if(location.protocol!=='https:' && location.hostname!=='127.0.0.1' && location.hostname!=='localhost') {
+      toast('External HTTP connection detected — use HTTPS on untrusted networks.','error');
+    }
     initEvents();updateClock();setInterval(updateClock,15000);await initCrypto();
-    $('secureBadge').textContent=location.protocol==='https:'?(state.encReady?'HTTPS · AES-GCM':'HTTPS'):(state.encReady?'HTTP · PAYLOAD AES':'HTTP · NO ENC');
-    connectSocket();loadFiles(false);setupOrbWaveforms();loadDiagnostics();loadUserProfile();
+    $('secureBadge').textContent=location.protocol==='https:'?(state.encReady?'HTTPS · AES-GCM':'HTTPS'):(state.encReady?'HTTP · PAYLOAD AES':'LOCAL OS');
+    connectSocket();loadFiles(false);setupOrbWaveforms();loadDiagnostics();loadUserProfile();loadRightRailTelemetry();
   }
   init();
 })();
